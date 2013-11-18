@@ -29,16 +29,20 @@ nzbGetOptions = new Class({
 });
 
 nzbGetAPI = new Class({
-	initialize: function(){
+	Implements: Events
+	,initialize: function(){
 	}
 	,version: function() {
 		return this.sendMessage('version', {}, false);
 	}
-	,status: function() {
-		return this.sendMessage('status', {}, false);
-	}
 	,history: function(async) {
 		return this.sendMessage('history', {}, async);
+	}
+	,listFiles: function(async) {
+		return this.sendMessage('listfiles', {}, async);
+	}
+	,listGroups: function(async) {
+		return this.sendMessage('listgroups', {}, async);
 	}
 	,sendMessage: function(method, params, async) {
         var url = this.Options.get('opt_host')
@@ -63,10 +67,33 @@ nzbGetAPI = new Class({
         	return JSON.parse(xhr.xhr.response);
         }
 	}
+	,updateStatus: function() {
+		this.status = this.sendMessage('status', {}, false).result;
+		this.fireEvent('statusupdated');
+	}
+	,updateGroups: function() {
+		this.listGroups((function(j){
+			this.groups = j;
+			this.fireEvent('groupsupdated');
+			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''}); // We have 10+ unread items.
+			chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
+		}).bind(this));
+	}
 	,Options: new nzbGetOptions()
 });
 
 window.addEvent('domready', function(){
 	ngAPI = new nzbGetAPI();
+	chrome.browserAction.setBadgeText({text: ''});
+
+	ngAPI.updateGroups();
+	ngAPI.updateGroups.bind(ngAPI).periodical(5000);
+
+	ngAPI.updateStatus();
+	ngAPI.updateStatus.bind(ngAPI).periodical(5000);
+	
+	//(function(){
+	//}).periodical(5000);
+
 });
 
