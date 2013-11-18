@@ -1,3 +1,62 @@
-<script src="js/mootools-core-1.4.5-full-nocompat-yc.js"></script>
-<script src="js/popup.js"></script>
-<h2>Extension</h2>
+<html>
+	<head>
+		<script src="js/mootools-core-1.4.5-full-nocompat-yc.js"></script>
+		<script src="js/popup.js"></script>
+		<style type="text/css">
+		* {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-size: 13px;
+			line-height: 16px;
+		}
+		.tag {
+			padding: 1px 4px 2px;
+			border-radius: 3px;
+			font-size: 10.998px;
+			font-weight: bold;
+			line-height: 14px;
+			color: #ffffff;
+			text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+			white-space: nowrap;
+			vertical-align: baseline;
+			text-transform: uppercase;
+			line-height: 18px;
+			text-align: center;
+		}
+		.tag.success {
+			background: #468847;
+		}
+		.tag.warning {
+			background: #c67605;
+		}
+		.tag.failure {
+			background: #b94a48
+		}
+		th,td {
+			text-align: left;
+			padding: 3px;
+		}
+		.r {
+			text-align: right;
+		}
+		</style>
+	</head>
+	<body>
+		<h2>Extension</h2>
+
+		<div>
+			<h2>History</h2>
+			<table>
+				<thead>
+					<tr>
+						<th></th>
+						<th>Name</th>
+						<th>Time</th>
+						<th class="r">Size</th>
+					</tr>
+				</thead>
+				<tbody id="history_cont">
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>

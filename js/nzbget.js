@@ -37,6 +37,9 @@ nzbGetAPI = new Class({
 	,status: function() {
 		return this.sendMessage('status', {}, false);
 	}
+	,history: function(async) {
+		return this.sendMessage('history', {}, async);
+	}
 	,sendMessage: function(method, params, async) {
         var url = this.Options.get('opt_host')
         	,port = this.Options.get('opt_port')
@@ -54,6 +57,7 @@ nzbGetAPI = new Class({
         	,data: JSON.stringify(query)
         	,user: username
         	,password: password
+        	,onComplete: async
         }).send();
         if(!async) {
         	return JSON.parse(xhr.xhr.response);
