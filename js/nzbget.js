@@ -1,13 +1,3 @@
-function main() {
-	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-		if ( message === "updateOptions" ) {
-			nzbGetChrome.loadMenu();
-		}
-	});
-
-    nzbGetChrome.loadMenu();
-}
-
 nzbGetOptions = new Class({
 	load: function() {
 		Array.each($$('input[type=text],input[type=password]'), function(o){
@@ -44,6 +34,19 @@ nzbGetAPI = new Class({
 	,listGroups: function(async) {
 		return this.sendMessage('listgroups', {}, async);
 	}
+	,loadMenu: function(){
+		chrome.storage.sync.get(function(options) {
+			chrome.contextMenus.removeAll();
+
+			chrome.contextMenus.create({
+				contexts:['link'],
+				id: '-1',
+				title: 'Send to NZBGet',
+				//parentId: parent,
+				onclick: function() {alert('test')}
+			});
+		});
+	}
 	,sendMessage: function(method, params, async) {
         var url = this.Options.get('opt_host')
         	,port = this.Options.get('opt_port')
@@ -75,16 +78,17 @@ nzbGetAPI = new Class({
 		this.listGroups((function(j){
 			this.groups = j;
 			this.fireEvent('groupsupdated');
-			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''}); // We have 10+ unread items.
-			chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
+			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''});
 		}).bind(this));
 	}
 	,Options: new nzbGetOptions()
 });
 
 window.addEvent('domready', function(){
+	console.log('dom');
 	ngAPI = new nzbGetAPI();
 	chrome.browserAction.setBadgeText({text: ''});
+	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 
 	ngAPI.updateGroups();
 	ngAPI.updateGroups.bind(ngAPI).periodical(5000);
@@ -92,8 +96,10 @@ window.addEvent('domready', function(){
 	ngAPI.updateStatus();
 	ngAPI.updateStatus.bind(ngAPI).periodical(5000);
 	
-	//(function(){
-	//}).periodical(5000);
-
+	ngAPI.loadMenu();
+	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+		if(message === 'updateOptions') {
+			ngAPI.loadMenu();
+		}
+	});
 });
-
