@@ -19,8 +19,7 @@ nzbGetOptions = new Class({
 });
 
 nzbGetAPI = new Class({
-	Implements: Events
-	,initialize: function(){
+	initialize: function(){
 	}
 	,version: function() {
 		return this.sendMessage('version', {}, false);
@@ -72,20 +71,20 @@ nzbGetAPI = new Class({
 	}
 	,updateStatus: function() {
 		this.status = this.sendMessage('status', {}, false).result;
-		this.fireEvent('statusupdated');
+		chrome.runtime.sendMessage({statusUpdated: 'status'});
 	}
 	,updateGroups: function() {
 		this.listGroups((function(j){
 			this.groups = j;
-			this.fireEvent('groupsupdated');
 			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''});
+			chrome.runtime.sendMessage({statusUpdated: 'groups'});
 		}).bind(this));
 	}
 	,Options: new nzbGetOptions()
 });
 
 window.addEvent('domready', function(){
-	console.log('dom');
+	console.log('dom loaded');
 	ngAPI = new nzbGetAPI();
 	chrome.browserAction.setBadgeText({text: ''});
 	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});

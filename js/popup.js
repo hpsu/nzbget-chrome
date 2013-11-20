@@ -147,7 +147,13 @@ window.addEvent('domready', function(){
 
 	//new Element('div', {text: JSON.stringify(result)}).inject(document.body);
 
-	api.addEvent('groupsupdated', onGroupsUpdated);
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
+			if (request.statusUpdated && request.statusUpdated == 'groups') {
+				onGroupsUpdated();
+			}
+		}
+	);
 	onGroupsUpdated();
 
 	/* Setup history */
