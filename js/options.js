@@ -1,4 +1,4 @@
-window.addEvent('domready', function(){
+document.addEventListener('DOMContentLoaded', function() {
 	api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
@@ -16,5 +16,4 @@ window.addEvent('domready', function(){
 		var result = api.version();
 		new Element('div', {text: JSON.stringify(result)}).inject(document.body);
 	});
-
 });

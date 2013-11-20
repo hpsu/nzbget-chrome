@@ -1,6 +1,6 @@
 {
    "background": {
-      "scripts": [ "js/mootools-core-1.4.5-full-nocompat-yc.js", "js/nzbget.js" ]
+      "scripts": [ "js/nzbget.js" ]
    },
    "description": "Interact with and send NZB-files to NZBGet",
    "icons": {

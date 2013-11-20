@@ -1,27 +1,8 @@
-nzbGetOptions = new Class({
-	load: function() {
-		Array.each($$('input[type=text],input[type=password]'), function(o){
-			o.value = this.get(o.id);
-		},this);
-	}
-	,save: function() {
-		Array.each($$('input[type=text],input[type=password]'), function(o){
-			console.log('set',o.value);
-			localStorage[o.id] = o.value;
-		},this);
-	}
-	,get: function(opt) {
-		return typeof localStorage[opt] != 'undefined' ? localStorage[opt] : '';
-	}
-	,set: function(opt, value) {
-		localStorage[opt] = value;
-	}
-});
-
-nzbGetAPI = new Class({
-	initialize: function(){
-	}
-	,version: function() {
+/**
+ * nzbGetAPI - Base API Class
+ */
+ window.ngAPI = {
+	version: function() {
 		return this.sendMessage('version', {}, false);
 	}
 	,history: function(async) {
@@ -95,7 +76,7 @@ nzbGetAPI = new Class({
 						}
 						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", '', 0, false, window.btoa(xhr.responseText)],
 							function() {
-								console.log('request complete!');
+								window.ngAPI.updateGroups();
 							},
 							function() {
 								console.log('spectacular failure!');
@@ -121,20 +102,36 @@ nzbGetAPI = new Class({
 			chrome.runtime.sendMessage({statusUpdated: 'groups'});
 		}).bind(this));
 	}
-	,Options: new nzbGetOptions()
-});
+	,Options: {
+		load: function() {
+			Array.each($$('input[type=text],input[type=password]'), function(o){
+				o.value = this.get(o.id);
+			},this);
+		}
+		,save: function() {
+			Array.each($$('input[type=text],input[type=password]'), function(o){
+				console.log('set',o.value);
+				localStorage[o.id] = o.value;
+			},this);
+		}
+		,get: function(opt) {
+			return typeof localStorage[opt] != 'undefined' ? localStorage[opt] : '';
+		}
+		,set: function(opt, value) {
+			localStorage[opt] = value;
+		}
+	}
+}
 
-window.addEvent('domready', function(){
+document.addEventListener('DOMContentLoaded', function() {
 	console.log('dom loaded');
-	window.ngAPI = new nzbGetAPI();
 	chrome.browserAction.setBadgeText({text: ''});
 	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 
-	ngAPI.updateGroups();
-	ngAPI.updateGroups.bind(ngAPI).periodical(5000);
 
-	ngAPI.updateStatus();
-	ngAPI.updateStatus.bind(ngAPI).periodical(5000);
+	ngAPI.updateGroups();
+	setInterval(ngAPI.updateGroups.bind(ngAPI), 5000);
+	setInterval(ngAPI.updateStatus.bind(ngAPI), 5000);
 	
 	ngAPI.loadMenu();
 	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
