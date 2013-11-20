@@ -42,32 +42,73 @@ nzbGetAPI = new Class({
 				id: '-1',
 				title: 'Send to NZBGet',
 				//parentId: parent,
-				onclick: function() {alert('test')}
+				onclick: window.ngAPI.addLink
 			});
 		});
 	}
-	,sendMessage: function(method, params, async) {
-        var url = this.Options.get('opt_host')
-        	,port = this.Options.get('opt_port')
-        	,username = this.Options.get('opt_username')
-        	,password = this.Options.get('opt_password')
-			,query = {
-	            version: '1.1'
-	            ,method: method
-	            ,params: params
-	        };
+	,sendMessage: function(method, params, async, fail_func) {
+		var url = this.Options.get('opt_host')
+		,port = this.Options.get('opt_port')
+		,username = this.Options.get('opt_username')
+		,password = this.Options.get('opt_password')
+		,query = {
+			version: '1.1'
+			,method: method
+			,params: params
+		};
 
-        xhr = new Request.JSON({
-        	url: 'http://' + url + ":" + port + "/jsonrpc"
-        	,async: async
-        	,data: JSON.stringify(query)
-        	,user: username
-        	,password: password
-        	,onComplete: async
-        }).send();
-        if(!async) {
-        	return JSON.parse(xhr.xhr.response);
-        }
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function(r){
+			if (xhr.readyState == 4) {
+				if(xhr.status == 200) {
+					if(typeof async === 'function')
+						async(JSON.parse(r.target.responseText));
+				} else {
+					if(typeof fail_func === 'function')
+						fail_func(JSON.parse(r.target.responseText));
+				}
+			}
+		};
+		xhr.open('POST', 'http://' + url + ':' + port + '/jsonrpc', typeof async === 'function');
+		xhr.setRequestHeader('Content-Type','text/json');
+		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
+		xhr.send(JSON.stringify(query));
+
+		if(!async) {
+			return JSON.parse(xhr.responseText);
+		}
+	}
+	,addLink: function(info, tab) {
+		var nzbFileName = info.linkUrl.match(/\/([^\/]+)$/)[1];
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function(){
+			if (xhr.readyState == 4) {
+				if(xhr.status == 200) {
+					if(xhr.getResponseHeader('Content-Type') === "application/x-nzb") {
+						/* Replace NZB file name with the one specified in response header if available. */
+						var disposition = xhr.getResponseHeader('Content-Disposition');
+						if(disposition) {
+							match = disposition.replace(/.+filename=["']?([^'":;]+?)/i, '$1');
+							if(match) {
+								nzbFileName = match.replace('.nzb','');
+							}
+						}
+						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", '', 0, false, window.btoa(xhr.responseText)],
+							function() {
+								console.log('request complete!');
+							},
+							function() {
+								console.log('spectacular failure!');
+							}
+						);
+					} else {
+						console.log('Not an nzb file!?');
+					}
+				}
+			}
+		};
+		xhr.open('POST', info.linkUrl);
+		xhr.send();
 	}
 	,updateStatus: function() {
 		this.status = this.sendMessage('status', {}, false).result;
@@ -85,7 +126,7 @@ nzbGetAPI = new Class({
 
 window.addEvent('domready', function(){
 	console.log('dom loaded');
-	ngAPI = new nzbGetAPI();
+	window.ngAPI = new nzbGetAPI();
 	chrome.browserAction.setBadgeText({text: ''});
 	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 
