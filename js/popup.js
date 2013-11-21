@@ -1,51 +1,80 @@
-Number.implement({
-	zeroPad: function() {
-		return (Number(this) < 10 ? '0' : '') + String(this);
-	}
-	,formatTimeDiff: function(){ 
-	    var date = new Date(this),
-	        diff = (((new Date()).getTime() - date.getTime()) / 1000),
-	        day_diff = Math.floor(diff / 86400);
+function $(o) {return document.getElementById(o);}
 
-	    if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
-	        return;
+Number.prototype.zeroPad =  function() {
+	return (Number(this) < 10 ? '0' : '') + String(this);
+};
+Number.prototype.formatTimeDiff = function(){ 
+    var date = new Date(this),
+        diff = (((new Date()).getTime() - date.getTime()) / 1000),
+        day_diff = Math.floor(diff / 86400);
 
-	    return day_diff == 0 && (
-	            diff < 60 && "just now" ||
-	            diff < 120 && "1 min ago" ||
-	            diff < 3600 && Math.floor( diff / 60 ) + " mins ago" ||
-	            diff < 7200 && "1 hour ago" ||
-	            diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
-	        day_diff == 1 && "Yesterday "+date.getHours().zeroPad()+':'+date.getMinutes().zeroPad() ||
-	        Number(this).formatDateTime()
-	}
-	,formatTimeLeft: function(){
-		var hms = '';
-		var days = Math.floor(this / 86400);
-		var hours = Math.floor((this % 86400) / 3600);
-		var minutes = Math.floor((this / 60) % 60);
-		var seconds = Math.floor(this % 60);
+    if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
+        return;
 
-		if (days > 10) {
-			return days + 'd';
-		}
-		if (days > 0) {	
-			return days + 'd ' + hours + 'h';
-		}
-		if (hours > 0) {
-			return hours + 'h ' + minutes.zeroPad() + 'm';
-		}
-		if (minutes > 0) {
-			return minutes + 'm ' + seconds.zeroPad() + 's';
-		}
+    return day_diff == 0 && (
+            diff < 60 && "just now" ||
+            diff < 120 && "1 min ago" ||
+            diff < 3600 && Math.floor( diff / 60 ) + " mins ago" ||
+            diff < 7200 && "1 hour ago" ||
+            diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
+        day_diff == 1 && "Yesterday "+date.getHours().zeroPad()+':'+date.getMinutes().zeroPad() ||
+        Number(this).formatDateTime()
+};
+Number.prototype.formatTimeLeft = function(){
+	var hms = '';
+	var days = Math.floor(this / 86400);
+	var hours = Math.floor((this % 86400) / 3600);
+	var minutes = Math.floor((this / 60) % 60);
+	var seconds = Math.floor(this % 60);
 
-		return seconds + 's';
+	if (days > 10) {
+		return days + 'd';
 	}
-	,formatDateTime: function(){
-		var x = new Date(this);
-		return x.getFullYear()+'-'+x.getMonth().zeroPad()+'-'+x.getDate().zeroPad()+' '+x.getHours().zeroPad()+':'+x.getMinutes().zeroPad()
+	if (days > 0) {	
+		return days + 'd ' + hours + 'h';
 	}
-});
+	if (hours > 0) {
+		return hours + 'h ' + minutes.zeroPad() + 'm';
+	}
+	if (minutes > 0) {
+		return minutes + 'm ' + seconds.zeroPad() + 's';
+	}
+
+	return seconds + 's';
+};
+Number.prototype.formatDateTime = function(){
+	var x = new Date(this);
+	return x.getFullYear()+'-'+x.getMonth().zeroPad()+'-'+x.getDate().zeroPad()+' '+x.getHours().zeroPad()+':'+x.getMinutes().zeroPad()
+};
+
+function detectGroupStatus(group) {
+	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
+	group.postprocess = group.post !== undefined;
+	if (group.postprocess) {
+		switch (group.post.Stage) {
+			case 'QUEUED': group.status = 'pp-queued'; break;
+			case 'LOADING_PARS': group.status = 'checking'; break;
+			case 'VERIFYING_SOURCES': group.status = 'checking'; break;
+			case 'REPAIRING': group.status = 'repairing'; break;
+			case 'VERIFYING_REPAIRED': group.status = 'verifying'; break;
+			case 'RENAMING': group.status = 'renaming'; break;
+			case 'MOVING': group.status = 'moving'; break;
+			case 'UNPACKING': group.status = 'unpacking'; break;
+			case 'EXECUTING_SCRIPT': group.status = 'processing'; break;
+			case 'FINISHED': group.status = 'finished'; break;
+			default: group.status = 'error: ' + group.post.Stage; break;
+		}
+	}
+	else if (group.ActiveDownloads > 0) {
+		return 'downloading';
+	}
+	else if (group.paused) {
+		return 'paused';
+	}
+	else {
+		return 'queued';
+	}
+}
 
 function detectStatus(hist) {
 	if (hist.Kind === 'NZB') {
@@ -85,26 +114,52 @@ function formatSizeMB(sizeMB, sizeLo) {
 	}
 
 	if (sizeMB > 10240) {
-		return (sizeMB / 1024.0).round(1) + ' GiB';
+		return (sizeMB / 1024.0).toFixed(1) + ' GiB';
 	}
 	else if (sizeMB > 1024) {
-		return (sizeMB / 1024.0).round(2) + ' GiB';
+		return (sizeMB / 1024.0).toFixed(2) + ' GiB';
 	}
 	else if (sizeMB > 100) {
-		return sizeMB.round(0) + ' MiB';
+		return sizeMB.toFixed(0) + ' MiB';
 	}
 	else if (sizeMB > 10) {
-		return sizeMB.round(1) + ' MiB';
+		return sizeMB.toFixed(1) + ' MiB';
 	}
 	else {
-		return sizeMB.round(2) + ' MiB';
+		return Number(sizeMB).toFixed(2) + ' MiB';
 	}
 }
 
+function row(indata, replace) {
+	var tr = replace ? replace : document.createElement('tr');
+	for(var i=0;i < indata.length; i++) {
+		var td = replace ? replace.children[i] : document.createElement('td');
+		if(replace) td.removeChild(td.firstChild);
+		if (typeof indata[i] === 'object') 
+			td.appendChild(indata[i]);
+		else
+			td.appendChild(document.createTextNode(indata[i]));
+
+		if(!replace) tr.appendChild(td);
+	}
+	return tr;
+}
+
+function E(type, text, className, styles) {
+	var tmp = document.createElement(type);
+	if(className) tmp.className = className;
+	if(text) tmp.appendChild(document.createTextNode(text));
+	if(styles) for(k in styles) {
+		tmp.style[k] = styles[k];
+	}
+	return tmp;
+}
+
+
 function onGroupsUpdated(){
 	api = chrome.extension.getBackgroundPage().ngAPI;
-	Array.each(api.groups.result, function(o){
-
+	for(k in api.groups.result) {
+		o = api.groups.result[k];
 		var totalMB = o.FileSizeMB-o.PausedSizeMB;
 		var remainingMB = o.RemainingSizeMB-o.PausedSizeMB;
 		var percent = Math.round((totalMB - remainingMB) / totalMB * 100);
@@ -112,40 +167,39 @@ function onGroupsUpdated(){
 		var remaining = formatSizeMB(remainingMB, o.RemainingSizeLo)
 			,total = formatSizeMB(o.FileSizeMB, o.FileSizeLo);
 
-		var tr = $('download_cont').getElement('[rel='+o.NZBID+']');
-		if(tr) {
-			var td2 = tr.getElements('td')[1];
-			td2.getChildren().destroy();
-			var td3 = tr.getElements('td')[2];
+		var big = E('div', null, 'progress-block');
+		var prog = big.appendChild(E('div', null, 'progress progress-striped progress-success'));
+		big.appendChild(E('div', total, 'bar-text-left'));
+		big.appendChild(E('div', remaining, 'bar-text-right'));
+		prog.appendChild(E('div', null, 'bar', {width: percent+'%'}));
+		o.status = detectGroupStatus(o);
+		tr = row([E('div', o.status, 'tag '+o.status), o.NZBName, big, ((o.RemainingSizeMB-o.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).formatTimeLeft()], $('download_cont').querySelector('TR[rel="' + o.NZBID + '"]'));
+		tr.setAttribute('rel', o.NZBID);
+
+		$('download_cont').appendChild(tr);
+	};
+
+	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
+	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
+	$('lbl_speed').appendChild(document.createTextNode((api.status.DownloadRate / 1024).toFixed(2) + ' KB/s'));
+	$('lbl_remainingmb').appendChild(document.createTextNode(formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo))));
+
+	var trElements = $('download_cont').querySelectorAll('tr');
+	for(var k = 0; k<trElements.length; k++) {
+		var match = false;
+		for(sk in api.groups.result) {
+			if(api.groups.result[sk].NZBID == trElements[k].getAttribute('rel')) match=true;
 		}
-		else {
-			tr = new Element('tr',{rel: o.NZBID}).inject($('download_cont'));
-			var td1 = new Element('td', {text: o.NZBName}).inject(tr);
-			var td2 = new Element('td').inject(tr);
-			var td3 = new Element('td').inject(tr);
-		}
-		td3.set('text', ((o.RemainingSizeMB-o.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).formatTimeLeft());
-		var big = new Element('div', {class: 'progress-block'}).inject(td2);
-		var prog = new Element('div', {class: 'progress progress-striped progress-success'}).inject(big);
-		var bar = new Element('div', {class: 'bar', styles: {width: percent+'%'}}).inject(prog);
-
-		var left = new Element('div', {class: 'bar-text-left', text: total}).inject(big);
-		var right = new Element('div', {class: 'bar-text-right', text: remaining}).inject(big);
-
-		$('lbl_speed').set('text', formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo)));
-		$('lbl_remainingmb').set('text', (api.status.DownloadRate / 1024).round(2) + ' KB/s');
-
-	});
+		if(!match) $('download_cont').removeChild(trElements[k]);
+	}
 }
 
-window.addEvent('domready', function(){
+document.addEventListener('DOMContentLoaded', function() {
 	api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
 	/* Setup variables */
 	// {"RemainingSizeLo":0,"RemainingSizeHi":0,"RemainingSizeMB":0,"DownloadedSizeLo":4009763785,"DownloadedSizeHi":52,"DownloadedSizeMB":216816,"DownloadRate":0,"AverageDownloadRate":4607597,"DownloadLimit":0,"ThreadCount":5,"ParJobCount":0,"PostJobCount":0,"UrlCount":0,"UpTimeSec":2348634,"DownloadTimeSec":49342,"ServerPaused":false,"DownloadPaused":false,"Download2Paused":false,"ServerStandBy":true,"PostPaused":false,"ScanPaused":false,"FreeDiskSpaceLo":127795200,"FreeDiskSpaceHi":2057,"FreeDiskSpaceMB":8425593,"ServerTime":1384806423,"ResumeTime":0}}
-
-	//new Element('div', {text: JSON.stringify(result)}).inject(document.body);
 
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -161,39 +215,15 @@ window.addEvent('domready', function(){
 		for(var i=0; i<10; i++) {
 			var litem = j.result[i];
 			litem.status = detectStatus(litem);
-			t = new Element('tr').inject($('history_cont'));
-			new Element('td', {text:litem.status, class:'tag '+litem.status}).inject(t);
-			new Element('td', {text:litem.Name}).inject(t);
-			new Element('td', {text:Number(litem.HistoryTime*1000).formatTimeDiff()}).inject(t);
-			new Element('td', {text:formatSizeMB(litem.FileSizeMB, litem.FileSizeLo), class:'r'}).inject(t);
+			tr = row([
+				litem.status
+				,litem.Name
+				,Number(litem.HistoryTime*1000).formatTimeDiff()
+				,formatSizeMB(litem.FileSizeMB, litem.FileSizeLo)
+			]);
+			tr.childNodes[0].className = 'tag '+litem.status;
+			tr.childNodes[3].className = 'r';
+			document.getElementById('history_cont').appendChild(tr);
 		}
 	});
-/*
-[{ActiveDownloads: 20
-,Category: ""
-,DestDir: "/share/download/nzbget/incomplete/Grimm.S03E04.720p.WEB-DL.DD5.1.H.264-ECI"
-,FileCount: 40
-,FileSizeHi: 0
-,FileSizeLo: 1713291183
-,FileSizeMB: 1633
-,FirstID: 14905
-,LastID: 14943
-,MaxPostTime: 1384801891
-,MaxPriority: 0
-,MinPostTime: 1384801830
-,MinPriority: 0
-,NZBFilename: "Grimm.S03E04.720p.WEB-DL.DD5.1.H.264-ECI.nzb"
-,NZBID: 453
-,NZBName: "Grimm.S03E04.720p.WEB-DL.DD5.1.H.264-ECI"
-,NZBNicename: "Grimm.S03E04.720p.WEB-DL.DD5.1.H.264-ECI"
-,Parameters: Array[0]
-,PausedSizeHi: 0
-,PausedSizeLo: 290588216
-,PausedSizeMB: 277
-,RemainingFileCount: 36
-,RemainingParCount: 8
-,RemainingSizeHi: 0
-,RemainingSizeLo: 1462779847
-,RemainingSizeMB: 1395}]
-*/
 });
