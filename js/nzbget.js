@@ -69,7 +69,7 @@
 						/* Replace NZB file name with the one specified in response header if available. */
 						var disposition = xhr.getResponseHeader('Content-Disposition');
 						if(disposition) {
-							match = disposition.replace(/.+filename=["']?([^'":;]+?)/i, '$1');
+							match = disposition.replace(/.+filename=["']?([^'":;]+).*$/i, '$1');
 							if(match) {
 								nzbFileName = match.replace('.nzb','');
 							}
@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	console.log('dom loaded');
 	chrome.browserAction.setBadgeText({text: ''});
 	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
-
 
 	ngAPI.updateGroups();
 	setInterval(ngAPI.updateGroups.bind(ngAPI), 5000);
