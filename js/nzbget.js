@@ -129,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 
 	ngAPI.updateGroups();
+	ngAPI.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0};
+	ngAPI.updateStatus();
 	setInterval(ngAPI.updateGroups.bind(ngAPI), 5000);
 	setInterval(ngAPI.updateStatus.bind(ngAPI), 5000);
 	
