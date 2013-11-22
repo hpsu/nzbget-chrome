@@ -210,12 +210,20 @@ function downloadPost(item) {
 		,update		= post !== null;
 	item.status = detectGroupStatus(item);
 
+	if(item.status === 'downloading' || (item.postprocess && !api.status.PostPaused))
+		var kind = 'success';
+	else if(item.status === 'paused' || (item.postprocess && api.status.PostPaused))
+		var kind = 'warning';
+	else
+		var kind = 'none';
+
 	if(update) {
 		post.querySelector('.tag').className = 'tag '+item.status;
 		post.querySelector('.tag span').innerText = item.status;
 		post.querySelector('.bar-text.left').innerText = percent+'%';
 		post.querySelector('.bar-text.right').innerText = formatSizeMB(item.FileSizeMB, item.FileSizeLo);
 		post.querySelector('.bar').style.width = (percent)+'%';
+		post.querySelector('.bar').className = 'bar '+kind;
 	}
 	else {
 		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
@@ -228,7 +236,7 @@ function downloadPost(item) {
 				info.appendChild($E({tag: 'div', text: item.NZBName, className: 'title'}));
 
 				var progress = info.appendChild($E({tag: 'div', className:'progress'}));
-					progress.appendChild($E({tag: 'div', className: 'bar', styles: {width: percent+'%'}}));
+					progress.appendChild($E({tag: 'div', className: 'bar '+kind, styles: {width: percent+'%'}}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: percent+'%'}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo)}));
 	}
