@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="160"
+   height="160"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   inkscape:export-filename="/media/agnus/.devel/web/nzbget-chrome/icon/icon48.png"
+   inkscape:export-xdpi="27"
+   inkscape:export-ydpi="27"
+   sodipodi:docname="nzbget-icon.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="91.901116"
+     inkscape:cy="154.94197"
+     inkscape:document-units="px"
+     inkscape:current-layer="g3855"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="2007"
+     inkscape:window-height="1268"
+     inkscape:window-x="2620"
+     inkscape:window-y="64"
+     inkscape:window-maximized="0"
+     inkscape:snap-global="true"
+     inkscape:snap-grids="true"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3845"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+    <sodipodi:guide
+       position="0,0"
+       orientation="0,160"
+       id="guide3847" />
+    <sodipodi:guide
+       position="160,0"
+       orientation="-160,0"
+       id="guide3849" />
+    <sodipodi:guide
+       position="160,160"
+       orientation="0,-160"
+       id="guide3851" />
+    <sodipodi:guide
+       position="0,160"
+       orientation="160,0"
+       id="guide3853" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-892.36215)">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="92.85714"
+       y="145.21931"
+       id="text2985"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2987"
+         x="92.85714"
+         y="145.21931"></tspan></text>
+    <g
+       id="g3855"
+       transform="translate(-2.5507778,-4.7384714)">
+      <text
+         transform="scale(0.64955556,1.5395142)"
+         sodipodi:linespacing="100%"
+         id="text2993"
+         y="630.32532"
+         x="139.71069"
+         style="font-size:56.65415955px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Cantarell;-inkscape-font-specification:Cantarell Bold"
+         xml:space="preserve"><tspan
+           style="font-size:50px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bebas;-inkscape-font-specification:Bebas"
+           y="630.32532"
+           x="139.71069"
+           id="tspan2995"
+           sodipodi:role="line">NZB</tspan><tspan
+           id="tspan3765"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bebas;-inkscape-font-specification:Bebas"
+           y="680.32532"
+           x="139.71069"
+           sodipodi:role="line" /></text>
+      <path
+         sodipodi:nodetypes="cccccccccccc"
+         inkscape:connector-curvature="0"
+         id="path3814"
+         d="m 7.0062961,994.62326 0,-12.01552 19.9998699,0 0,-70.09055 21.99986,0 22.99985,0 0,70.09055 18.999885,0 0,12.01552 -38.999755,47.06084 -4.99997,0 z"
+         style="fill:#800080;stroke:#000000;stroke-width:0.82815242;stroke-opacity:1" />
+      <text
+         transform="scale(0.62766534,1.5932057)"
+         sodipodi:linespacing="100%"
+         id="text3822"
+         y="650.59589"
+         x="147.96918"
+         style="font-size:49.41394806px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:100%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bebas;-inkscape-font-specification:Bebas"
+         xml:space="preserve"><tspan
+           style="font-size:50px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Cantarell;-inkscape-font-specification:Cantarell Bold"
+           y="650.59589"
+           x="147.96918"
+           id="tspan3824"
+           sodipodi:role="line">GET</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:56.65415955px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Cantarell;-inkscape-font-specification:Cantarell Bold"
+         x="139.71069"
+         y="630.32532"
+         id="text3863"
+         sodipodi:linespacing="100%"
+         transform="scale(0.64955556,1.5395142)"><tspan
+           sodipodi:role="line"
+           id="tspan3865"
+           x="139.71069"
+           y="630.32532"
+           style="font-size:50px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bebas;-inkscape-font-specification:Bebas">NZB</tspan><tspan
+           sodipodi:role="line"
+           x="139.71069"
+           y="680.32532"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:100%;letter-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bebas;-inkscape-font-specification:Bebas"
+           id="tspan3867" /></text>
+    </g>
+  </g>
+</svg>

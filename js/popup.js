@@ -4,21 +4,21 @@ Number.prototype.zeroPad =  function() {
 	return (Number(this) < 10 ? '0' : '') + String(this);
 };
 Number.prototype.formatTimeDiff = function(){ 
-    var date = new Date(this),
-        diff = (((new Date()).getTime() - date.getTime()) / 1000),
-        day_diff = Math.floor(diff / 86400);
+	var date = new Date(this),
+		diff = (((new Date()).getTime() - date.getTime()) / 1000),
+		day_diff = Math.floor(diff / 86400);
 
-    if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
-        return;
+	if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
+		return;
 
-    return day_diff == 0 && (
-            diff < 60 && "just now" ||
-            diff < 120 && "1 min ago" ||
-            diff < 3600 && Math.floor( diff / 60 ) + " mins ago" ||
-            diff < 7200 && "1 hour ago" ||
-            diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
-        day_diff == 1 && "Yesterday "+date.getHours().zeroPad()+':'+date.getMinutes().zeroPad() ||
-        Number(this).formatDateTime()
+	return day_diff == 0 && (
+			diff < 60 && "just now" ||
+			diff < 120 && "1 min ago" ||
+			diff < 3600 && Math.floor( diff / 60 ) + " mins ago" ||
+			diff < 7200 && "1 hour ago" ||
+			diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
+		day_diff == 1 && "Yesterday "+date.getHours().zeroPad()+':'+date.getMinutes().zeroPad() ||
+		Number(this).formatDateTime()
 };
 Number.prototype.formatTimeLeft = function(){
 	var hms = '';
@@ -51,19 +51,7 @@ function detectGroupStatus(group) {
 	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
 	group.postprocess = group.post !== undefined;
 	if (group.postprocess) {
-		switch (group.post.Stage) {
-			case 'QUEUED': group.status = 'pp-queued'; break;
-			case 'LOADING_PARS': group.status = 'checking'; break;
-			case 'VERIFYING_SOURCES': group.status = 'checking'; break;
-			case 'REPAIRING': group.status = 'repairing'; break;
-			case 'VERIFYING_REPAIRED': group.status = 'verifying'; break;
-			case 'RENAMING': group.status = 'renaming'; break;
-			case 'MOVING': group.status = 'moving'; break;
-			case 'UNPACKING': group.status = 'unpacking'; break;
-			case 'EXECUTING_SCRIPT': group.status = 'processing'; break;
-			case 'FINISHED': group.status = 'finished'; break;
-			default: group.status = 'error: ' + group.post.Stage; break;
-		}
+		return 'postprocess';
 	}
 	else if (group.ActiveDownloads > 0) {
 		return 'downloading';
@@ -130,68 +118,42 @@ function formatSizeMB(sizeMB, sizeLo) {
 	}
 }
 
-function row(indata, replace) {
-	var tr = replace ? replace : document.createElement('tr');
-	for(var i=0;i < indata.length; i++) {
-		var td = replace ? replace.children[i] : document.createElement('td');
-		if(replace) td.removeChild(td.firstChild);
-		if (typeof indata[i] === 'object') 
-			td.appendChild(indata[i]);
-		else
-			td.appendChild(document.createTextNode(indata[i]));
-
-		if(!replace) tr.appendChild(td);
+function $E(params) {
+	var tmp = document.createElement(params.tag);
+	if(params.className) tmp.className = params.className;
+	if(params.text) tmp.appendChild(document.createTextNode(params.text));
+	if(params.styles) for(k in params.styles) {
+		tmp.style[k] = params.styles[k];
 	}
-	return tr;
-}
-
-function E(type, text, className, styles) {
-	var tmp = document.createElement(type);
-	if(className) tmp.className = className;
-	if(text) tmp.appendChild(document.createTextNode(text));
-	if(styles) for(k in styles) {
-		tmp.style[k] = styles[k];
-	}
+	if(params.rel) tmp.setAttribute('rel', params.rel);
 	return tmp;
 }
 
 
 function onGroupsUpdated(){
 	api = chrome.extension.getBackgroundPage().ngAPI;
+	$('download_table').style['display'] = api.groups.result.length > 0 ? 'block' : 'none';
+
+	// Build or update active download list
 	for(k in api.groups.result) {
-		o = api.groups.result[k];
-		var totalMB = o.FileSizeMB-o.PausedSizeMB;
-		var remainingMB = o.RemainingSizeMB-o.PausedSizeMB;
-		var percent = Math.round((totalMB - remainingMB) / totalMB * 100);
-
-		var remaining = formatSizeMB(remainingMB, o.RemainingSizeLo)
-			,total = formatSizeMB(o.FileSizeMB, o.FileSizeLo);
-
-		var big = E('div', null, 'progress-block');
-		var prog = big.appendChild(E('div', null, 'progress progress-striped progress-success'));
-		big.appendChild(E('div', total, 'bar-text-left'));
-		big.appendChild(E('div', remaining, 'bar-text-right'));
-		prog.appendChild(E('div', null, 'bar', {width: percent+'%'}));
-		o.status = detectGroupStatus(o);
-		tr = row([E('div', o.status, 'tag '+o.status), o.NZBName, big, ((o.RemainingSizeMB-o.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).formatTimeLeft()], $('download_cont').querySelector('TR[rel="' + o.NZBID + '"]'));
-		tr.setAttribute('rel', o.NZBID);
-
-		$('download_cont').appendChild(tr);
+		$('download_container').appendChild(downloadPost(api.groups.result[k]));
 	};
 
-	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
-	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
-	$('lbl_speed').appendChild(document.createTextNode((api.status.DownloadRate / 1024).toFixed(2) + ' KB/s'));
-	$('lbl_remainingmb').appendChild(document.createTextNode(formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo))));
-
-	var trElements = $('download_cont').querySelectorAll('tr');
+	// Remove completed downloads from "Active downloads"
+	var trElements = $('download_container').querySelectorAll('div.post');
 	for(var k = 0; k<trElements.length; k++) {
 		var match = false;
 		for(sk in api.groups.result) {
 			if(api.groups.result[sk].NZBID == trElements[k].getAttribute('rel')) match=true;
 		}
-		if(!match) $('download_cont').removeChild(trElements[k]);
+		if(!match) $('download_container').removeChild(trElements[k]);
 	}
+
+	// Set "global" labels
+	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
+	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
+	$('lbl_speed').appendChild(document.createTextNode((api.status.DownloadRate / 1024).toFixed(2) + ' KB/s'));
+	$('lbl_remainingmb').appendChild(document.createTextNode(formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo))));
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -213,17 +175,63 @@ document.addEventListener('DOMContentLoaded', function() {
 	/* Setup history */
 	api.history(function(j){
 		for(var i=0; i<10; i++) {
-			var litem = j.result[i];
-			litem.status = detectStatus(litem);
-			tr = row([
-				litem.status
-				,litem.Name
-				,Number(litem.HistoryTime*1000).formatTimeDiff()
-				,formatSizeMB(litem.FileSizeMB, litem.FileSizeLo)
-			]);
-			tr.childNodes[0].className = 'tag '+litem.status;
-			tr.childNodes[3].className = 'r';
-			document.getElementById('history_cont').appendChild(tr);
+			$('history_container').appendChild(historyPost(j.result[i]));
 		}
 	});
 });
+
+function historyPost(item) {
+	item.status = detectStatus(item);
+
+	var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
+
+		// Tag
+		post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
+			.appendChild($E({tag: 'span', text: item.status}));
+
+		// Info
+		var info = post.appendChild($E({tag: 'div', className: 'info'}));
+			info.appendChild($E({tag: 'div', text: item.Name, className: 'title'}));
+			var details = info.appendChild($E({tag: 'div', className: 'details'}));
+				details.appendChild($E({tag: 'div', text: Number(item.HistoryTime*1000).formatTimeDiff(), className: 'left'}));
+				details.appendChild($E({tag: 'div', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo), className: 'right'}));
+
+	return post;
+}
+
+function downloadPost(item) {
+	var totalMB		= item.FileSizeMB-item.PausedSizeMB
+		,remainingMB= item.RemainingSizeMB-item.PausedSizeMB
+		,percent	= Math.round((totalMB - remainingMB) / totalMB * 100)
+		,remaining	= formatSizeMB(remainingMB, item.RemainingSizeLo)
+		,total		= formatSizeMB(item.FileSizeMB, item.FileSizeLo)
+		,estRem		= ((item.RemainingSizeMB-item.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).formatTimeLeft()
+		,post		= $('download_container').querySelector('[rel="' + item.NZBID + '"]')
+		,update		= post !== null;
+	item.status = detectGroupStatus(item);
+
+	if(update) {
+		post.querySelector('.tag').className = 'tag '+item.status;
+		post.querySelector('.tag span').innerText = item.status;
+		post.querySelector('.bar-text.left').innerText = percent+'%';
+		post.querySelector('.bar-text.right').innerText = formatSizeMB(item.FileSizeMB, item.FileSizeLo);
+		post.querySelector('.bar').style.width = (percent)+'%';
+	}
+	else {
+		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
+			// Tag
+			post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
+				.appendChild($E({tag: 'span', text: item.status}));
+
+			// Info
+			var info = post.appendChild($E({tag: 'div', className: 'info'}));
+				info.appendChild($E({tag: 'div', text: item.NZBName, className: 'title'}));
+
+				var progress = info.appendChild($E({tag: 'div', className:'progress'}));
+					progress.appendChild($E({tag: 'div', className: 'bar', styles: {width: percent+'%'}}));
+					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: percent+'%'}));
+					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo)}));
+	}
+
+	return post;
+}

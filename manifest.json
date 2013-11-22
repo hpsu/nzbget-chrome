@@ -1,21 +1,24 @@
 {
-   "background": {
-      "scripts": [ "js/nzbget.js" ]
-   },
-   "description": "Interact with and send NZB-files to NZBGet",
-   "icons": {
-      "16": "icon/icon16x16.png"
-   },
-   "manifest_version": 2,
-   "web_accessible_resources": [
-    "icon/logo.png"
-   ],
-   "name": "nzbget-chrome",
-   "options_page": "options.html",
-   "permissions": [ "*://*/", "contextMenus", "tabs", "notifications", "storage" ],
-   "version": "0.1",
-   "browser_action": {
-      "default_icon": "icon/icon16x16.png",
-      "default_popup": "popup.html"
-   }
+	"background": {
+		"scripts": [ "js/nzbget.js" ]
+	},
+	"description": "Interact with and send NZB-files to NZBGet",
+	"icons": {
+		"16": "img/icon16.png"
+		,"19": "img/icon19.png"
+		,"38": "img/icon38.png"
+		,"48": "img/icon48.png"
+	},
+	"manifest_version": 2,
+	"web_accessible_resources": [
+		"img/icon48.png"
+	],
+	"name": "nzbget-chrome",
+	"options_page": "options.html",
+	"permissions": [ "*://*/", "contextMenus", "tabs", "notifications", "storage" ],
+	"version": "0.1",
+	"browser_action": {
+		"default_icon": "img/icon38.png",
+		"default_popup": "popup.html"
+	}
 }

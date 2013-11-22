@@ -1,0 +1,178 @@
+/* Global styles */
+* {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	line-height: 16px;
+}
+
+body {
+	max-width: 400px;
+}
+
+@-webkit-keyframes animatedStripes {
+	from { background-position: 0 0; }
+	to   { background-position: 60px 30px; }
+}
+
+/* Infobox styles */
+
+.infobox {
+	overflow: auto;
+}
+.infobox img {
+	float: left;
+
+}
+dl {
+	float: left;
+	margin-left: 20px;
+}
+dt {
+	width: 100px;
+	float: left; 
+	clear: both;
+}
+dd {
+	float: left;
+	display: block;
+	-webkit-margin-start: 0;
+}
+
+/* Post styles */
+
+div.post {
+	display: flex;
+	border-radius: 5px;
+}
+div.post:nth-child(odd) {
+	background: #f5f5f5;
+}
+div.post:hover {
+	background: #f5f5e5;
+}
+
+div.post .tag {
+	max-width: 10px;
+	display: flex;
+	margin: 3px 0;
+	border-radius: 3px;
+	background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	transition: max-width 250ms ease-in-out;
+}
+
+div.post .info {
+	flex: 1;
+}
+
+div.post .tag:hover  {
+	max-width: 100px;
+}
+div.post .tag:hover span { 
+	opacity: 1;
+}
+div.post .tag span {
+	transition: opacity 250ms ease-in-out;
+	opacity: 0;
+	display: inline-block;
+	align-self: center;
+	flex: 1 0 auto;
+	padding: 5px;
+	text-align: center;
+	text-transform: uppercase;
+	font-weight: bold;
+	color: white;
+	font-size: 8px;
+	text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4),
+		1px -1px 0 rgba(0, 0, 0, 0.4),
+		-1px 1px 0 rgba(0, 0, 0, 0.4),
+		1px 1px 0 rgba(0, 0, 0, 0.4);  
+}
+
+div.post .title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 3px;
+}
+
+.details {
+	height: 18px;
+	position: relative;
+}
+.details .left {
+	position: absolute;
+	font-size: 10px;
+	top: 0px;
+	left: 3px;
+}
+
+.details .right {
+	position: absolute;
+	font-size: 10px;
+	top: 0px;
+	right: 3px;
+}
+
+/* Tag colors */
+
+.tag {
+	background: #999;
+}
+.tag.unknown {
+	background: #3a87ad;
+}
+.tag.success, .tag.downloading {
+	background: #468847;
+}
+.tag.warning {
+	background: #c67605;
+}
+.tag.failure {
+	background: #b94a48
+}
+
+/* Striped progress bar */
+
+.progress {
+	overflow: hidden;
+	height: 18px;
+	background-color: #e5e5e5;
+	background-image: linear-gradient(top, #f5f5f5, #f9f9f9);
+	background-repeat: repeat-x;
+	border-radius: 3px;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+	margin: 0 0 4px 3px;
+	position: relative;
+}
+.info .bar {
+	width: 0;
+	height: 18px;
+	box-sizing: border-box;
+	transition: width 0.6s ease;
+	background-color: #62c462;
+	background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+	background-size: 30px 30px;
+	-webkit-animation: animatedStripes 7s linear infinite;
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15), 1px 0px 3px rgba(0,0,0,0.3);
+}
+
+.bar-text {
+	font-size:10px;
+	position: absolute;
+	color:white;
+	font-weight: bold;
+	text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.7),
+		1px -1px 0 rgba(0, 0, 0, 0.7),
+		-1px 1px 0 rgba(0, 0, 0, 0.7),
+		1px 1px 0 rgba(0, 0, 0, 0.7);  
+}
+
+.bar-text.left {
+	top: 2px;
+	left: 5px;
+}
+.bar-text.right {
+	top: 2px;
+	right: 5px;
+	text-align: right;
+}
