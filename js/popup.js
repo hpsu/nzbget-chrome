@@ -1,3 +1,8 @@
+/***
+* @TODO: Show postprocessing status. (merge with postqueue)
+* @TODO: Take sort order into consideration when adding new posts to history or groups
+*/
+
 function $(o) {return document.getElementById(o);}
 
 Number.prototype.zeroPad =  function() {
@@ -49,7 +54,6 @@ Number.prototype.formatDateTime = function(){
 
 function detectGroupStatus(group) {
 	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
-	group.postprocess = group.post !== undefined;
 	if (group.postprocess) {
 		return 'postprocess';
 	}
@@ -131,12 +135,11 @@ function $E(params) {
 
 
 function onGroupsUpdated(){
-	api = chrome.extension.getBackgroundPage().ngAPI;
 	$('download_table').style['display'] = api.groups.result.length > 0 ? 'block' : 'none';
 
 	// Build or update active download list
 	for(k in api.groups.result) {
-		$('download_container').appendChild(downloadPost(api.groups.result[k]));
+		downloadPost(api.groups.result[k]);
 	};
 
 	// Remove completed downloads from "Active downloads"
@@ -156,8 +159,16 @@ function onGroupsUpdated(){
 	$('lbl_remainingmb').appendChild(document.createTextNode(formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo))));
 }
 
+function onHistoryUpdated(){
+	api.history(function(j){
+		for(var i=0; i<10; i++) {
+			historyPost(j.result[i]);
+		}
+	});
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-	api = chrome.extension.getBackgroundPage().ngAPI;
+	window.api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
 	/* Setup variables */
@@ -165,36 +176,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
-			if (request.statusUpdated && request.statusUpdated == 'groups') {
-				onGroupsUpdated();
+			switch(request.statusUpdated) {
+				case 'groups':
+					onGroupsUpdated();
+					break;
+				case 'history':
+					onHistoryUpdated();
+					break;
 			}
 		}
 	);
 	onGroupsUpdated();
-
-	/* Setup history */
-	api.history(function(j){
-		for(var i=0; i<10; i++) {
-			$('history_container').appendChild(historyPost(j.result[i]));
-		}
+	onHistoryUpdated();
+	$('logo').addEventListener('click', function() {
+		api.switchToNzbGetTab();
 	});
 });
 
 function historyPost(item) {
 	item.status = detectStatus(item);
+	var post = $('history_container').querySelector('[rel="' + item.NZBID + '"]')
+		,update	= post !== null;
+	
+	if(update) {
+		post.querySelector('.left').innerText = Number(item.HistoryTime*1000).formatTimeDiff();
+	}
+	else {
+		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
 
-	var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
+			// Tag
+			post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
+				.appendChild($E({tag: 'span', text: item.status}));
 
-		// Tag
-		post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
-			.appendChild($E({tag: 'span', text: item.status}));
-
-		// Info
-		var info = post.appendChild($E({tag: 'div', className: 'info'}));
-			info.appendChild($E({tag: 'div', text: item.Name, className: 'title'}));
-			var details = info.appendChild($E({tag: 'div', className: 'details'}));
-				details.appendChild($E({tag: 'div', text: Number(item.HistoryTime*1000).formatTimeDiff(), className: 'left'}));
-				details.appendChild($E({tag: 'div', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo), className: 'right'}));
+			// Info
+			var info = post.appendChild($E({tag: 'div', className: 'info'}));
+				info.appendChild($E({tag: 'div', text: item.Name, className: 'title'}));
+				var details = info.appendChild($E({tag: 'div', className: 'details'}));
+					details.appendChild($E({tag: 'div', text: Number(item.HistoryTime*1000).formatTimeDiff(), className: 'left'}));
+					details.appendChild($E({tag: 'div', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo), className: 'right'}));
+			$('history_container').appendChild(post);
+	}
 
 	return post;
 }
@@ -239,6 +260,7 @@ function downloadPost(item) {
 					progress.appendChild($E({tag: 'div', className: 'bar '+kind, styles: {width: percent+'%'}}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: percent+'%'}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo)}));
+		$('download_container').appendChild(post);
 	}
 
 	return post;

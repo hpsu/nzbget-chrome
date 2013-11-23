@@ -95,8 +95,41 @@
 		this.status = this.sendMessage('status', {}, false).result;
 		chrome.runtime.sendMessage({statusUpdated: 'status'});
 	}
+	,switchToNzbGetTab: function() {
+		var url = this.Options.get('opt_host')
+		,port = this.Options.get('opt_port')
+		,username = this.Options.get('opt_username')
+		,password = this.Options.get('opt_password');
+		chrome.tabs.query({url: 'http://' + url + '/*'}, function(tabs) {
+			if(tabs.length) {
+				chrome.tabs.update(tabs[0].id, {selected: true});
+			} else {
+				chrome.tabs.create({url: 'http://' + username + ':' + password + '@' + url + ":" + port});
+			}
+		});
+	}
+	,notify: function(header, message) {
+		var n = new Notification(header, {icon: 'img/icon48.png', body: message});
+		n.onshow = function(){
+			setTimeout(function() {n.close();}, 5000);
+		};
+		n.onclick = function() {
+			window.ngAPI.switchToNzbGetTab();
+		}
+	}
 	,updateGroups: function() {
 		this.listGroups((function(j){
+			var newIDs = [];
+			for(i in j.result) {
+				newIDs[j.result[i].NZBID] = true;
+			}
+
+			if(this.groups) for(i in this.groups.result) {
+				if(!newIDs[this.groups.result[i].NZBID]) {
+					window.ngAPI.notify('Download complete!', this.groups.result[i].NZBName);
+					chrome.runtime.sendMessage({statusUpdated: 'history'});
+				}
+			}
 			this.groups = j;
 			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''});
 			chrome.runtime.sendMessage({statusUpdated: 'groups'});

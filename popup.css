@@ -21,7 +21,7 @@ body {
 }
 .infobox img {
 	float: left;
-
+	cursor: pointer;
 }
 dl {
 	float: left;
@@ -118,6 +118,9 @@ div.post .title {
 .tag {
 	background: #999;
 }
+.tag.postprocess {
+	
+}
 .tag.unknown {
 	background: #3a87ad;
 }
@@ -128,7 +131,10 @@ div.post .title {
 	background: #c67605;
 }
 .tag.failure {
-	background: #b94a48
+	background: #b94a48;
+}
+.tag.paused {
+	background: #f89406;
 }
 
 /* Striped progress bar */
