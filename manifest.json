@@ -12,6 +12,7 @@
 	"manifest_version": 2,
 	"web_accessible_resources": [
 		"img/icon48.png"
+		,"img/nzbget-icon.svg"
 	],
 	"name": "nzbget-chrome",
 	"options_page": "options.html",

@@ -22,6 +22,7 @@ body {
 .infobox img {
 	float: left;
 	cursor: pointer;
+	width:64px;
 }
 dl {
 	float: left;

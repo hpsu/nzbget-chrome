@@ -109,7 +109,7 @@
 		});
 	}
 	,notify: function(header, message) {
-		var n = new Notification(header, {icon: 'img/icon48.png', body: message});
+		var n = new Notification(header, {icon: 'img/nzbget-icon.svg', body: message});
 		n.onshow = function(){
 			setTimeout(function() {n.close();}, 5000);
 		};
