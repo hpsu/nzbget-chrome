@@ -3,8 +3,22 @@
 * @TODO: Take sort order into consideration when adding new posts to history or groups
 */
 
-function $(o) {return document.getElementById(o);}
+/* "Framework" stuff */ 
+function $(o) {
+	return document.getElementById(o);
+}
+function $E(params) {
+	var tmp = document.createElement(params.tag);
+	if(params.className) tmp.className = params.className;
+	if(params.text) tmp.appendChild(document.createTextNode(params.text));
+	if(params.styles) for(k in params.styles) {
+		tmp.style[k] = params.styles[k];
+	}
+	if(params.rel) tmp.setAttribute('rel', params.rel);
+	return tmp;
+}
 
+/* Format stuff */ 
 Number.prototype.zeroPad =  function() {
 	return (Number(this) < 10 ? '0' : '') + String(this);
 };
@@ -51,6 +65,28 @@ Number.prototype.formatDateTime = function(){
 	var x = new Date(this);
 	return x.getFullYear()+'-'+x.getMonth().zeroPad()+'-'+x.getDate().zeroPad()+' '+x.getHours().zeroPad()+':'+x.getMinutes().zeroPad()
 };
+
+function formatSizeMB(sizeMB, sizeLo) {
+	if (sizeLo !== undefined && sizeMB < 100) {
+		sizeMB = sizeLo / 1024 / 1024;
+	}
+
+	if (sizeMB > 10240) {
+		return (sizeMB / 1024.0).toFixed(1) + ' GiB';
+	}
+	else if (sizeMB > 1024) {
+		return (sizeMB / 1024.0).toFixed(2) + ' GiB';
+	}
+	else if (sizeMB > 100) {
+		return sizeMB.toFixed(0) + ' MiB';
+	}
+	else if (sizeMB > 10) {
+		return sizeMB.toFixed(1) + ' MiB';
+	}
+	else {
+		return Number(sizeMB).toFixed(2) + ' MiB';
+	}
+}
 
 function detectGroupStatus(group) {
 	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
@@ -100,40 +136,6 @@ function detectStatus(hist) {
 	}
 }
 
-function formatSizeMB(sizeMB, sizeLo) {
-	if (sizeLo !== undefined && sizeMB < 100) {
-		sizeMB = sizeLo / 1024 / 1024;
-	}
-
-	if (sizeMB > 10240) {
-		return (sizeMB / 1024.0).toFixed(1) + ' GiB';
-	}
-	else if (sizeMB > 1024) {
-		return (sizeMB / 1024.0).toFixed(2) + ' GiB';
-	}
-	else if (sizeMB > 100) {
-		return sizeMB.toFixed(0) + ' MiB';
-	}
-	else if (sizeMB > 10) {
-		return sizeMB.toFixed(1) + ' MiB';
-	}
-	else {
-		return Number(sizeMB).toFixed(2) + ' MiB';
-	}
-}
-
-function $E(params) {
-	var tmp = document.createElement(params.tag);
-	if(params.className) tmp.className = params.className;
-	if(params.text) tmp.appendChild(document.createTextNode(params.text));
-	if(params.styles) for(k in params.styles) {
-		tmp.style[k] = params.styles[k];
-	}
-	if(params.rel) tmp.setAttribute('rel', params.rel);
-	return tmp;
-}
-
-
 function onGroupsUpdated(){
 	$('download_table').style['display'] = api.groups.result.length > 0 ? 'block' : 'none';
 
@@ -166,32 +168,6 @@ function onHistoryUpdated(){
 		}
 	});
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-	window.api = chrome.extension.getBackgroundPage().ngAPI;
-	opts = api.Options;
-
-	/* Setup variables */
-	// {"RemainingSizeLo":0,"RemainingSizeHi":0,"RemainingSizeMB":0,"DownloadedSizeLo":4009763785,"DownloadedSizeHi":52,"DownloadedSizeMB":216816,"DownloadRate":0,"AverageDownloadRate":4607597,"DownloadLimit":0,"ThreadCount":5,"ParJobCount":0,"PostJobCount":0,"UrlCount":0,"UpTimeSec":2348634,"DownloadTimeSec":49342,"ServerPaused":false,"DownloadPaused":false,"Download2Paused":false,"ServerStandBy":true,"PostPaused":false,"ScanPaused":false,"FreeDiskSpaceLo":127795200,"FreeDiskSpaceHi":2057,"FreeDiskSpaceMB":8425593,"ServerTime":1384806423,"ResumeTime":0}}
-
-	chrome.runtime.onMessage.addListener(
-		function(request, sender, sendResponse) {
-			switch(request.statusUpdated) {
-				case 'groups':
-					onGroupsUpdated();
-					break;
-				case 'history':
-					onHistoryUpdated();
-					break;
-			}
-		}
-	);
-	onGroupsUpdated();
-	onHistoryUpdated();
-	$('logo').addEventListener('click', function() {
-		api.switchToNzbGetTab();
-	});
-});
 
 function historyPost(item) {
 	item.status = detectStatus(item);
@@ -265,3 +241,25 @@ function downloadPost(item) {
 
 	return post;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+	window.api = chrome.extension.getBackgroundPage().ngAPI;
+
+	chrome.runtime.onMessage.addListener(
+		function(request, sender, sendResponse) {
+			switch(request.statusUpdated) {
+				case 'groups':
+					onGroupsUpdated();
+					break;
+				case 'history':
+					onHistoryUpdated();
+					break;
+			}
+		}
+	);
+	onGroupsUpdated();
+	onHistoryUpdated();
+	$('logo').addEventListener('click', function() {
+		api.switchToNzbGetTab();
+	});
+});
