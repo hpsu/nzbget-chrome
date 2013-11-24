@@ -1,19 +1,25 @@
+function $(o) {
+	return document.getElementById(o);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
-	Array.each($$('input[type=text],input[type=password]'), function(o){
-		o.value = opts.get(o.id);
-	});
-	
-	$('btn_save').addEvent('click', function(){
-		Array.each($$('input[type=text],input[type=password]'), function(o){
-			opts.set(o.id, o.value);
-		});
+	var inputs = document.body.querySelectorAll('input[type=text],input[type=password]')
+
+	for(var i in inputs) {
+		inputs[i].value = opts.get(inputs[i].id);
+	}
+		
+	$('btn_save').addEventListener('click', function(){
+		for(var i in inputs) {
+			opts.set(inputs[i].id, inputs[i].value);
+		}
 	});
 
-	$('btn_test').addEvent('click', function(){
+	$('btn_test').addEventListener('click', function(){
 		var result = api.version();
-		new Element('div', {text: JSON.stringify(result)}).inject(document.body);
+		console.log(JSON.stringify(result));
 	});
 });
