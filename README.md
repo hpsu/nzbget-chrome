@@ -1,4 +1,4 @@
-![alt](img/icon48.png "apa") nzbget-chrome
+<img src="img/icon48.png" align="absmiddle"> nzbget-chrome
 =============
 
 Google chrome extension to interact with nzbget
