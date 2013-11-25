@@ -1,18 +1,80 @@
 <html>
 <head>
+	<title>Options - NZBGet-chrome</title>
 	<script src="js/options.js"></script>
+	<style>
+		body {
+			position: relative;
+			text-align: center;
+			background: linear-gradient(#333, #000);
+		}
+		fieldset {
+			padding: 1rem 1.4rem;
+			display: inline-block;
+			border-radius: 1rem;
+			position: relative;
+			border: 0.1rem solid #999;
+			background: linear-gradient(#fafafa, #f0f0f0);
+		}
+		h2  {
+			font-size: 1.8rem;
+			font-weight: bold;
+			letter-spacing:1;
+			color: #fff;
+			position:relative;
+			text-shadow:
+				-1px -1px 0 #000,
+				1px -1px 0 #000,
+				-1px 1px 0 #000,
+				1px 1px 0 #000;  
+		}
+		img {
+			float: left;
+			width: 160px;
+			height: 160px;
+		}
+		label {
+			min-width: 6rem;
+			float: left;
+			display: block;
+			clear: left;
+			text-align: right;
+			padding: 0.3rem 1rem;
+		}
+		input[type=text], input[type=password] {
+			float: left;
+			width: auto;
+			border: 1px solid #999;
+			font-size: 0.9rem;
+			border-radius:0.3rem;
+			padding: 0.3rem 0.6rem;
+			width: 10rem;
+		}
+		.wrap {
+			display: inline-block;
+			float: left;
+			padding: 0.9rem 0;
+		}
+		#btn_grp {
+			text-align:left;
+		}
+	</style>
 </head>
 <body>
-	<h1>Hubba hubba</h1>
-	<form>
-		<fieldset>
-			<legend>Connect to NZBGet</legend>
+	<h2>Connection settings</h2>
+	<fieldset>
+		<img src="img/nzbget-icon.svg">
+		<div class="wrap">
 			<label for="opt_host">Host:</label><input type="text" id="opt_host">
 			<label for="opt_port">Port:</label><input type="text" id="opt_port">
 			<label for="opt_username">Username:</label><input type="text" id="opt_username">
 			<label for="opt_password">Password:</label><input type="password" id="opt_password">
-			<input type="button" id="btn_save" value="Save">
-			<input type="button" id="btn_test" value="Test connection">
-		</fieldset>
-	</form>
+			<label for="btn_grp">&nbsp;</label>
+			<div id="btn_grp">
+				<input type="button" id="btn_test" value="Test connection">
+				<input type="button" id="btn_save" value="Save">
+			</div>
+		</div>
+	</fieldset>
 </body>
+</html>
