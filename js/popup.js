@@ -245,6 +245,13 @@ function downloadPost(item) {
 document.addEventListener('DOMContentLoaded', function() {
 	window.api = chrome.extension.getBackgroundPage().ngAPI;
 
+	if(!api.isInitialized) {
+		$('download_table').style.display='none';
+		$('history_table').style.display='none';
+		$('setup_needed').style.display='block';
+		return;
+	}
+
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
 			switch(request.statusUpdated) {

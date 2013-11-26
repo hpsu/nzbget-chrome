@@ -191,3 +191,11 @@ div.post .title {
 	right: 5px;
 	text-align: right;
 }
+#setup_needed {
+	display: none;
+	width:200px;
+	padding: 3rem;
+	background:#fcc;
+	border: 0.3rem solid red;
+
+}

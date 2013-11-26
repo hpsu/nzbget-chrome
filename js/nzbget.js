@@ -2,7 +2,10 @@
  * nzbGetAPI - Base API Class
  */
  window.ngAPI = {
-	version: function() {
+ 	groupTimer: null
+ 	,statusTime: null
+ 	,isInitialized: false
+	,version: function() {
 		return this.sendMessage('version', {}, false);
 	}
 	,history: function(async) {
@@ -59,6 +62,13 @@
 			return JSON.parse(xhr.responseText);
 		}
 	}
+	/**
+	 * Download a file and try to send it to NZBGet
+	 *
+	 * @TODO: Better error notification
+	 * @var info chrome OnClickData-object
+	 * @var tab chrome tabs.Tab-object
+	 */
 	,addLink: function(info, tab) {
 		var nzbFileName = info.linkUrl.match(/\/([^\/]+)$/)[1];
 		var xhr = new XMLHttpRequest();
@@ -91,10 +101,9 @@
 		xhr.open('POST', info.linkUrl);
 		xhr.send();
 	}
-	,updateStatus: function() {
-		this.status = this.sendMessage('status', {}, false).result;
-		chrome.runtime.sendMessage({statusUpdated: 'status'});
-	}
+	/**
+	 * Locate existing NZBGet-tab or open a new one
+	 */
 	,switchToNzbGetTab: function() {
 		var url = this.Options.get('opt_host')
 		,port = this.Options.get('opt_port')
@@ -108,6 +117,12 @@
 			}
 		});
 	}
+	/**
+	 * Display notification for 5 sec
+	 *
+	 * @var header
+	 * @var message
+	 */
 	,notify: function(header, message) {
 		var n = new Notification(header, {icon: 'img/nzbget-icon.svg', body: message});
 		n.onshow = function(){
@@ -117,6 +132,20 @@
 			window.ngAPI.switchToNzbGetTab();
 		}
 	}
+	/**
+	 * Request new status information via NZBGET JSON-RPC.
+	 */
+	,updateStatus: function() {
+		this.sendMessage('status', {}, function(j){
+			this.status = j.result;
+			chrome.runtime.sendMessage({statusUpdated: 'status'});
+		}.bind(this));
+	}
+	/**
+	 * Request new group information via NZBGET JSON-RPC.
+	 * Notifies on complete downloads 
+	 * Updates badge on active downloads.
+	 */
 	,updateGroups: function() {
 		this.listGroups((function(j){
 			var newIDs = [];
@@ -135,6 +164,34 @@
 			chrome.runtime.sendMessage({statusUpdated: 'groups'});
 		}).bind(this));
 	}
+	/**
+	 * Setup polling timers and stuff
+	 *
+	 * @return bool success
+	 */
+	,initialize: function(){
+		console.log('initialize');
+		if(this.groupTimer) clearInterval(this.groupTimer);
+		if(this.statusTimer) clearInterval(this.groupTimer);
+		if(ngAPI.Options.get('opt_host').length === 0) {
+			return this.isInitialized = false;
+		}
+
+		chrome.browserAction.setBadgeText({text: ''});
+		chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
+
+		this.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0};
+		this.updateGroups();
+		this.updateStatus();
+		this.loadMenu();
+
+		this.groupTimer = setInterval(this.updateGroups.bind(this), 5000);
+		this.statusTimer = setInterval(this.updateStatus.bind(this), 5000);
+		return this.isInitialized = true;
+	}
+	/**
+	 * Option abstraction object. Handles everyting option related.
+	 */
 	,Options: {
 		load: function() {
 			Array.each($$('input[type=text],input[type=password]'), function(o){
@@ -143,7 +200,6 @@
 		}
 		,save: function() {
 			Array.each($$('input[type=text],input[type=password]'), function(o){
-				console.log('set',o.value);
 				localStorage[o.id] = o.value;
 			},this);
 		}
@@ -157,20 +213,13 @@
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	console.log('dom loaded');
-	chrome.browserAction.setBadgeText({text: ''});
-	chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
-
-	ngAPI.updateGroups();
-	ngAPI.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0};
-	ngAPI.updateStatus();
-	setInterval(ngAPI.updateGroups.bind(ngAPI), 5000);
-	setInterval(ngAPI.updateStatus.bind(ngAPI), 5000);
+	ngAPI.initialize();
 	
-	ngAPI.loadMenu();
 	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-		if(message === 'updateOptions') {
-			ngAPI.loadMenu();
+		if(message === 'optionsUpdated') {
+			ngAPI.initialize();
+		}else {
+			console.log(message);
 		}
 	});
 });

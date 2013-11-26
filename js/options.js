@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		for(var i in inputs) {
 			opts.set(inputs[i].id, inputs[i].value);
 		}
+		chrome.runtime.sendMessage('optionsUpdated');
 	});
 
 	$('btn_test').addEventListener('click', function(){
