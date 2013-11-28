@@ -5,18 +5,21 @@
  	groupTimer: null
  	,statusTime: null
  	,isInitialized: false
+	/**
+	 * Setup version information
+	 */
 	,version: function() {
 		return this.sendMessage('version', {}, false);
 	}
+	/**
+	 * Request history from JSON-RPC
+	 */
 	,history: function(async) {
 		return this.sendMessage('history', {}, async);
 	}
-	,listFiles: function(async) {
-		return this.sendMessage('listfiles', {}, async);
-	}
-	,listGroups: function(async) {
-		return this.sendMessage('listgroups', {}, async);
-	}
+	/**
+	 * Setup context menu item(s)
+	 */
 	,loadMenu: function(){
 		chrome.storage.sync.get(function(options) {
 			chrome.contextMenus.removeAll();
@@ -30,7 +33,15 @@
 			});
 		});
 	}
-	,sendMessage: function(method, params, async, fail_func) {
+	/**
+	 * Send XHR Request to NZBGet via JSON-RPC
+	 *
+	 * @var method "method" to call
+	 * @var params array of parameters to send
+	 * @var success_func function to execute on success. Turns async off if it evaluates to false.
+	 * @var fail_func function to execute on failure
+	 */
+	,sendMessage: function(method, params, success_func, fail_func) {
 		var url = this.Options.get('opt_host')
 		,port = this.Options.get('opt_port')
 		,username = this.Options.get('opt_username')
@@ -45,20 +56,20 @@
 		xhr.onreadystatechange = function(r){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
-					if(typeof async === 'function')
-						async(JSON.parse(r.target.responseText));
+					if(typeof success_func === 'function')
+						success_func(JSON.parse(r.target.responseText));
 				} else {
 					if(typeof fail_func === 'function')
 						fail_func(JSON.parse(r.target.responseText));
 				}
 			}
 		};
-		xhr.open('POST', 'http://' + url + ':' + port + '/jsonrpc', typeof async === 'function');
+		xhr.open('POST', 'http://' + url + ':' + port + '/jsonrpc', typeof succes_func === 'function');
 		xhr.setRequestHeader('Content-Type','text/json');
 		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
 		xhr.send(JSON.stringify(query));
 
-		if(!async) {
+		if(!success_func) {
 			return JSON.parse(xhr.responseText);
 		}
 	}
@@ -147,7 +158,7 @@
 	 * Updates badge on active downloads.
 	 */
 	,updateGroups: function() {
-		this.listGroups((function(j){
+		this.sendMessage('listgroups', [], (function(j){
 			var newIDs = [];
 			for(i in j.result) {
 				newIDs[j.result[i].NZBID] = true;
@@ -218,8 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 		if(message === 'optionsUpdated') {
 			ngAPI.initialize();
-		}else {
-			console.log(message);
 		}
 	});
 });
