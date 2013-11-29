@@ -4,6 +4,7 @@
  window.ngAPI = {
  	groupTimer: null
  	,statusTime: null
+ 	,connectionStatus: true
  	,isInitialized: false
 	/**
 	 * Setup version information
@@ -84,11 +85,12 @@
 	}
 	,setSuccess: function(boo) {
 		if(boo) {
-
+			this.connectionStatus = true;
 		}
 		else {
 			chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
 			chrome.browserAction.setBadgeText({text: 'ERR'});
+			this.connectionStatus = false;
 		}
 	}
 	/**

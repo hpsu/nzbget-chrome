@@ -245,7 +245,7 @@ function downloadPost(item) {
 document.addEventListener('DOMContentLoaded', function() {
 	window.api = chrome.extension.getBackgroundPage().ngAPI;
 
-	if(!api.isInitialized) {
+	if(!api.isInitialized || !api.connectionStatus) {
 		$('download_table').style.display='none';
 		$('history_table').style.display='none';
 		$('setup_needed').style.display='block';
