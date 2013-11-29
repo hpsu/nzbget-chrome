@@ -56,21 +56,39 @@
 		xhr.onreadystatechange = function(r){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
-					if(typeof success_func === 'function')
+					this.setSuccess(true);
+					if(typeof success_func === 'function') {
 						success_func(JSON.parse(r.target.responseText));
+					}
 				} else {
-					if(typeof fail_func === 'function')
+					this.setSuccess(false);
+					if(typeof fail_func === 'function'){
 						fail_func(JSON.parse(r.target.responseText));
+					}
 				}
 			}
-		};
+		}.bind(this);
 		xhr.open('POST', 'http://' + url + ':' + port + '/jsonrpc', typeof succes_func === 'function');
 		xhr.setRequestHeader('Content-Type','text/json');
 		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
-		xhr.send(JSON.stringify(query));
+		try {
+			xhr.send(JSON.stringify(query));
+		}
+		catch (e){
+			this.setSuccess(false);
+		}
 
 		if(!success_func) {
 			return JSON.parse(xhr.responseText);
+		}
+	}
+	,setSuccess: function(boo) {
+		if(boo) {
+
+		}
+		else {
+			chrome.browserAction.setBadgeBackgroundColor({color: '#ff0000'});
+			chrome.browserAction.setBadgeText({text: 'ERR'});
 		}
 	}
 	/**
@@ -171,6 +189,7 @@
 				}
 			}
 			this.groups = j;
+			chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''});
 			chrome.runtime.sendMessage({statusUpdated: 'groups'});
 		}).bind(this));
@@ -189,7 +208,6 @@
 		}
 
 		chrome.browserAction.setBadgeText({text: ''});
-		chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 
 		this.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0};
 		this.updateGroups();
