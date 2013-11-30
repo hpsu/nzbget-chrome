@@ -124,11 +124,16 @@
 							}
 						);
 					} else {
-						console.log('Not an nzb file!?');
+						window.ngAPI.notify(
+							'Not an NZB-file!?'
+							,"Link does not appear to be valid.\n"+info.linkUrl
+							,'img/broken-arrow.svg'
+							,null
+						);
 					}
 				}
 			}
-		};
+		}.bind(this);
 		xhr.open('POST', info.linkUrl);
 		xhr.send();
 	}
@@ -154,11 +159,16 @@
 	 * @var header
 	 * @var message
 	 */
-	,notify: function(header, message) {
-		var n = new Notification(header, {icon: 'img/nzbget-icon.svg', body: message});
-		n.onshow = function(){
-			setTimeout(function() {n.close();}, 5000);
-		};
+	,notify: function(header, message, icon, timeout) {
+		if(typeof timeout === 'undefined') timeout = 5000;
+		if(typeof icon === 'undefined') timeout = 'img/nzbget-icon.svg';
+		var n = new Notification(header, {icon: icon, body: message});
+		
+		if(timeout !== null) {
+			n.onshow = function(){
+				setTimeout(function() {n.close();}, timeout);
+			};
+		}
 		n.onclick = function() {
 			window.ngAPI.switchToNzbGetTab();
 		}

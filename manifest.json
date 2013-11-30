@@ -11,8 +11,8 @@
 	},
 	"manifest_version": 2,
 	"web_accessible_resources": [
-		"img/icon48.png"
-		,"img/nzbget-icon.svg"
+		"img/nzbget-icon.svg"
+		,"img/broken-arrow.svg"
 	],
 	"name": "nzbget-chrome",
 	"options_page": "options.html",
