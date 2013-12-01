@@ -120,7 +120,15 @@
 								window.ngAPI.updateGroups();
 							},
 							function() {
-								console.log('spectacular failure!');
+								window.ngAPI.notify(
+									'Error occured!'
+									,"Could not download link. Click to try again\n"+info.linkUrl
+									,'img/broken-arrow.svg'
+									,null
+									,function() {
+										window.ngAPI.addLink(info, tab);
+									}
+								);
 							}
 						);
 					} else {
@@ -159,9 +167,12 @@
 	 * @var header
 	 * @var message
 	 */
-	,notify: function(header, message, icon, timeout) {
+	,notify: function(header, message, icon, timeout, onclick) {
 		if(typeof timeout === 'undefined') timeout = 5000;
-		if(typeof icon === 'undefined') timeout = 'img/nzbget-icon.svg';
+		if(typeof icon === 'undefined') icon = 'img/nzbget-icon.svg';
+		if(typeof onclick === 'undefined') onclick = function() {
+			window.ngAPI.switchToNzbGetTab();
+		};
 		var n = new Notification(header, {icon: icon, body: message});
 		
 		if(timeout !== null) {
@@ -169,8 +180,8 @@
 				setTimeout(function() {n.close();}, timeout);
 			};
 		}
-		n.onclick = function() {
-			window.ngAPI.switchToNzbGetTab();
+		if(onclick !== null) {
+			n.onclick = onclick;
 		}
 	}
 	/**
