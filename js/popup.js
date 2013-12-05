@@ -179,7 +179,12 @@ function historyPost(item) {
 	}
 	else {
 		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
-
+		post.setAttribute('draggable', true);
+		post.addEventListener('dragstart', function(e){
+			this.style.opacity='0.4';
+			e.dataTransfer.effectAllowed = 'move';
+  			e.dataTransfer.setData('text/html', this.innerHTML);
+		});
 			// Tag
 			post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
 				.appendChild($E({tag: 'span', text: item.status}));
@@ -264,6 +269,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 	);
+	$('history_container').addEventListener('dragover', function(ev){
+		ev.preventDefault();
+	});
+	$('history_container').addEventListener('drop', function(ev){
+		console.log(ev);
+		ev.preventDefault();
+	});
 	onGroupsUpdated();
 	onHistoryUpdated();
 	$('logo').addEventListener('click', function() {
