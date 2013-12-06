@@ -193,6 +193,17 @@
 			chrome.runtime.sendMessage({statusUpdated: 'status'});
 		}.bind(this));
 	}
+	,updatePostQueue: function(j) {
+		for(i in j.result) {
+			var post = j.result[i];
+			for(x in ngAPI.groups.result) {
+				var group = ngAPI.groups.result[x];
+				if(post.NZBID == group.NZBID) {
+					group.post = post;
+				}
+			}
+		}
+	}
 	/**
 	 * Request new group information via NZBGET JSON-RPC.
 	 * Notifies on complete downloads 
@@ -200,6 +211,7 @@
 	 */
 	,updateGroups: function() {
 		this.sendMessage('listgroups', [], (function(j){
+			if(j.result.length) ngAPI.sendMessage('postqueue', [], ngAPI.updatePostQueue);
 			var newIDs = [];
 			for(i in j.result) {
 				newIDs[j.result[i].NZBID] = true;
