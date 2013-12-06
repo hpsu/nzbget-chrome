@@ -223,6 +223,7 @@
 				else {
 					this.groups[id] = j.result[i];
 				}
+				this.groups[id].sortorder = i;
 			}
 			if(j.result.length) ngAPI.sendMessage('postqueue', [], ngAPI.updatePostQueue);
 

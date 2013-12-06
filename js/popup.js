@@ -144,14 +144,33 @@ function onGroupsUpdated(){
 		downloadPost(api.groups[k]);
 	};
 
-	// Remove completed downloads from "Active downloads"
-	var trElements = $('download_container').querySelectorAll('div.post');
+	// Remove completed downloads from "Active downloads" and check if sorting is needed
+	var i = 0
+		,sortNeeded = false
+		,trElements = $('download_container').querySelectorAll('div.post');
 	for(var k = 0; k<trElements.length; k++) {
-		var match = false;
-		for(sk in api.groups) {
-			if(api.groups[sk].NZBID == trElements[k].getAttribute('rel')) match=true;
+		var id = trElements[k].getAttribute('rel');
+		if(api.groups[id]) {
+			if(i++ != api.groups[id].sortorder) sortNeeded = true;
 		}
-		if(!match) $('download_container').removeChild(trElements[k]);
+		else {
+			$('download_container').removeChild(trElements[k]);
+		}
+	}
+
+	if(sortNeeded) {
+		order = Object.keys(api.groups).sort(function(a,b) {
+			a = api.groups[a].sortorder;
+			b = api.groups[b].sortorder;
+			if(a < b) return -1;
+			if(a > b) return 1;
+			return 0;
+		});
+		for(i in order) {
+			var el = $('download_container').querySelector('div.post[rel="' + order[i] + '"]');
+			if(el) $('download_container').appendChild($('download_container').removeChild(el));
+		}
+		
 	}
 
 	// Set "global" labels
