@@ -90,7 +90,7 @@ function formatSizeMB(sizeMB, sizeLo) {
 
 function detectGroupStatus(group) {
 	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
-	if (group.postprocess) {
+	if (group.post) {
 		return 'postprocess';
 	}
 	else if (group.ActiveDownloads > 0) {
@@ -137,19 +137,19 @@ function detectStatus(hist) {
 }
 
 function onGroupsUpdated(){
-	$('download_table').style['display'] = api.groups.result.length > 0 ? 'block' : 'none';
+	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
 
 	// Build or update active download list
-	for(k in api.groups.result) {
-		downloadPost(api.groups.result[k]);
+	for(k in api.groups) {
+		downloadPost(api.groups[k]);
 	};
 
 	// Remove completed downloads from "Active downloads"
 	var trElements = $('download_container').querySelectorAll('div.post');
 	for(var k = 0; k<trElements.length; k++) {
 		var match = false;
-		for(sk in api.groups.result) {
-			if(api.groups.result[sk].NZBID == trElements[k].getAttribute('rel')) match=true;
+		for(sk in api.groups) {
+			if(api.groups[sk].NZBID == trElements[k].getAttribute('rel')) match=true;
 		}
 		if(!match) $('download_container').removeChild(trElements[k]);
 	}
@@ -209,9 +209,10 @@ function downloadPost(item) {
 		,total		= formatSizeMB(item.FileSizeMB, item.FileSizeLo)
 		,estRem		= ((item.RemainingSizeMB-item.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).formatTimeLeft()
 		,post		= $('download_container').querySelector('[rel="' + item.NZBID + '"]')
-		,update		= post !== null;
+		,update		= post !== null
+		,leftLabel	= item.post ? item.post.ProgressLabel : percent+'%'
+		,rightLabel	= item.post ? '' : formatSizeMB(item.FileSizeMB, item.FileSizeLo);
 	item.status = detectGroupStatus(item);
-
 	if(item.status === 'downloading' || (item.postprocess && !api.status.PostPaused))
 		var kind = 'success';
 	else if(item.status === 'paused' || (item.postprocess && api.status.PostPaused))
@@ -222,8 +223,8 @@ function downloadPost(item) {
 	if(update) {
 		post.querySelector('.tag').className = 'tag '+item.status;
 		post.querySelector('.tag span').innerText = item.status;
-		post.querySelector('.bar-text.left').innerText = percent+'%';
-		post.querySelector('.bar-text.right').innerText = formatSizeMB(item.FileSizeMB, item.FileSizeLo);
+		post.querySelector('.bar-text.left').innerText = leftLabel;
+		post.querySelector('.bar-text.right').innerText = rightLabel;
 		post.querySelector('.bar').style.width = (percent)+'%';
 		post.querySelector('.bar').className = 'bar '+kind;
 	}
@@ -239,8 +240,8 @@ function downloadPost(item) {
 
 				var progress = info.appendChild($E({tag: 'div', className:'progress'}));
 					progress.appendChild($E({tag: 'div', className: 'bar '+kind, styles: {width: percent+'%'}}));
-					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: percent+'%'}));
-					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo)}));
+					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: leftLabel}));
+					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: rightLabel}));
 		$('download_container').appendChild(post);
 	}
 

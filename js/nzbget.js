@@ -4,6 +4,7 @@
  window.ngAPI = {
  	groupTimer: null
  	,statusTime: null
+ 	,groups: {}
  	,connectionStatus: true
  	,isInitialized: false
 	/**
@@ -196,10 +197,9 @@
 	,updatePostQueue: function(j) {
 		for(i in j.result) {
 			var post = j.result[i];
-			for(x in ngAPI.groups.result) {
-				var group = ngAPI.groups.result[x];
-				if(post.NZBID == group.NZBID) {
-					group.post = post;
+			for(x in ngAPI.groups) {
+				if(post.NZBID == x) {
+					ngAPI.groups[x].post = post;
 				}
 			}
 		}
@@ -211,19 +211,29 @@
 	 */
 	,updateGroups: function() {
 		this.sendMessage('listgroups', [], (function(j){
-			if(j.result.length) ngAPI.sendMessage('postqueue', [], ngAPI.updatePostQueue);
 			var newIDs = [];
 			for(i in j.result) {
-				newIDs[j.result[i].NZBID] = true;
+				var id = j.result[i].NZBID;
+				newIDs[id] = true;
+				if(this.groups[id]) {
+					for(attr in j.result[i]) {
+						console.log(this.groups[id]);
+						this.groups[id][attr] = j.result[i][attr];
+					}
+				}
+				else {
+					this.groups[id] = j.result[i];
+				}
 			}
+			if(j.result.length) ngAPI.sendMessage('postqueue', [], ngAPI.updatePostQueue);
 
-			if(this.groups) for(i in this.groups.result) {
-				if(!newIDs[this.groups.result[i].NZBID]) {
-					window.ngAPI.notify('Download complete!', this.groups.result[i].NZBName);
+			if(this.groups) for(i in this.groups) {
+				if(!newIDs[i]) {
+					window.ngAPI.notify('Download complete!', this.groups[i].NZBName);
+					delete this.groups[i];
 					chrome.runtime.sendMessage({statusUpdated: 'history'});
 				}
 			}
-			this.groups = j;
 			chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''});
 			chrome.runtime.sendMessage({statusUpdated: 'groups'});
