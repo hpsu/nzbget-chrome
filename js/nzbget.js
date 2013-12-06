@@ -217,7 +217,6 @@
 				newIDs[id] = true;
 				if(this.groups[id]) {
 					for(attr in j.result[i]) {
-						console.log(this.groups[id]);
 						this.groups[id][attr] = j.result[i][attr];
 					}
 				}
