@@ -88,6 +88,17 @@ function formatSizeMB(sizeMB, sizeLo) {
 	}
 }
 
+function formatBytes(bytes) {
+	var sizes = {1:'KiB', 2:'MiB', 3:'GiB', 4:'TiB'},
+	output = null;
+
+	Object.keys(sizes).reverse().forEach( function(i) {
+		if(!output && bytes >= Math.pow(1024, i))
+			output = (bytes/Math.pow(1024, i)).toFixed(1) + sizes[i];
+	});
+	return output ? output : bytes + 'b';
+}
+
 function detectGroupStatus(group) {
 	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
 	if (group.post) {
@@ -176,7 +187,7 @@ function onGroupsUpdated(){
 	// Set "global" labels
 	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
 	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
-	$('lbl_speed').appendChild(document.createTextNode((api.status.DownloadRate / 1024).toFixed(2) + ' KB/s'));
+	$('lbl_speed').appendChild(document.createTextNode(formatBytes(api.status.DownloadRate) + '/s'));
 	$('lbl_remainingmb').appendChild(document.createTextNode(formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo))));
 }
 
