@@ -52,6 +52,10 @@ div.post:hover {
 	background: #f5f5e5;
 }
 
+div.placeholder {
+	border: 1px #333 dotted;
+	display: flex;
+}
 div.post .tag {
 	max-width: 10px;
 	display: flex;

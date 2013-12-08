@@ -3,6 +3,8 @@
 * @TODO: Take sort order into consideration when adding new posts to history or groups
 */
 
+var dragging = null;
+
 /* "Framework" stuff */ 
 function $(o) {
 	return document.getElementById(o);
@@ -89,7 +91,7 @@ function formatSizeMB(sizeMB, sizeLo) {
 }
 
 function formatBytes(bytes) {
-	var sizes = {1:'KiB', 2:'MiB', 3:'GiB', 4:'TiB'},
+	var sizes = {1:'KiB', 2:'MiB', 3:'GiB'},
 	output = null;
 
 	Object.keys(sizes).reverse().forEach( function(i) {
@@ -210,11 +212,60 @@ function historyPost(item) {
 	else {
 		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
 		post.setAttribute('draggable', true);
+
 		post.addEventListener('dragstart', function(e){
-			this.style.opacity='0.4';
-			e.dataTransfer.effectAllowed = 'move';
-  			e.dataTransfer.setData('text/html', this.innerHTML);
+  			dragging = this;
+			var dt = e.dataTransfer;
+			dt.effectAllowed = 'move';
+			dt.setData('Text', 'dummy');
+  			dt.setData('text/html', this.innerHTML);
 		});
+		dover = function (ev) {
+			if (ev.type == 'drop') {
+				ev.stopPropagation();
+				el =this.parentElement.insertBefore(dragging, this.parentElement.querySelector('.placeholder'));
+				dragging.dispatchEvent('dragend');
+				return false;
+			}
+			ev.preventDefault();
+			ev.dataTransfer.dropEffect = 'move';
+
+			if(this.classList.contains('post')) {
+				if(dragging.offsetHeight) 
+					dragging.storedHeight = dragging.offsetHeight;
+				if(dragging.storedHeight) this.placeholder.style.height = dragging.storedHeight+'px';
+				dragging.style.display='none';
+				var pholders = this.parentElement.querySelectorAll('div.placeholder');
+				for(var i = 0; i<pholders.length; i++) {
+					pholders[i].parentNode.removeChild(pholders[i]);
+				};
+
+				var i = 0, child = this;
+				while( (child = child.previousSibling) != null ) i++;
+				this.parentElement.insertBefore(this.placeholder, i < 2 ? this : this.nextSibling);
+				console.log(i);
+				//$(this)[placeholder.index() < $(this).index() ? 'after' : 'before'](placeholder);
+			}
+			else if(this.classList.contains('placeholder')) {
+				//this.parentElement.replaceChild(this, )
+			}
+			return false;
+		}
+		post.addEventListener('dragover', dover);
+		post.addEventListener('dragenter', dover);
+		post.addEventListener('drop', dover);
+		post.addEventListener('dragend', function(){
+			if (!dragging) {
+				return;
+			}
+			dragging.style.display='flex';
+			var pholders = document.querySelectorAll('div.placeholder');
+			for(var i = 0; i<pholders.length; i++) {
+				pholders[i].parentNode.removeChild(pholders[i]);
+			};
+			dragging = null;
+		});
+
 			// Tag
 			post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
 				.appendChild($E({tag: 'span', text: item.status}));
@@ -225,6 +276,11 @@ function historyPost(item) {
 				var details = info.appendChild($E({tag: 'div', className: 'details'}));
 					details.appendChild($E({tag: 'div', text: Number(item.HistoryTime*1000).formatTimeDiff(), className: 'left'}));
 					details.appendChild($E({tag: 'div', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo), className: 'right'}));
+	
+			post.placeholder = $E({tag: 'div', className: 'placeholder'});
+			post.placeholder.addEventListener('dragover', dover);
+			post.placeholder.addEventListener('dragenter', dover);
+			post.placeholder.addEventListener('drop', dover);
 			$('history_container').appendChild(post);
 	}
 
@@ -300,13 +356,6 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 	);
-	$('history_container').addEventListener('dragover', function(ev){
-		ev.preventDefault();
-	});
-	$('history_container').addEventListener('drop', function(ev){
-		console.log(ev);
-		ev.preventDefault();
-	});
 	onGroupsUpdated();
 	onHistoryUpdated();
 	$('logo').addEventListener('click', function() {
