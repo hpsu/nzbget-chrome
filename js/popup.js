@@ -20,6 +20,11 @@ function $E(params) {
 	return tmp;
 }
 
+Element.prototype.index = function() {
+	if(!this.parentNode) return -1;
+	return [].indexOf.call(this.parentNode.children, this);
+}
+
 /* Format stuff */ 
 Number.prototype.zeroPad =  function() {
 	return (Number(this) < 10 ? '0' : '') + String(this);
@@ -201,6 +206,83 @@ function onHistoryUpdated(){
 	});
 }
 
+function setupDraggable(post) {
+	post.setAttribute('draggable', true);
+	post.placeholder = $E({tag: 'div', className: 'placeholder'});
+	post.indexBefore = 0;
+
+	dover = function (ev) {
+		ev.preventDefault();
+		ev.dataTransfer.dropEffect = 'move';
+
+		if(this.classList.contains('post')) {
+			if(dragging.offsetHeight) 
+				dragging.storedHeight = dragging.offsetHeight;
+			if(dragging.storedHeight) this.placeholder.style.height = dragging.storedHeight+'px';
+			dragging.style.display='none';
+			var pholders = this.parentElement.querySelectorAll('div.placeholder');
+			for(var i = 0; i<pholders.length; i++) {
+				if(pholders[i] != this.placeholder)
+					pholders[i].parentNode.removeChild(pholders[i]);
+			};
+
+			this.parentElement.insertBefore(this.placeholder, this.placeholder.index() < this.index() ? this.nextSibling : this);
+		}
+		return false;
+	};
+	drop = function (ev) {
+		ev.preventDefault();
+		this.parentElement.insertBefore(dragging, this.parentElement.querySelector('.placeholder'));
+		if(dragging.indexBefore != dragging.index()) {
+			dragging.dispatchEvent(new CustomEvent('sortupdate', {detail:{
+				oldIndex: dragging.indexBefore
+				,newIndex: dragging.index()
+				,nzbID: dragging.getAttribute('rel')
+			}
+			}));
+		}
+		dragging.dispatchEvent(new Event('dragend'));
+		return false;
+	};
+	post.addEventListener('dragstart', function(e){
+		dragging = this;
+		dragging.indexBefore = this.index();
+		var dt = e.dataTransfer;
+		dt.effectAllowed = 'move';
+		dt.setData('text/html', this.innerHTML);
+	});
+	post.addEventListener('dragend', function(){
+		if (!dragging) {
+			return;
+		}
+		dragging.style.display='flex';
+		var pholders = document.querySelectorAll('div.placeholder');
+		for(var i = 0; i<pholders.length; i++) {
+			pholders[i].parentNode.removeChild(pholders[i]);
+		};
+		dragging = null;
+	});
+
+	post.addEventListener('dragover', dover);
+	post.addEventListener('dragenter', dover);
+	post.addEventListener('drop', drop);
+	post.addEventListener('sortupdate', function(e){
+		var oldI = e.detail.oldIndex
+			,newI = e.detail.newIndex
+			,diff = (newI-oldI)
+			,fileId = api.groups[e.detail.nzbID].LastID;
+
+		api.sendMessage('editqueue', ['GroupMoveOffset', diff, '', [fileId]], function(res) {
+			console.log(res);
+		});
+	});
+	
+	post.placeholder.addEventListener('dragover', dover);
+	post.placeholder.addEventListener('dragenter', dover);
+	post.placeholder.addEventListener('drop', drop);
+
+}
+
 function historyPost(item) {
 	item.status = detectStatus(item);
 	var post = $('history_container').querySelector('[rel="' + item.NZBID + '"]')
@@ -211,60 +293,6 @@ function historyPost(item) {
 	}
 	else {
 		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
-		post.setAttribute('draggable', true);
-
-		post.addEventListener('dragstart', function(e){
-  			dragging = this;
-			var dt = e.dataTransfer;
-			dt.effectAllowed = 'move';
-			dt.setData('Text', 'dummy');
-  			dt.setData('text/html', this.innerHTML);
-		});
-		dover = function (ev) {
-			if (ev.type == 'drop') {
-				ev.stopPropagation();
-				el =this.parentElement.insertBefore(dragging, this.parentElement.querySelector('.placeholder'));
-				dragging.dispatchEvent('dragend');
-				return false;
-			}
-			ev.preventDefault();
-			ev.dataTransfer.dropEffect = 'move';
-
-			if(this.classList.contains('post')) {
-				if(dragging.offsetHeight) 
-					dragging.storedHeight = dragging.offsetHeight;
-				if(dragging.storedHeight) this.placeholder.style.height = dragging.storedHeight+'px';
-				dragging.style.display='none';
-				var pholders = this.parentElement.querySelectorAll('div.placeholder');
-				for(var i = 0; i<pholders.length; i++) {
-					pholders[i].parentNode.removeChild(pholders[i]);
-				};
-
-				var i = 0, child = this;
-				while( (child = child.previousSibling) != null ) i++;
-				this.parentElement.insertBefore(this.placeholder, i < 2 ? this : this.nextSibling);
-				console.log(i);
-				//$(this)[placeholder.index() < $(this).index() ? 'after' : 'before'](placeholder);
-			}
-			else if(this.classList.contains('placeholder')) {
-				//this.parentElement.replaceChild(this, )
-			}
-			return false;
-		}
-		post.addEventListener('dragover', dover);
-		post.addEventListener('dragenter', dover);
-		post.addEventListener('drop', dover);
-		post.addEventListener('dragend', function(){
-			if (!dragging) {
-				return;
-			}
-			dragging.style.display='flex';
-			var pholders = document.querySelectorAll('div.placeholder');
-			for(var i = 0; i<pholders.length; i++) {
-				pholders[i].parentNode.removeChild(pholders[i]);
-			};
-			dragging = null;
-		});
 
 			// Tag
 			post.appendChild($E({tag: 'div', className: 'tag '+item.status}))
@@ -277,10 +305,6 @@ function historyPost(item) {
 					details.appendChild($E({tag: 'div', text: Number(item.HistoryTime*1000).formatTimeDiff(), className: 'left'}));
 					details.appendChild($E({tag: 'div', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo), className: 'right'}));
 	
-			post.placeholder = $E({tag: 'div', className: 'placeholder'});
-			post.placeholder.addEventListener('dragover', dover);
-			post.placeholder.addEventListener('dragenter', dover);
-			post.placeholder.addEventListener('drop', dover);
 			$('history_container').appendChild(post);
 	}
 
@@ -328,6 +352,7 @@ function downloadPost(item) {
 					progress.appendChild($E({tag: 'div', className: 'bar '+kind, styles: {width: percent+'%'}}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: leftLabel}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: rightLabel}));
+		setupDraggable(post);
 		$('download_container').appendChild(post);
 	}
 
