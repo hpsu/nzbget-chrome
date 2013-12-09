@@ -9,8 +9,7 @@ Google chrome extension to interact with nzbget
 * Adds a content mennu item to links to download link with NZBGet
 * Notification when downloads complete
 * Uses no toolkits or frameworks, just JavasScript, CSS3 and chrome.*-apis
+* Drag-n-drop sorting of download queue
 
 ### TODO / Wishlist
-* Sort posts in download and history list on update.
-* merge info from 'postqueue' API call to see status on postprocessing.
-* Drag-n-drop queue sorting
+* Sort posts in history list on update.
