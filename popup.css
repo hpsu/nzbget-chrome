@@ -6,7 +6,8 @@
 }
 
 body {
-	max-width: 400px;
+	width: 400px;
+	padding: 10px 15px;
 }
 
 @-webkit-keyframes animatedStripes {

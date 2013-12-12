@@ -1,9 +1,9 @@
 /***
-* @TODO: Show postprocessing status. (merge with postqueue)
-* @TODO: Take sort order into consideration when adding new posts to history or groups
+* @TODO: Take sort order into consideration when adding new posts to history
 */
 
-var dragging = null;
+var dragging = null
+	,MAX32 = 4294967296;
 
 /* "Framework" stuff */ 
 function $(o) {
@@ -20,21 +20,32 @@ function $E(params) {
 	return tmp;
 }
 
+/**
+ * BigNumber
+ * Combines two 32-bit integers to a 64-bit Double (may lose data with extreme sizes)
+ */
+function BigNumber(hi,lo) {
+	return Number(hi * MAX32 + lo);
+};
+
+/**
+ * function index() 
+ * Get elements "position" in relation to it's siblings
+ */
 Element.prototype.index = function() {
 	if(!this.parentNode) return -1;
 	return [].indexOf.call(this.parentNode.children, this);
 }
 
-/* Format stuff */ 
-Number.prototype.zeroPad =  function() {
-	return (Number(this) < 10 ? '0' : '') + String(this);
-};
-Number.prototype.formatTimeDiff = function(){ 
-	var date = new Date(this),
-		diff = (((new Date()).getTime() - date.getTime()) / 1000),
+/**
+ * function toHRTimeDiff()
+ * Compares Date object to current Date and outputs human readable time diff
+ */
+Date.prototype.toHRTimeDiff = function(){ 
+	var	diff = (((new Date()).getTime() - this.getTime()) / 1000),
 		day_diff = Math.floor(diff / 86400);
 
-	if ( isNaN(day_diff) || day_diff < 0 || day_diff >= 31 )
+	if (isNaN(day_diff) || day_diff < 0)
 		return;
 
 	return day_diff == 0 && (
@@ -43,68 +54,59 @@ Number.prototype.formatTimeDiff = function(){
 			diff < 3600 && Math.floor( diff / 60 ) + " mins ago" ||
 			diff < 7200 && "1 hour ago" ||
 			diff < 86400 && Math.floor( diff / 3600 ) + " hours ago") ||
-		day_diff == 1 && "Yesterday "+date.getHours().zeroPad()+':'+date.getMinutes().zeroPad() ||
-		Number(this).formatDateTime()
+		day_diff == 1 && "Yesterday "+this.toLocaleTimeString() ||
+		this.toLocaleString()
 };
-Number.prototype.formatTimeLeft = function(){
-	var hms = '';
-	var days = Math.floor(this / 86400);
-	var hours = Math.floor((this % 86400) / 3600);
-	var minutes = Math.floor((this / 60) % 60);
-	var seconds = Math.floor(this % 60);
 
-	if (days > 10) {
+/**
+ * function zeroPad() 
+ * adds a zero before an integer if needed to make it a two characters long string
+ */
+Number.prototype.zeroPad =  function() {
+	return (Number(this) < 10 ? '0' : '') + String(this);
+};
+
+/**
+ * function toHRTimeLeft()
+ * Formats an integer of seconds to a human readable string
+ */
+Number.prototype.toHRTimeLeft = function(){
+	var days = Math.floor(this / 86400);
+	if (days > 10)
 		return days + 'd';
-	}
-	if (days > 0) {	
+
+	var hours = Math.floor((this % 86400) / 3600);
+	if (days > 0)
 		return days + 'd ' + hours + 'h';
-	}
+
+	var minutes = Math.floor((this / 60) % 60);
 	if (hours > 0) {
 		return hours + 'h ' + minutes.zeroPad() + 'm';
 	}
+
+	var seconds = Math.floor(this % 60);
 	if (minutes > 0) {
 		return minutes + 'm ' + seconds.zeroPad() + 's';
 	}
 
 	return seconds + 's';
 };
-Number.prototype.formatDateTime = function(){
-	var x = new Date(this);
-	return x.getFullYear()+'-'+x.getMonth().zeroPad()+'-'+x.getDate().zeroPad()+' '+x.getHours().zeroPad()+':'+x.getMinutes().zeroPad()
-};
 
-function formatSizeMB(sizeMB, sizeLo) {
-	if (sizeLo !== undefined && sizeMB < 100) {
-		sizeMB = sizeLo / 1024 / 1024;
-	}
-
-	if (sizeMB > 10240) {
-		return (sizeMB / 1024.0).toFixed(1) + ' GiB';
-	}
-	else if (sizeMB > 1024) {
-		return (sizeMB / 1024.0).toFixed(2) + ' GiB';
-	}
-	else if (sizeMB > 100) {
-		return sizeMB.toFixed(0) + ' MiB';
-	}
-	else if (sizeMB > 10) {
-		return sizeMB.toFixed(1) + ' MiB';
-	}
-	else {
-		return Number(sizeMB).toFixed(2) + ' MiB';
-	}
-}
-
-function formatBytes(bytes) {
-	var sizes = {1:'KiB', 2:'MiB', 3:'GiB'},
+/**
+ * function formatHRSize()
+ * Formats an integer of seconds to a human readable string
+ */
+Number.prototype.toHRDataSize = function() {
+	var sizes = {1:['KiB',0], 2:['MiB',0], 3:['GiB',2]},
 	output = null;
-
 	Object.keys(sizes).reverse().forEach( function(i) {
-		if(!output && bytes >= Math.pow(1024, i))
-			output = (bytes/Math.pow(1024, i)).toFixed(1) + sizes[i];
-	});
-	return output ? output : bytes + 'b';
-}
+		if(!output && this >= Math.pow(1024, i)) {
+			var nmr = (this/Math.pow(1024, i));
+			output = nmr.toFixed(nmr<100 ? sizes[i][1]: 0) + ' ' +sizes[i][0];
+		}
+	}.bind(this));
+	return output !== null ? output : this + 'B';
+} 
 
 function detectGroupStatus(group) {
 	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
@@ -190,17 +192,17 @@ function onGroupsUpdated(){
 		}
 		
 	}
-
+api.groups[825].FileSizeHi*MAX32+api.groups[825].FileSizeLo
 	// Set "global" labels
 	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
 	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
-	$('lbl_speed').appendChild(document.createTextNode(formatBytes(api.status.DownloadRate) + '/s'));
-	$('lbl_remainingmb').appendChild(document.createTextNode(formatSizeMB(Number(api.status.RemainingSizeMB), Number(api.status.RemainingSizeLo))));
+	$('lbl_speed').appendChild(document.createTextNode(Number(api.status.DownloadRate).toHRDataSize() + '/s'));
+	$('lbl_remainingmb').appendChild(document.createTextNode(BigNumber(api.status.RemainingSizeHi, api.status.RemainingSizeLo).toHRDataSize()));
 }
 
 function onHistoryUpdated(){
 	api.history(function(j){
-		for(var i=0; i<10; i++) {
+		for(var i=0; i<50; i++) {
 			historyPost(j.result[i]);
 		}
 	});
@@ -289,7 +291,7 @@ function historyPost(item) {
 		,update	= post !== null;
 	
 	if(update) {
-		post.querySelector('.left').innerText = Number(item.HistoryTime*1000).formatTimeDiff();
+		post.querySelector('.left').innerText = new Date(item.HistoryTime*1000).toHRTimeDiff();
 	}
 	else {
 		var post = $E({tag: 'div', className: 'post', rel: item.NZBID});
@@ -302,8 +304,8 @@ function historyPost(item) {
 			var info = post.appendChild($E({tag: 'div', className: 'info'}));
 				info.appendChild($E({tag: 'div', text: item.Name, className: 'title'}));
 				var details = info.appendChild($E({tag: 'div', className: 'details'}));
-					details.appendChild($E({tag: 'div', text: Number(item.HistoryTime*1000).formatTimeDiff(), className: 'left'}));
-					details.appendChild($E({tag: 'div', text: formatSizeMB(item.FileSizeMB, item.FileSizeLo), className: 'right'}));
+					details.appendChild($E({tag: 'div', text: new Date(item.HistoryTime*1000).toHRTimeDiff(), className: 'left'}));
+					details.appendChild($E({tag: 'div', text: BigNumber(item.FileSizeHi, item.FileSizeLo).toHRDataSize(), className: 'right'}));
 	
 			$('history_container').appendChild(post);
 	}
@@ -315,13 +317,11 @@ function downloadPost(item) {
 	var totalMB		= item.FileSizeMB-item.PausedSizeMB
 		,remainingMB= item.RemainingSizeMB-item.PausedSizeMB
 		,percent	= Math.round((totalMB - remainingMB) / totalMB * 100)
-		,remaining	= formatSizeMB(remainingMB, item.RemainingSizeLo)
-		,total		= formatSizeMB(item.FileSizeMB, item.FileSizeLo)
-		,estRem		= ((item.RemainingSizeMB-item.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).formatTimeLeft()
+		,estRem		= ((item.RemainingSizeMB-item.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).toHRTimeLeft()
 		,post		= $('download_container').querySelector('[rel="' + item.NZBID + '"]')
 		,update		= post !== null
 		,leftLabel	= item.post ? item.post.ProgressLabel : percent+'%'
-		,rightLabel	= item.post ? '' : formatSizeMB(item.FileSizeMB, item.FileSizeLo);
+		,rightLabel	= item.post ? '' : BigNumber(item.FileSizeHi, item.FileSizeLo).toHRDataSize();
 	item.status = detectGroupStatus(item);
 	if(item.status === 'downloading' || (item.postprocess && !api.status.PostPaused))
 		var kind = 'success';
