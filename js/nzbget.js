@@ -23,16 +23,13 @@
 	 * Setup context menu item(s)
 	 */
 	,loadMenu: function(){
-		chrome.storage.sync.get(function(options) {
-			chrome.contextMenus.removeAll();
+		chrome.contextMenus.removeAll();
 
-			chrome.contextMenus.create({
-				contexts:['link'],
-				id: '-1',
-				title: 'Send to NZBGet',
-				//parentId: parent,
-				onclick: window.ngAPI.addLink
-			});
+		chrome.contextMenus.create({
+			contexts:['link'],
+			id: '-1',
+			title: 'Send to NZBGet',
+			onclick: window.ngAPI.addLink
 		});
 	}
 	/**
