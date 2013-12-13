@@ -60,7 +60,7 @@ Date.prototype.toHRTimeDiff = function(){
 
 /**
  * function zeroPad() 
- * adds a zero before an integer if needed to make it a two characters long string
+ * adds a zero before an integer if needed to make it a string at least two characters wide
  */
 Number.prototype.zeroPad =  function() {
 	return (Number(this) < 10 ? '0' : '') + String(this);
@@ -97,7 +97,7 @@ Number.prototype.toHRTimeLeft = function(){
  * Formats an integer of seconds to a human readable string
  */
 Number.prototype.toHRDataSize = function() {
-	var sizes = {1:['KiB',0], 2:['MiB',0], 3:['GiB',2]},
+	var sizes = {1:['KiB',0], 2:['MiB',1], 3:['GiB',2]},
 	output = null;
 	Object.keys(sizes).reverse().forEach( function(i) {
 		if(!output && this >= Math.pow(1024, i)) {
@@ -124,7 +124,7 @@ function detectGroupStatus(group) {
 	}
 }
 
-function detectStatus(hist) {
+function detectHistoryStatus(hist) {
 	if (hist.Kind === 'NZB') {
 		if (hist.ParStatus == 'FAILURE' || hist.UnpackStatus == 'FAILURE' || hist.MoveStatus == 'FAILURE' || hist.ScriptStatus == 'FAILURE')
 			return 'failure';
@@ -192,7 +192,7 @@ function onGroupsUpdated(){
 		}
 		
 	}
-api.groups[825].FileSizeHi*MAX32+api.groups[825].FileSizeLo
+
 	// Set "global" labels
 	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
 	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
@@ -286,7 +286,7 @@ function setupDraggable(post) {
 }
 
 function historyPost(item) {
-	item.status = detectStatus(item);
+	item.status = detectHistoryStatus(item);
 	var post = $('history_container').querySelector('[rel="' + item.NZBID + '"]')
 		,update	= post !== null;
 	
