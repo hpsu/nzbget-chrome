@@ -108,20 +108,20 @@ Number.prototype.toHRDataSize = function() {
 	return output !== null ? output : this + 'B';
 } 
 
+/**
+ * function detectGroupStatus()
+ * Returns a string representing current download status
+ */
 function detectGroupStatus(group) {
-	group.paused = (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo);
-	if (group.post) {
-		return 'postprocess';
+	switch(true) {
+		case group.post:
+			return 'postprocess';
+		case group.ActiveDownloads > 0:
+			return 'downloading';
+		case (group.PausedSizeLo != 0) && (group.RemainingSizeLo == group.PausedSizeLo):
+			return 'paused';
 	}
-	else if (group.ActiveDownloads > 0) {
-		return 'downloading';
-	}
-	else if (group.paused) {
-		return 'paused';
-	}
-	else {
-		return 'queued';
-	}
+	return 'queued';
 }
 
 function detectHistoryStatus(hist) {

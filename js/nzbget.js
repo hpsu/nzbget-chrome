@@ -125,6 +125,7 @@
 									,null
 									,function() {
 										window.ngAPI.addLink(info, tab);
+										this.close();
 									}
 								);
 							}
@@ -137,6 +138,18 @@
 							,null
 						);
 					}
+				} else {
+					window.ngAPI.notify(
+						'Download failed!'
+						,"Request failed with status: "+xhr.status+"\nClick to try again.\n"+info.linkUrl
+						,'img/broken-arrow.svg'
+						,null
+						,function() {
+							window.ngAPI.addLink(info, tab);
+							this.close();
+						}
+					);
+
 				}
 			}
 		}.bind(this);
