@@ -124,30 +124,33 @@ function detectGroupStatus(group) {
 	return 'queued';
 }
 
+
+/**
+ * function detectHistoryStatus()
+ * Returns a string a history entrys status
+ */
 function detectHistoryStatus(hist) {
 	if (hist.Kind === 'NZB') {
-		if (hist.ParStatus == 'FAILURE' || hist.UnpackStatus == 'FAILURE' || hist.MoveStatus == 'FAILURE' || hist.ScriptStatus == 'FAILURE')
-			return 'failure';
-		else if (hist.ParStatus == 'MANUAL')
-			return 'damaged';
-		else {
-			switch (hist.ScriptStatus) {
-				case 'SUCCESS': return 'success';
-				case 'UNKNOWN': return 'unknown';
-				case 'NONE':
-					switch (hist.UnpackStatus) {
-						case 'SUCCESS': return 'success';
-						case 'NONE':
-							switch (hist.ParStatus) {
-								case 'SUCCESS': return 'success';
-								case 'REPAIR_POSSIBLE': return 'repairable';
-								case 'NONE': return 'unknown';
-							}
-					}
-			}
+		switch(true) {
+			case hist.ParStatus == 'FAILURE': 
+			case hist.UnpackStatus == 'FAILURE': 
+			case hist.MoveStatus == 'FAILURE': 
+			case hist.ScriptStatus == 'FAILURE':
+				return 'failure';
+			case hist.ParStatus == 'MANUAL':
+				return 'damaged';
+			case hist.ScriptStatus == 'UNKNOWN':
+				return 'unknown';
+			case hist.ScriptStatus == 'SUCCESS': 
+			case hist.UnpackStatus == 'SUCCESS':
+			case hist.ParStatus == 'SUCCESS':
+				return 'success';
+			case hist.ParStatus == 'REPAIR_POSSIBLE':
+				return 'repairable';
+			case hist.ParStatus == 'NONE': 
+				return 'unknown';
 		}
-	}
-	else if (hist.Kind === 'URL') {
+	} else if (hist.Kind === 'URL') {
 		switch (hist.UrlStatus) {
 			case 'SUCCESS': return 'success';
 			case 'FAILURE': return 'failure';
