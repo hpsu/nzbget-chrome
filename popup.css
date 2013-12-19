@@ -18,15 +18,15 @@ body {
 /* Infobox styles */
 
 .infobox {
-	overflow: auto;
+	display: flex;
+	width: 100%;
 }
 .infobox img {
-	float: left;
 	cursor: pointer;
 	width:64px;
 }
 dl {
-	float: left;
+	flex: 2;
 	margin-left: 20px;
 }
 dt {
@@ -203,4 +203,73 @@ div.post .title {
 	background:#fcc;
 	border: 0.3rem solid red;
 
+}
+
+.dropdown {
+	font-weight: bold;
+	font-size:1.5em;
+	padding: 7px 3px 0 0;
+	align-self: top;
+}
+.dropdown:hover arrow.down {
+	border-top: 5px solid #999;
+}
+
+div.control {
+	flex: 1;
+	align-self: center;
+	text-align: right;
+}
+
+/* Toggle buttons */
+.toggle:before, .toggle:after, .toggle span:before, .toggle span:after {
+	content: '';
+	position: absolute;
+	top: 50%;
+}
+
+.toggle span:before, .toggle span:after {
+	margin: -8px 0 0;
+}
+
+div.toggle {
+	position:relative;
+	overflow:hidden;
+	padding:0;
+	margin:0;
+	display: inline-block;
+	cursor: pointer;
+}
+.toggle span {
+	display:block;
+	border:0;
+	padding-left:15px;
+	zoom: 3.5;
+}
+
+.toggle.pause span:after {
+	left:3px;
+	width:4px;
+	height:100%;
+	border:3px solid #eee;
+	border-width:0 4px;
+	background:transparent;
+	-webkit-filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+.toggle.resume span:after {
+	left:6px;
+	border:8px solid transparent;
+	border-left-color:#62c462;
+	background:transparent;
+	-webkit-filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.8));
+}
+
+arrow.down {
+	display: block;
+	width: 0; 
+	height: 0; 
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 5px solid #666;
 }

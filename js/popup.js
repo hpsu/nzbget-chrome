@@ -159,6 +159,21 @@ function detectHistoryStatus(hist) {
 	}
 }
 
+function onStatusUpdated(){
+	var downloadPaused = api.status.Download2Paused;
+
+	$('tgl_pause').className = downloadPaused ? 'toggle resume' : 'toggle pause';
+
+	// Set "global" labels
+	if(api.status.DownloadRate)
+		speedLabel = Number(api.status.DownloadRate).toHRDataSize() + '/s';
+	else
+		speedLabel = downloadPaused ? '- PAUSED -' : 'idle';
+
+	$('lbl_speed').innerText = speedLabel;
+	$('lbl_remainingmb').innerText = BigNumber(api.status.RemainingSizeHi, api.status.RemainingSizeLo).toHRDataSize();
+}
+
 function onGroupsUpdated(){
 	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
 
@@ -195,12 +210,6 @@ function onGroupsUpdated(){
 		}
 		
 	}
-
-	// Set "global" labels
-	if($('lbl_speed').hasChildNodes()) $('lbl_speed').removeChild($('lbl_speed').firstChild);
-	if($('lbl_remainingmb').hasChildNodes()) $('lbl_remainingmb').removeChild($('lbl_remainingmb').firstChild);
-	$('lbl_speed').appendChild(document.createTextNode(Number(api.status.DownloadRate).toHRDataSize() + '/s'));
-	$('lbl_remainingmb').appendChild(document.createTextNode(BigNumber(api.status.RemainingSizeHi, api.status.RemainingSizeLo).toHRDataSize()));
 }
 
 function onHistoryUpdated(){
@@ -381,11 +390,22 @@ document.addEventListener('DOMContentLoaded', function() {
 				case 'history':
 					onHistoryUpdated();
 					break;
+				case 'status':
+					onStatusUpdated();
+					break;
 			}
 		}
 	);
 	onGroupsUpdated();
 	onHistoryUpdated();
+	onStatusUpdated();
+	$('tgl_pause').addEventListener('click', function() {
+		method = this.classList.contains('pause') ? 'pausedownload2' : 'resumedownload2';
+		api.sendMessage(method, [], function() {
+			api.updateStatus();
+			api.updateGroups();
+		});
+	});
 	$('logo').addEventListener('click', function() {
 		api.switchToNzbGetTab();
 	});
