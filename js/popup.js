@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					onGroupsUpdated();
 					break;
 				case 'history':
-					onHistoryUpdated();
+					setTimeout(onHistoryUpdated,1500);
 					break;
 				case 'status':
 					onStatusUpdated();
