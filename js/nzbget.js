@@ -3,7 +3,7 @@
  */
  window.ngAPI = {
  	groupTimer: null
- 	,statusTime: null
+ 	,statusTimer: null
  	,groups: {}
  	,connectionStatus: true
  	,isInitialized: false
@@ -302,5 +302,17 @@ document.addEventListener('DOMContentLoaded', function() {
 		if(message === 'optionsUpdated') {
 			ngAPI.initialize();
 		}
+	});
+	chrome.runtime.onConnect.addListener(function(port) {
+		port.onDisconnect.addListener(function(){
+			clearInterval(ngAPI.groupTimer);
+			clearInterval(ngAPI.statusTimer);
+			ngAPI.groupTimer = setInterval(ngAPI.updateGroups.bind(ngAPI), 5000);
+			ngAPI.statusTimer = setInterval(ngAPI.updateStatus.bind(ngAPI), 5000);
+		});
+		clearInterval(ngAPI.groupTimer);
+		clearInterval(ngAPI.statusTimer);
+		ngAPI.groupTimer = setInterval(ngAPI.updateGroups.bind(ngAPI), 500);
+		ngAPI.statusTimer = setInterval(ngAPI.updateStatus.bind(ngAPI), 500);
 	});
 });

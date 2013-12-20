@@ -398,6 +398,7 @@ function downloadPost(item) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+	chrome.runtime.connect();
 	window.api = chrome.extension.getBackgroundPage().ngAPI;
 
 	if(!api.isInitialized || !api.connectionStatus) {
