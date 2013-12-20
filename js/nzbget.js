@@ -94,7 +94,6 @@
 	/**
 	 * Download a file and try to send it to NZBGet
 	 *
-	 * @TODO: Better error notification
 	 * @var info chrome OnClickData-object
 	 * @var tab chrome tabs.Tab-object
 	 */

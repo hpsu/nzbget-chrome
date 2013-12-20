@@ -1,7 +1,3 @@
-/***
-* @TODO: Take sort order into consideration when adding new posts to history
-*/
-
 var dragging = null
 	,MAX32 = 4294967296;
 
@@ -213,11 +209,41 @@ function onGroupsUpdated(){
 }
 
 function onHistoryUpdated(){
+	var history = [];
 	api.history(function(j){
 		for(var i=0; i<50; i++) {
+			history[j.result[i].NZBID] = j.result[i];
+			history[j.result[i].NZBID].sortorder = i;
 			historyPost(j.result[i]);
 		}
 	});
+
+	var i = 0
+		,sortNeeded = false
+		,trElements = $('history_container').querySelectorAll('div.post');
+	for(var k = 0; k<trElements.length; k++) {
+		var id = trElements[k].getAttribute('rel');
+		if(history[id]) {
+			if(i++ != history[id].sortorder) sortNeeded = true;
+		}
+		else {
+			$('history_container').removeChild(trElements[k]);
+		}
+	}
+
+	if(sortNeeded) {
+		order = Object.keys(history).sort(function(a,b) {
+			a = history[a].sortorder;
+			b = history[b].sortorder;
+			if(a < b) return -1;
+			if(a > b) return 1;
+			return 0;
+		});
+		for(i in order) {
+			var el = $('history_container').querySelector('div.post[rel="' + order[i] + '"]');
+			if(el) $('history_container').appendChild($('history_container').removeChild(el));
+		}
+	}
 }
 
 function setupDraggable(post) {
