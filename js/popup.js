@@ -390,11 +390,51 @@ function downloadPost(item) {
 					progress.appendChild($E({tag: 'div', className: 'bar '+kind, styles: {width: percent+'%'}}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: leftLabel}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: rightLabel}));
+
+			var dd = post.appendChild($E({tag: 'div', className: 'dropdown'})).appendChild($E({tag: 'div', 'className': 'down'}));
+			dd.parentNode.addEventListener('click', setupContextMenu);
 		setupDraggable(post);
 		$('download_container').appendChild(post);
 	}
 
 	return post;
+}
+
+function setupContextMenu(e){
+	e.stopPropagation();
+	var ctxm = this.querySelector('div.contextmenu');
+	if(ctxm) {
+		if(getComputedStyle(ctxm).display == 'block')
+			ctxm.style.display = 'none';
+		else
+			ctxm.style.display = 'block';
+
+		pse = ctxm.querySelector('li.pause');
+	}
+	else {
+		this.ctxm = this.appendChild($E({tag: 'div', className: 'contextmenu'}));
+			var ul = this.ctxm.appendChild($E({tag: 'ul'}));
+				var pse = ul.appendChild($E({tag: 'li', className:'pause', text: 'Pause'}));
+				//var del = ul.appendChild($E({tag: 'li', className:'delete', text: 'Delete'}));
+
+		pse.addEventListener('click', function(e){
+			e.stopPropagation();
+			this.style.display='none';
+			var nid = this.parentNode.parentNode.getAttribute('rel')
+				,fileId = api.groups[nid].LastID
+				,status = api.groups[nid].status
+				,method = (status == 'paused' ? 'GroupResume' : 'GroupPause');
+
+			api.sendMessage('editqueue', [method, 0, '', [fileId]], function(res) {
+				//console.log(res);
+			});
+
+		}.bind(this.ctxm));
+		ctxm = this.ctxm;
+	}
+	pse.innerText = api.groups[ctxm.parentNode.parentNode.getAttribute('rel')].status == 'paused' ? 'Resume' : 'Pause';
+
+
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -426,6 +466,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	onGroupsUpdated();
 	onHistoryUpdated();
 	onStatusUpdated();
+	document.body.addEventListener('click', function() {
+		var els = document.querySelectorAll('div.contextmenu');
+		for(var i=0; i<els.length; i++) {
+			els[i].style.display='none';
+		}
+	});
 	$('tgl_pause').addEventListener('click', function() {
 		method = this.classList.contains('pause') ? 'pausedownload2' : 'resumedownload2';
 		api.sendMessage(method, [], function() {
