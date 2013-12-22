@@ -415,7 +415,7 @@ function setupContextMenu(e){
 		this.ctxm = this.appendChild($E({tag: 'div', className: 'contextmenu'}));
 			var ul = this.ctxm.appendChild($E({tag: 'ul'}));
 				var pse = ul.appendChild($E({tag: 'li', className:'pause', text: 'Pause'}));
-				//var del = ul.appendChild($E({tag: 'li', className:'delete', text: 'Delete'}));
+				var del = ul.appendChild($E({tag: 'li', className:'delete', text: 'Delete'}));
 
 		pse.addEventListener('click', function(e){
 			e.stopPropagation();
@@ -425,10 +425,18 @@ function setupContextMenu(e){
 				,status = api.groups[nid].status
 				,method = (status == 'paused' ? 'GroupResume' : 'GroupPause');
 
-			api.sendMessage('editqueue', [method, 0, '', [fileId]], function(res) {
-				//console.log(res);
-			});
+			api.sendMessage('editqueue', [method, 0, '', [fileId]], function(res) {});
 
+		}.bind(this.ctxm));
+		del.addEventListener('click', function(e){
+			e.stopPropagation();
+			this.style.display='none';
+			var nid = this.parentNode.parentNode.getAttribute('rel')
+				,fileId = api.groups[nid].LastID
+				,status = api.groups[nid].status;
+			if(confirm('Are you sure?')) {
+				api.sendMessage('editqueue', ['GroupDelete', 0, '', [fileId]], function(res) {});
+			}
 		}.bind(this.ctxm));
 		ctxm = this.ctxm;
 	}
