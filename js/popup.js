@@ -93,7 +93,7 @@ Number.prototype.toHRTimeLeft = function(){
  * Formats an integer of seconds to a human readable string
  */
 Number.prototype.toHRDataSize = function() {
-	var sizes = {1:['KiB',0], 2:['MiB',1], 3:['GiB',2]},
+	var sizes = {1:['KiB',0], 2:['MiB',1], 3:['GiB',2], 4:['TiB',2]},
 	output = null;
 	Object.keys(sizes).reverse().forEach( function(i) {
 		if(!output && this >= Math.pow(1024, i)) {
@@ -155,6 +155,10 @@ function detectHistoryStatus(hist) {
 	}
 }
 
+/**
+ * function onStatusUpdated()
+ * Triggered whenever status is updated from server. Sets speed, remaining and diskspace labels and resets pause/resume button
+ */
 function onStatusUpdated(){
 	var downloadPaused = api.status.Download2Paused;
 
@@ -166,8 +170,11 @@ function onStatusUpdated(){
 	else
 		speedLabel = downloadPaused ? '- PAUSED -' : 'idle';
 
+	var remainingLbl = BigNumber(api.status.RemainingSizeHi, api.status.RemainingSizeLo);
+
 	$('lbl_speed').innerText = speedLabel;
-	$('lbl_remainingmb').innerText = BigNumber(api.status.RemainingSizeHi, api.status.RemainingSizeLo).toHRDataSize();
+	$('lbl_remainingmb').innerText = remainingLbl == 0 ? 'nothing' : remainingLbl.toHRDataSize();
+	$('lbl_remainingdisk').innerText = BigNumber(api.status.FreeDiskSpaceHi, api.status.FreeDiskSpaceLo).toHRDataSize();
 }
 
 function onGroupsUpdated(){

@@ -35,9 +35,12 @@ dt {
 	clear: both;
 }
 dd {
+	width: 100px;
 	float: left;
 	display: block;
 	-webkit-margin-start: 0;
+	text-align: right;
+	font-weight: bold;
 }
 
 /* Post styles */
