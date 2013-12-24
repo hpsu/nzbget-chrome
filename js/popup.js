@@ -156,8 +156,44 @@ function detectHistoryStatus(hist) {
 }
 
 /**
- * function onStatusUpdated()
- * Triggered whenever status is updated from server. Sets speed, remaining and diskspace labels and resets pause/resume button
+ * function cleanupList() - Remove unneeded elements and resort the list if needed
+ * 
+ * @var Array dataObj Array of objects containing at least sortorder
+ * @var Element contEl container element for the list
+ */
+function cleanupList(dataObj, contEl) {
+	var i = 0
+		,sortNeeded = false
+		,trElements = contEl.querySelectorAll('div.post');
+	for(var k = 0; k<trElements.length; k++) {
+		var id = trElements[k].getAttribute('rel');
+		if(dataObj[id]) {
+			if(i++ != dataObj[id].sortorder) sortNeeded = true;
+		}
+		else {
+			contEl.removeChild(trElements[k]);
+		}
+	}
+
+	if(sortNeeded) {
+		order = Object.keys(dataObj).sort(function(a,b) {
+			a = dataObj[a].sortorder;
+			b = dataObj[b].sortorder;
+			if(a < b) return -1;
+			if(a > b) return 1;
+			return 0;
+		});
+		for(i in order) {
+			var el = contEl.querySelector('div.post[rel="' + order[i] + '"]');
+			if(el) contEl.appendChild(contEl.removeChild(el));
+		}
+		
+	}
+}
+
+/**
+ * function onStatusUpdated() - Triggered whenever status is updated from server.  
+ * Sets speed, remaining and diskspace labels and resets pause/resume button.
  */
 function onStatusUpdated(){
 	var downloadPaused = api.status.Download2Paused;
@@ -177,6 +213,9 @@ function onStatusUpdated(){
 	$('lbl_remainingdisk').innerText = BigNumber(api.status.FreeDiskSpaceHi, api.status.FreeDiskSpaceLo).toHRDataSize();
 }
 
+/**
+ * function onGroupsUpdated() - Triggered when groups are updated from server. 
+ */
 function onGroupsUpdated(){
 	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
 
@@ -185,36 +224,12 @@ function onGroupsUpdated(){
 		downloadPost(api.groups[k]);
 	};
 
-	// Remove completed downloads from "Active downloads" and check if sorting is needed
-	var i = 0
-		,sortNeeded = false
-		,trElements = $('download_container').querySelectorAll('div.post');
-	for(var k = 0; k<trElements.length; k++) {
-		var id = trElements[k].getAttribute('rel');
-		if(api.groups[id]) {
-			if(i++ != api.groups[id].sortorder) sortNeeded = true;
-		}
-		else {
-			$('download_container').removeChild(trElements[k]);
-		}
-	}
-
-	if(sortNeeded) {
-		order = Object.keys(api.groups).sort(function(a,b) {
-			a = api.groups[a].sortorder;
-			b = api.groups[b].sortorder;
-			if(a < b) return -1;
-			if(a > b) return 1;
-			return 0;
-		});
-		for(i in order) {
-			var el = $('download_container').querySelector('div.post[rel="' + order[i] + '"]');
-			if(el) $('download_container').appendChild($('download_container').removeChild(el));
-		}
-		
-	}
+	cleanupList(api.groups, $('download_container'));
 }
 
+/**
+ * function onHistoryUpdated() - Triggered when history is updated from server. 
+ */
 function onHistoryUpdated(){
 	var history = [];
 	api.history(function(j){
@@ -225,32 +240,7 @@ function onHistoryUpdated(){
 		}
 	});
 
-	var i = 0
-		,sortNeeded = false
-		,trElements = $('history_container').querySelectorAll('div.post');
-	for(var k = 0; k<trElements.length; k++) {
-		var id = trElements[k].getAttribute('rel');
-		if(history[id]) {
-			if(i++ != history[id].sortorder) sortNeeded = true;
-		}
-		else {
-			$('history_container').removeChild(trElements[k]);
-		}
-	}
-
-	if(sortNeeded) {
-		order = Object.keys(history).sort(function(a,b) {
-			a = history[a].sortorder;
-			b = history[b].sortorder;
-			if(a < b) return -1;
-			if(a > b) return 1;
-			return 0;
-		});
-		for(i in order) {
-			var el = $('history_container').querySelector('div.post[rel="' + order[i] + '"]');
-			if(el) $('history_container').appendChild($('history_container').removeChild(el));
-		}
-	}
+	cleanupList(history, $('history_container'));
 }
 
 function setupDraggable(post) {
