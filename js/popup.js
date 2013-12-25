@@ -243,6 +243,10 @@ function onHistoryUpdated(){
 	cleanupList(history, $('history_container'));
 }
 
+/**
+ * function setupDraggable() - Setup drag'n'drop on an element with all associated event handlers
+ * also adds a placeholder element that gets moved around while dragging
+ */
 function setupDraggable(post) {
 	post.setAttribute('draggable', true);
 	post.placeholder = $E({tag: 'div', className: 'placeholder'});
@@ -319,7 +323,9 @@ function setupDraggable(post) {
 	post.placeholder.addEventListener('drop', drop);
 
 }
-
+/**
+ * Add or update a history entry
+ */
 function historyPost(item) {
 	item.status = detectHistoryStatus(item);
 	var post = $('history_container').querySelector('[rel="' + item.NZBID + '"]')
@@ -348,6 +354,9 @@ function historyPost(item) {
 	return post;
 }
 
+/**
+ * Add or update a download entry
+ */
 function downloadPost(item) {
 	var totalMB		= item.FileSizeMB-item.PausedSizeMB
 		,remainingMB= item.RemainingSizeMB-item.PausedSizeMB
@@ -438,8 +447,6 @@ function setupContextMenu(e){
 		ctxm = this.ctxm;
 	}
 	pse.innerText = api.groups[ctxm.parentNode.parentNode.getAttribute('rel')].status == 'paused' ? 'Resume' : 'Pause';
-
-
 }
 
 document.addEventListener('DOMContentLoaded', function() {
