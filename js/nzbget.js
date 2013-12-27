@@ -276,7 +276,13 @@
 	 * Option abstraction object. Handles everyting option related.
 	 */
 	,Options: {
-		load: function() {
+		defaults: {
+			opt_port: 6789
+			,opt_username: 'nzbget'
+			,opt_password: 'tegbzn6789'
+			,opt_historyitems: 30
+		}
+		,load: function() {
 			Array.each($$('input[type=text],input[type=password]'), function(o){
 				o.value = this.get(o.id);
 			},this);
@@ -287,7 +293,14 @@
 			},this);
 		}
 		,get: function(opt) {
-			return typeof localStorage[opt] != 'undefined' ? localStorage[opt] : '';
+			switch(true) {
+				case typeof localStorage[opt] != 'undefined':
+					return localStorage[opt];
+				case typeof this.defaults[opt] != 'undefined':
+					return this.defaults[opt];
+				default:
+					return '';
+			}
 		}
 		,set: function(opt, value) {
 			localStorage[opt] = value;

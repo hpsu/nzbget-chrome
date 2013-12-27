@@ -233,7 +233,7 @@ function onGroupsUpdated(){
 function onHistoryUpdated(){
 	var history = [];
 	api.history(function(j){
-		for(var i=0; i<50; i++) {
+		for(var i=0; i<api.Options.get('opt_historyitems'); i++) {
 			history[j.result[i].NZBID] = j.result[i];
 			history[j.result[i].NZBID].sortorder = i;
 			historyPost(j.result[i]);
