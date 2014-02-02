@@ -110,7 +110,7 @@ Number.prototype.toHRDataSize = function() {
  */
 function detectGroupStatus(group) {
 	switch(true) {
-		case group.post:
+		case typeof group.post != 'undefined':
 			return 'postprocess';
 		case group.ActiveDownloads > 0:
 			return 'downloading';
