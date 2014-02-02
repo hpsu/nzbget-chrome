@@ -163,7 +163,7 @@
 		,port = this.Options.get('opt_port')
 		,username = this.Options.get('opt_username')
 		,password = this.Options.get('opt_password');
-		chrome.tabs.query({url: 'http://' + url + '/*'}, function(tabs) {
+		chrome.tabs.query({url: 'http://' + url + ':' + port + '/*'}, function(tabs) {
 			if(tabs.length) {
 				chrome.tabs.update(tabs[0].id, {selected: true});
 			} else {
