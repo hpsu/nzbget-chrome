@@ -12,8 +12,7 @@ Google chrome extension to interact with nzbget
 * Drag-n-drop sorting of download queue
 * Flow control (pause, resume, delete) on individual items or whole queue.
 
-###
-Installation instructions
+### Installation instructions
 1. Download a release or checkout repo with git
 2. Open chrome://extensions/ in Chrome / Chromium
 3. Make sure the "Developer mode" checkbox is checked.
