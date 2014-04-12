@@ -8,11 +8,16 @@ Google chrome extension to interact with nzbget
 * Browser action icons badge indicating number of current active downloads
 * Adds a context menu item to links to download with NZBGet
 * Notification when downloads complete
-* Uses no toolkits or frameworks, just JavasScript, CSS3 and chrome.*-apis
+* Uses no toolkits or frameworks, just Javascript, CSS3 and chrome.*-apis
 * Drag-n-drop sorting of download queue
 * Flow control (pause, resume, delete) on individual items or whole queue.
 
-### Installation instructions
+### Installation from chrome webstore
+https://chrome.google.com/webstore/detail/nzbget-chrome/pbhceneiekgjjeblaghpkdkaomlloghm
+
+### Installation instructions (as unpacked extension)
+*Note: Newer versions of chrome for windows will show a yellow icon backgorund for unpacked extensions*
+
 1. Download a release or checkout repo with git
 2. Open chrome://extensions/ in Chrome / Chromium
 3. Make sure the "Developer mode" checkbox is checked.
