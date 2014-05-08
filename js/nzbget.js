@@ -69,7 +69,6 @@
 			}
 		}.bind(this);
 		xhr.open('POST', protocol + '://' + url + ':' + port + '/jsonrpc', typeof succes_func === 'function');
-		console.log("test");
 		xhr.setRequestHeader('Content-Type','text/json');
 		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
 		try {
@@ -105,7 +104,7 @@
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
-					if(xhr.getResponseHeader('Content-Type') === "application/x-nzb") {
+					if(xhr.getResponseHeader('Content-Type').indexOf("application/x-nzb") > -1)  {
 						/* Replace NZB file name with the one specified in response header if available. */
 						var disposition = xhr.getResponseHeader('Content-Disposition');
 						if(disposition) {
