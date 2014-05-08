@@ -9,12 +9,22 @@
 	<fieldset>
 		<img src="img/nzbget-icon.svg">
 		<div class="wrap">
-			<label for="opt_host">Host:</label><input type="text" id="opt_host">
-			<label for="opt_port">Port:</label><input type="text" id="opt_port">
-			<label for="opt_username">Username:</label><input type="text" id="opt_username">
-			<label for="opt_password">Password:</label><input type="password" id="opt_password">
+			<label for="opt_host">Host:</label>
+			<input type="text" id="opt_host">
+			<label for="opt_port">Port:</label>
+			<input type="text" id="opt_port">
+			<label for="opt_protocol">Protocol:</label>
+			<select id="opt_protocol">
+				<option value="http">HTTP</option>
+				<option value="https">HTTPS</option>
+			</select>
+			<label for="opt_username">Username:</label>
+			<input type="text" id="opt_username">
+			<label for="opt_password">Password:</label>
+			<input type="password" id="opt_password">
 			<hr>
-			<label for="opt_historyitems">History items:</label><input size="4" class="small" type="text" id="opt_historyitems" title="Number of history items to show in popup">
+			<label for="opt_historyitems">History items:</label>
+			<input size="4" class="small" type="text" id="opt_historyitems" title="Number of history items to show in popup">
 			<div id="btn_grp">
 				<input type="button" id="btn_test" value="Test connection">
 				<input type="button" id="btn_save" value="Save">

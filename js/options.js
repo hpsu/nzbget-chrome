@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
-	var inputs = document.body.querySelectorAll('input[type=text],input[type=password]')
+	var inputs = document.body.querySelectorAll('input[type=text],input[type=password],select')
 
 	for(var i in inputs) {
 		inputs[i].value = opts.get(inputs[i].id);
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			opts.set(inputs[i].id, inputs[i].value);
 		}
 		chrome.runtime.sendMessage('optionsUpdated');
+
 	});
 
 	$('btn_test').addEventListener('click', function(){
