@@ -11,15 +11,23 @@
 	},
 	"manifest_version": 2,
 	"web_accessible_resources": [
-		"img/nzbget-icon.svg"
+		"img/icon16.png"
+		,"img/nzbget-icon.svg"
 		,"img/broken-arrow.svg"
 	],
 	"name": "nzbget-chrome",
 	"options_page": "options.html",
-	"permissions": [ "*://*/", "contextMenus", "tabs", "notifications", "storage" ],
+	"permissions": [ "*://*/", "contextMenus", "tabs", "notifications", "storage", "background" ],
 	"version": "1.1",
 	"browser_action": {
 		"default_icon": "img/icon38.png",
 		"default_popup": "popup.html"
-	}
+	},
+	"content_scripts": [ 
+		{
+			"matches": [ "*://*.feedly.com/*" ]
+			,"js": [ "sites/common.js", "sites/feedly.js" ]
+			,"css": [ "sites/common.css", "sites/feedly.css" ]
+		}
+	]
 }

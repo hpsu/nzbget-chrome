@@ -92,14 +92,8 @@
 			this.connectionStatus = false;
 		}
 	}
-	/**
-	 * Download a file and try to send it to NZBGet
-	 *
-	 * @var info chrome OnClickData-object
-	 * @var tab chrome tabs.Tab-object
-	 */
-	,addLink: function(info, tab) {
-		var nzbFileName = info.linkUrl.match(/\/([^\/]+)$/)[1];
+	,addURL: function(url, tab, ident) {
+		var nzbFileName = url.match(/\/([^\/]+)$/)[1];
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState == 4) {
@@ -116,24 +110,37 @@
 						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", '', 0, false, window.btoa(xhr.responseText)],
 							function() {
 								window.ngAPI.updateGroups();
+								if(tab) {
+									chrome.tabs.sendMessage(
+										tab
+										,{message: 'addedurl', url: url, status: true, id: ident}
+									);
+								}
+
 							},
 							function() {
 								window.ngAPI.notify(
 									'Error occured!'
-									,"Could not download link. Click to try again\n"+info.linkUrl
+									,"Could not download link. Click to try again\n"+url
 									,'img/broken-arrow.svg'
 									,null
 									,function() {
-										window.ngAPI.addLink(info, tab);
+										window.ngAPI.addURL(url, tab);
 										this.close();
 									}
 								);
+								if(tab) {
+									chrome.tabs.sendMessage(
+										tab
+										,{message: 'addedurl', url: url, status: false, id: ident}
+									);
+								}
 							}
 						);
 					} else {
 						window.ngAPI.notify(
 							'Not an NZB-file!?'
-							,"Link does not appear to be valid.\n"+info.linkUrl
+							,"Link does not appear to be valid.\n"+url
 							,'img/broken-arrow.svg'
 							,null
 						);
@@ -141,11 +148,11 @@
 				} else {
 					window.ngAPI.notify(
 						'Download failed!'
-						,"Request failed with status: "+xhr.status+"\nClick to try again.\n"+info.linkUrl
+						,"Request failed with status: "+xhr.status+"\nClick to try again.\n"+url
 						,'img/broken-arrow.svg'
 						,null
 						,function() {
-							window.ngAPI.addLink(info, tab);
+							window.ngAPI.addURL(url, tab);
 							this.close();
 						}
 					);
@@ -153,8 +160,18 @@
 				}
 			}
 		}.bind(this);
-		xhr.open('POST', info.linkUrl);
+		xhr.open('POST', url);
 		xhr.send();
+	}
+
+	/**
+	 * Download a file and try to send it to NZBGet
+	 *
+	 * @var info chrome OnClickData-object
+	 * @var tab chrome tabs.Tab-object
+	 */
+	,addLink: function(info, tab) {
+		window.ngAPI.addURL(info.linkUrl, tab);
 	}
 	/**
 	 * Locate existing NZBGet-tab or open a new one
@@ -314,9 +331,11 @@
 document.addEventListener('DOMContentLoaded', function() {
 	ngAPI.initialize();
 	
-	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-		if(message === 'optionsUpdated') {
+	chrome.runtime.onMessage.addListener(function(m, sender, sendResponse) {
+		if(m.message === 'optionsUpdated') {
 			ngAPI.initialize();
+		} else if(m.message === 'addURL') {
+			ngAPI.addURL(m.href, sender.tab.id, m.id);
 		}
 	});
 	chrome.runtime.onConnect.addListener(function(port) {
@@ -330,5 +349,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		clearInterval(ngAPI.statusTimer);
 		ngAPI.groupTimer = setInterval(ngAPI.updateGroups.bind(ngAPI), 500);
 		ngAPI.statusTimer = setInterval(ngAPI.updateStatus.bind(ngAPI), 500);
+	});
+
+	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
+		if (changeInfo.status == 'complete') {
+			chrome.tabs.executeScript(tabId, {
+    			code: "var e = document.querySelector('#browsetable div.icon_nzb a,table#detailstable a[href*=\"/getnzb\"]'); if(e) {e.href;}"
+				}, function(r) {
+					if(r && r[0] !== null) {
+						chrome.tabs.executeScript(tabId, {file: 'sites/common.js'});
+						chrome.tabs.executeScript(tabId, {file: 'sites/newsnab.js'});
+						chrome.tabs.insertCSS(tabId, {file: 'sites/common.css'});
+    				}
+			});
+		}
 	});
 });
