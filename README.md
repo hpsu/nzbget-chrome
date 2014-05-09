@@ -11,6 +11,7 @@ Google chrome extension to interact with nzbget
 * Uses no toolkits or frameworks, just Javascript, CSS3 and chrome.*-apis
 * Drag-n-drop sorting of download queue
 * Flow control (pause, resume, delete) on individual items or whole queue.
+* One click site intergarion on newznab sites and feedly.com
 
 ### Installation from chrome webstore
 https://chrome.google.com/webstore/detail/nzbget-chrome/pbhceneiekgjjeblaghpkdkaomlloghm
