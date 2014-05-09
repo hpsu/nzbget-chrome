@@ -45,6 +45,7 @@
 		,port = this.Options.get('opt_port')
 		,username = this.Options.get('opt_username')
 		,password = this.Options.get('opt_password')
+		,protocol = this.Options.get('opt_protocol')
 		,query = {
 			version: '1.1'
 			,method: method
@@ -67,7 +68,7 @@
 				}
 			}
 		}.bind(this);
-		xhr.open('POST', 'http://' + url + ':' + port + '/jsonrpc', typeof succes_func === 'function');
+		xhr.open('POST', protocol + '://' + url + ':' + port + '/jsonrpc', typeof succes_func === 'function');
 		xhr.setRequestHeader('Content-Type','text/json');
 		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
 		try {
@@ -103,7 +104,7 @@
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
-					if(xhr.getResponseHeader('Content-Type') === "application/x-nzb") {
+					if(xhr.getResponseHeader('Content-Type').indexOf("application/x-nzb") > -1)  {
 						/* Replace NZB file name with the one specified in response header if available. */
 						var disposition = xhr.getResponseHeader('Content-Disposition');
 						if(disposition) {
@@ -162,12 +163,13 @@
 		var url = this.Options.get('opt_host')
 		,port = this.Options.get('opt_port')
 		,username = this.Options.get('opt_username')
-		,password = this.Options.get('opt_password');
-		chrome.tabs.query({url: 'http://' + url + ':' + port + '/*'}, function(tabs) {
+		,password = this.Options.get('opt_password')
+		,protocol = this.Options.get('opt_protocol');
+		chrome.tabs.query({url: protocol + '://' + url + ':' + port + '/*'}, function(tabs) {
 			if(tabs.length) {
 				chrome.tabs.update(tabs[0].id, {selected: true});
 			} else {
-				chrome.tabs.create({url: 'http://' + username + ':' + password + '@' + url + ":" + port});
+				chrome.tabs.create({url: protocol + '://' + username + ':' + password + '@' + url + ":" + port});
 			}
 		});
 	}
@@ -281,14 +283,15 @@
 			,opt_username: 'nzbget'
 			,opt_password: 'tegbzn6789'
 			,opt_historyitems: 30
+			,opt_protocol: 'http'
 		}
 		,load: function() {
-			Array.each($$('input[type=text],input[type=password]'), function(o){
+			Array.each($$('input[type=text],input[type=password],select'), function(o){
 				o.value = this.get(o.id);
 			},this);
 		}
 		,save: function() {
-			Array.each($$('input[type=text],input[type=password]'), function(o){
+			Array.each($$('input[type=text],input[type=password],select'), function(o){
 				localStorage[o.id] = o.value;
 			},this);
 		}
