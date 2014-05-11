@@ -93,12 +93,14 @@
 		}
 	}
 	,addURL: function(url, tab, ident) {
+		var category = '';
 		var nzbFileName = url.match(/\/([^\/]+)$/)[1];
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
 					if(xhr.getResponseHeader('Content-Type').indexOf("application/x-nzb") > -1)  {
+						if(xhr.getResponseHeader('X-DNZB-Category')) category = xhr.getResponseHeader('X-DNZB-Category');
 						/* Replace NZB file name with the one specified in response header if available. */
 						var disposition = xhr.getResponseHeader('Content-Disposition');
 						if(disposition) {
@@ -107,7 +109,7 @@
 								nzbFileName = match.replace('.nzb','');
 							}
 						}
-						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", '', 0, false, window.btoa(xhr.responseText)],
+						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", category, 0, false, window.btoa(xhr.responseText)],
 							function() {
 								window.ngAPI.updateGroups();
 								if(tab) {
