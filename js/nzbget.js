@@ -222,6 +222,11 @@
 		this.sendMessage('status', {}, function(j){
 			this.status = j.result;
 			chrome.runtime.sendMessage({statusUpdated: 'status'});
+			if(this.status.Download2Paused == true || this.status.DownloadPaused == true) {
+				chrome.browserAction.setBadgeBackgroundColor({color: '#f09229'});
+			} else {
+				chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
+			}
 		}.bind(this));
 	}
 	,updatePostQueue: function(j) {
@@ -264,7 +269,6 @@
 					chrome.runtime.sendMessage({statusUpdated: 'history'});
 				}
 			}
-			chrome.browserAction.setBadgeBackgroundColor({color: '#468847'});
 			chrome.browserAction.setBadgeText({text: j.result.length ? j.result.length.toString() : ''});
 			chrome.runtime.sendMessage({statusUpdated: 'groups'});
 		}).bind(this));
@@ -284,7 +288,7 @@
 
 		chrome.browserAction.setBadgeText({text: ''});
 
-		this.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0};
+		this.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0, Download2Paused: false, DownloadPaused: false};
 		this.updateGroups();
 		this.updateStatus();
 		this.loadMenu();
