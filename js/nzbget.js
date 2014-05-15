@@ -277,7 +277,7 @@
 	,initialize: function(){
 		console.log('initialize');
 		if(this.groupTimer) clearInterval(this.groupTimer);
-		if(this.statusTimer) clearInterval(this.groupTimer);
+		if(this.statusTimer) clearInterval(this.statusTimer);
 		if(ngAPI.Options.get('opt_host').length === 0) {
 			return this.isInitialized = false;
 		}
