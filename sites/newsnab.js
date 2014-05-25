@@ -2,7 +2,7 @@
  * Run when a site matching newznab-markup is found
  */
 
-dllinks = document.querySelectorAll('div.icon_nzb a');
+dllinks = document.querySelectorAll('div.icon_nzb a[href*=\"/getnzb\"]');
 for(var i=0; i < dllinks.length; i++) { 
 	var dlitem = dllinks.item(i);
 	var category = '', lid = '';

@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
 		if (changeInfo.status == 'complete') {
 			chrome.tabs.executeScript(tabId, {
-    			code: "var e = document.querySelector('#browsetable div.icon_nzb a,table#detailstable a[href*=\"/getnzb\"]'); if(e) {e.href;}"
+    			code: "var e = document.querySelector('div.icon_nzb a[href*=\"/getnzb\"]'); if(e) {e.href;}"
 				}, function(r) {
 					if(r && r[0] !== null) {
 						chrome.tabs.executeScript(tabId, {file: 'sites/common.js'});
