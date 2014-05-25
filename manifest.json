@@ -28,6 +28,10 @@
 			"matches": [ "*://*.feedly.com/*" ]
 			,"js": [ "sites/common.js", "sites/feedly.js" ]
 			,"css": [ "sites/common.css", "sites/feedly.css" ]
+		},{
+			"matches": [ "*://*.nzbclub.com/*" ]
+			,"js": [ "sites/common.js", "sites/nzbclub.js" ]
+			,"css": [ "sites/common.css" ]
 		}
 	]
 }
