@@ -9,7 +9,7 @@ for(var i=0; i < dllinks.length; i++) {
 	
 	newdiv = document.createElement('span');
 	newdiv.className = 'icon_nzbget';
-	newdiv.style.padding = '0 10px';
+	newdiv.style.padding = '0 5px';
 	var trParent = findParentOfType(dlitem, 'TR');
 	if(trParent && trParent.id) lid = trParent.id;
 

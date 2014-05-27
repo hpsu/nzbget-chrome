@@ -45,6 +45,23 @@ dd {
 
 /* Post styles */
 
+span.health-warning {
+	position: absolute;
+	right: 0;
+	padding: 1px 3px;
+	font-size: 10px;
+	border-radius: 5px;
+	background: #f89406;
+	color: white;
+	text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4), 1px -1px 0 rgba(0, 0, 0, 0.4), -1px 1px 0 rgba(0, 0, 0, 0.4), 1px 1px 0 rgba(0, 0, 0, 0.4);
+	font-weight: bold;
+}
+
+span.health-warning.critical {
+	background: #b94a48;
+}
+
+
 div.post {
 	display: flex;
 	border-radius: 5px;
@@ -71,6 +88,7 @@ div.post .tag {
 
 div.post .info {
 	flex: 1;
+	position: relative;
 }
 
 div.post .tag:hover  {

@@ -355,6 +355,25 @@ function historyPost(item) {
 }
 
 /**
+ * Health warning badge
+ */
+function hwBadge(item, post) {
+	if(item.Health < 1000 && (!item.postprocess || (item.status === 'pp-queued' && item.post.TotalTimeSec === 0))) {
+		var hwBadge = post.querySelector('span.health-warning')
+			,hwClass = 'health-warning'+(item.Health < item.CriticalHealth ? ' critical' : '')
+			,hwLbl = 'health: ' + Math.floor(item.Health / 10)+'%';
+
+		if(hwBadge) {
+			hwBadge.className = hwClass;
+			hwBadge.innerText = hwLbl;
+		} else {
+			var h = $E({tag:'span', className: hwClass, text: hwLbl});
+			post.querySelector('.title').appendChild(h);
+		}
+	}
+}
+
+/**
  * Add or update a download entry
  */
 function downloadPost(item) {
@@ -367,6 +386,7 @@ function downloadPost(item) {
 		,leftLabel	= item.post ? item.post.ProgressLabel : percent+'%'
 		,rightLabel	= item.post ? '' : BigNumber(item.FileSizeHi, item.FileSizeLo).toHRDataSize();
 	item.status = detectGroupStatus(item);
+
 	if(item.status === 'downloading' || (item.postprocess && !api.status.PostPaused))
 		var kind = 'success';
 	else if(item.status === 'paused' || (item.postprocess && api.status.PostPaused))
@@ -399,9 +419,12 @@ function downloadPost(item) {
 
 			var dd = post.appendChild($E({tag: 'div', className: 'dropdown'})).appendChild($E({tag: 'div', 'className': 'down'}));
 			dd.parentNode.addEventListener('click', setupContextMenu);
+
 		setupDraggable(post);
 		$('download_container').appendChild(post);
 	}
+
+	hwBadge(item, post);
 
 	return post;
 }
