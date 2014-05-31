@@ -24,23 +24,29 @@ body {
 .infobox img {
 	cursor: pointer;
 	width:64px;
+	height: 64px;
+	padding: 6px 0;
 }
 dl {
 	flex: 2;
-	margin-left: 20px;
+	margin: 13px 20px;
 }
 dt {
-	width: 100px;
 	float: left; 
 	clear: both;
 }
 dd {
-	width: 100px;
-	float: left;
-	display: block;
-	-webkit-margin-start: 0;
 	text-align: right;
 	font-weight: bold;
+}
+
+#history_table h2, #download_table h2 {
+	font-style: italic;
+	letter-spacing: 2px;
+	color: #333;
+	font-weight: normal;
+	font-family: Georgia, Times;
+	font-size: 15px;
 }
 
 /* Post styles */
@@ -227,7 +233,7 @@ div.post .title {
 }
 
 div.control {
-	flex: 1;
+	width: 66px;
 	align-self: center;
 	text-align: right;
 }
