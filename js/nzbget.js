@@ -200,7 +200,7 @@
 	 */
 	,notify: function(header, message, icon, timeout, onclick) {
 		if(typeof timeout === 'undefined') timeout = 5000;
-		if(typeof icon === 'undefined') icon = 'img/nzbget-icon.svg';
+		if(typeof icon === 'undefined') icon = 'img/icon48.webp';
 		if(typeof onclick === 'undefined') onclick = function() {
 			window.ngAPI.switchToNzbGetTab();
 		};
