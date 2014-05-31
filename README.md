@@ -3,6 +3,20 @@
 
 Google chrome extension to interact with nzbget
 
+### Version history
+#### 1.1
+* Protocol selector (Thanks dakky)
+* Less strict nzb header check (Thanks dakky)
+* One-click site integration for newznab, feedly and nzbclub
+* Provides category to NZBGet if available
+* Show paused state on badge label color (Thanks pdf)
+* Show nzb health in popup on low quality nzbs
+* Use webp-icon in notifications, since rich notifications lost support for SVG
+* Additional polish and bugfixes
+
+#### 1.0
+* Initial release
+
 ### Current main features
 * Browser action popup that displays active downloads, history and stats
 * Browser action icons badge indicating number of current active downloads
