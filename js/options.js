@@ -30,4 +30,22 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('connection_test').innerText = 'Connection failed! '+reason;
 		});
 	});
+
+	// Parse text in host field and try to place URI-parts in their right form fields.
+	$('opt_host').addEventListener('blur', function() {
+		var prot = this.value.match(/^([a-z]+):\/\//);
+
+		if(prot) {
+			var a = document.createElement('a');
+			a.href = this.value;
+			this.value = this.value.replace(/^[a-z]+:\/\//,'');
+			if(prot[1] == 'http' || prot[1] == 'https') {
+				$('opt_protocol').value = prot[1];
+			}
+			if(a.hostname) $('opt_host').value = a.hostname;
+			if(a.port) $('opt_port').value = a.port;
+			if(a.username) $('opt_username').value = a.username;
+			if(a.password) $('opt_password').value = a.password;
+		}
+	});
 });
