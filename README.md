@@ -4,6 +4,9 @@
 Google chrome extension to interact with nzbget
 
 ### Version history
+#### 1.2
+* Better handling of connection failures.
+
 #### 1.1
 * Protocol selector (Thanks dakky)
 * Less strict nzb header check (Thanks dakky)
