@@ -53,22 +53,32 @@
 		};
 
 		var xhr = new XMLHttpRequest();
+		xhr.timeout = 5000;
+		xhr.ontimeout = function(){
+			this.setSuccess(false);
+			if(typeof fail_func === 'function'){
+				fail_func('Timed out after 5 secs.');
+			}
+		}.bind(this);
+
 		xhr.onreadystatechange = function(r){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
 					this.setSuccess(true);
 					if(typeof success_func === 'function') {
-						success_func(JSON.parse(r.target.responseText));
+						success_func(r.target.responseText ? JSON.parse(r.target.responseText) : '');
 					}
 				} else {
 					this.setSuccess(false);
 					if(typeof fail_func === 'function'){
-						fail_func(JSON.parse(r.target.responseText));
+						fail_func(r.target.responseText ? JSON.parse(r.target.responseText) : '');
 					}
 				}
 			}
 		}.bind(this);
-		xhr.open('POST', protocol + '://' + url + ':' + port + '/jsonrpc', typeof succes_func === 'function');
+
+		xhr.open('POST', protocol + '://' + url + ':' + port + '/jsonrpc');
+
 		xhr.setRequestHeader('Content-Type','text/json');
 		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
 		try {

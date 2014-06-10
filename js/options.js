@@ -20,7 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	$('btn_test').addEventListener('click', function(){
-		var result = api.version();
-		console.log(JSON.stringify(result));
+		$('connection_test').innerText = 'Trying to connect...';
+		$('connection_test').className = 'working';
+		api.sendMessage('version', {}, function(r){
+			$('connection_test').innerText = 'Successfully connected to NZBGet v'+r.result;
+			$('connection_test').className = 'success';
+		}, function(reason){
+			$('connection_test').className = 'error';
+			$('connection_test').innerText = 'Connection failed! '+reason;
+		});
 	});
 });

@@ -1,3 +1,55 @@
+/*
+	Animatioms are copied and modified from animate.css - http://daneden.me/animate
+*/
+@-webkit-keyframes flip {
+	0% {
+		-webkit-transform: rotateY(-360deg);
+		-transform: rotateY(-360deg);
+		-webkit-animation-timing-function: ease-out;
+		-animation-timing-function: ease-out;
+	}
+	50% {
+		-webkit-transform: rotateY(0deg);
+		-transform: rotateY(0deg);
+		-webkit-animation-timing-function: ease-in;
+		-animation-timing-function: ease-in;
+	}
+}
+
+@-webkit-keyframes shake {
+	0%, 100% {
+		-webkit-transform: translateX(0);
+		transform: translateX(0);
+	}
+
+	10%, 30%, 50%, 70%, 90% {
+		-webkit-transform: translateX(-10px);
+		transform: translateX(-10px);
+	}
+
+	20%, 40%, 60%, 80% {
+		-webkit-transform: translateX(10px);
+		transform: translateX(10px);
+	}
+}
+
+@-webkit-keyframes pulse {
+	0% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+
+	50% {
+		-webkit-transform: scale(1.1);
+		transform: scale(1.1);
+	}
+
+	100% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}
+
 body {
 	position: relative;
 	text-align: center;
@@ -38,10 +90,14 @@ label {
 }
 input[type=text], input[type=password] {
 	float: left;
-	width: auto;
 	border: 1px solid #999;
 	font-size: 0.9rem;
 	border-radius:0.3rem;
+	padding: 0.3rem 0.6rem;
+	width: 10rem;
+}
+select {
+	float: left;
 	padding: 0.3rem 0.6rem;
 	width: 10rem;
 }
@@ -53,6 +109,26 @@ input.small[type=text], input.small[type=password] {
 	float: left;
 	padding: 0.9rem 0;
 }
+#connection_test {
+	display:block;
+	clear: both;
+
+}
+#connection_test.working {
+	-webkit-animation: flip 2s linear infinite;
+}
+
+#connection_test.error {
+	font-weight: bold;
+	color: #f00;
+	-webkit-animation: shake 500ms linear 1;
+}
+
+#connection_test.success {
+	color: #090;
+	-webkit-animation: pulse 250ms linear 1;
+}
+
 #btn_grp {
 	padding-top: 0.5rem;
 	display: inline-block;
