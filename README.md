@@ -4,7 +4,7 @@
 Google chrome extension to interact with nzbget
 
 ### Version history
-#### 1.2
+#### 1.2 (dev)
 * Better handling of connection failures.
 
 #### 1.1
