@@ -13,17 +13,18 @@ function DOMModificationCallback() {
 		if(dlitem.nzbGetProcessed || !dlitem.href.match(/\.nzb/)) continue;
 		dlitem.nzbGetProcessed = true;
 
-		var eBody = dlitem.parentElement.nextElementSibling;
-		var eHead = dlitem.parentElement;
-		var eTop = eHead.parentElement.parentElement;
-		
+		var eRoot = dlitem.parentElement.parentElement.parentElement
+			,eParent = eRoot.querySelector('.shareHolder .left')
+			,eBody = eRoot.querySelector('.entryBody');
+
 		newitem = createNgIcon(
-			eTop.id.replace('_entryHolder','_nzbgc'), 
+			eRoot.id.replace('_entryHolder','_nzbgc'), 
 			dlitem.href, 
 			eBody.innerText.match(/Category[\s-:]*(.+)/)[1]
 		);
+		newitem.classList.add('headerInfo-expanded-img');
 
-		dlitem.parentElement.insertBefore(newitem,dlitem);
+		eParent.insertBefore(newitem,eParent.firstChild);
 	}
 }
 

@@ -1,5 +1,4 @@
-.nzbgc_download {
-	position: absolute;
-	margin-top: 6px;
-	margin-left: -20px;
+.headerInfo-expanded-img.nzbgc_download {
+	width: auto;
+	height: auto;
 }
