@@ -4,13 +4,13 @@
 
 // check for browsing mode
 if (document.getElementsByTagName('title')[0].text.match(/Browse/)) {
-    dllinks = document.querySelectorAll('div.dog-icon-download');
+    var dllinks = document.querySelectorAll('div.dog-icon-download');
     for(var i=0; i < dllinks.length; i++) {
         var dlitem = dllinks.item(i);
         var category = '', lid = '';
 
         // create the element we want to insert into the html
-        newtd = document.createElement('td');
+        var newtd = document.createElement('td');
         newtd.className = 'icon_nzbget';
         newtd.style.padding = '0 2px';
         var trParent = findParentOfType(dlitem, 'TR');
@@ -39,7 +39,7 @@ if (document.getElementsByTagName('title')[0].text.match(/Browse/)) {
 
 // else use the details mode
 else {
-    dllinks = document.querySelectorAll('i.icon-download')
+    var dllinks = document.querySelectorAll('i.icon-download')
     for(var i=0; i < dllinks.length; i++) {
         var dlitem = dllinks.item(i);
         var category = '', lid = 'details';
