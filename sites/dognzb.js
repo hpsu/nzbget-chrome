@@ -24,7 +24,7 @@ if (document.getElementsByTagName('title')[0].text.match(/Browse/)) {
         var rss_token = document.getElementsByName("rsstoken")[0].value;
 
         // create the nzbget icon and assemble the download link
-        newitem = createNgIcon(
+        var newitem = createNgIcon(
             lid+'_nzbgc',
             'https://dognzb.cr' + '/fetch/' + nzbid + '/' + rss_token,
             category
@@ -44,14 +44,12 @@ else {
         var dlitem = dllinks.item(i);
         var category = '', lid = 'details';
 
-        // create the elements we want to insert into the html
-        newli = document.createElement('li');
-        newli.style.height = '22px';
-        newli.className = 'listitem_nzbget';
-
-        newa = document.createElement('a');
-        newa.style.padding = '0 5px';
-        newa.style.cursor = 'pointer';
+        // create the new hirarchy for the modified download menu
+        var newtr = document.createElement('tr');
+        var newtdpadding = document.createElement('td');
+        newtdpadding.width = '4';
+        var newtd1 = document.createElement('td');
+        var newtd2 = document.createElement('td');
 
         // read the nzb id from the onclick attribute
         var nzbid = dlitem.parentNode.getAttribute('onclick');
@@ -61,16 +59,19 @@ else {
         var rss_token = document.getElementsByName("rsstoken")[0].value;
 
         // create the nzbget icon and assemble the download link
-        newitem = createNgIcon(
+        var newitem = createNgIcon(
             lid+'_nzbgc',
             'https://dognzb.cr' + '/fetch/' + nzbid + '/' + rss_token,
             category
         );
 
-        newa.appendChild(newitem);
-        newli.appendChild(newa);
+        // assemble the modified download menu hirarchy
+        newtd1.appendChild(newitem);
+        newtd2.appendChild(dlitem.parentNode);
+        newtr.appendChild(newtdpadding);
+        newtr.appendChild(newtd1);
+        newtr.appendChild(newtd2);
 
-        var dlparent = dlitem.parentNode.parentNode.parentNode;
-        dlparent.insertBefore(newli,document.getElementsByClassName('multiple')[0]);
+        document.getElementsByClassName('multiple')[0].appendChild(newtr);
     }
 }
