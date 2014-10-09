@@ -6,6 +6,10 @@ Google chrome extension to interact with nzbget
 ### Version history
 #### 1.2 (dev)
 * Better handling of connection failures.
+* support one-click integration on nzbindex.nl
+* support one-click integration on fanzub.com
+* support one-click integration on DOGnzb (thanks @GrimSerious)
+* Minor fixes to feedly support due to layout changes
 
 #### 1.1
 * Protocol selector (Thanks dakky)
