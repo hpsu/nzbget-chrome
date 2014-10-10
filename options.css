@@ -73,7 +73,7 @@ h2  {
 		-1px -1px 0 #000,
 		1px -1px 0 #000,
 		-1px 1px 0 #000,
-		1px 1px 0 #000;  
+		1px 1px 0 #000;
 }
 img {
 	float: left;
@@ -88,6 +88,27 @@ label {
 	text-align: right;
 	padding: 0.3rem 1rem;
 }
+div.checkbox {
+	clear: both;
+	text-align: left;
+	padding: 0.6rem 0 0.6rem 8rem;
+}
+label.checkbox {
+	min-width: auto;
+	float: none;
+	display: inline;
+	text-align: left;
+	padding: 0;
+}
+input[type=checkbox] {
+	margin-left: 0;
+	vertical-align: middle;
+}
+div.small {
+	font-size: 0.6rem;
+	max-width: 15rem;
+}
+
 input[type=text], input[type=password] {
 	float: left;
 	border: 1px solid #999;
@@ -131,9 +152,9 @@ input.small[type=text], input.small[type=password] {
 
 #btn_grp {
 	padding-top: 0.5rem;
-	display: inline-block;
+
 	text-align:left;
-	padding-left: 6rem;
+	padding-left: 8rem;
 	clear: both;
 }
 hr {

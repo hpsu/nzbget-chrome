@@ -127,6 +127,7 @@
 										tab
 										,{message: 'addedurl', url: url, status: true, id: ident}
 									);
+                                    window.ngAPI.cacheDb.addURLObj(url);
 								}
 
 							},
@@ -215,7 +216,7 @@
 			window.ngAPI.switchToNzbGetTab();
 		};
 		var n = new Notification(header, {icon: icon, body: message});
-		
+
 		if(timeout !== null) {
 			n.onshow = function(){
 				setTimeout(function() {n.close();}, timeout);
@@ -251,7 +252,7 @@
 	}
 	/**
 	 * Request new group information via NZBGET JSON-RPC.
-	 * Notifies on complete downloads 
+	 * Notifies on complete downloads
 	 * Updates badge on active downloads.
 	 */
 	,updateGroups: function() {
@@ -298,15 +299,104 @@
 
 		chrome.browserAction.setBadgeText({text: ''});
 
-		this.status = {DownloadRate: 0, RemainingSizeMB: 0, RemainingSizeLo: 0, Download2Paused: false, DownloadPaused: false};
+		this.status = {
+             DownloadRate: 0
+            ,RemainingSizeMB: 0
+            ,RemainingSizeLo: 0
+            ,Download2Paused: false
+            ,DownloadPaused: false
+        };
 		this.updateGroups();
 		this.updateStatus();
 		this.loadMenu();
 
 		this.groupTimer = setInterval(this.updateGroups.bind(this), 5000);
 		this.statusTimer = setInterval(this.updateStatus.bind(this), 5000);
+
+        ngAPI.cacheDb.open();
+
 		return this.isInitialized = true;
 	}
+    /**
+    * IndexedDB abstraction storing info from URLS to recognize previously
+    * added values
+    */
+    ,cacheDb: {
+        dbRes: null
+        ,aEl: document.createElement('a')
+        ,open: function() {
+            if(!'indexedDB' in window) return;
+            var req = indexedDB.open('nzbgc_cache',1);
+            var cdb = this;
+            req.onsuccess = function(e) {
+                cdb.dbRes = this.result;
+            };
+            req.onerror = function (e) {
+                console.error("openDb:", e.target.errorCode);
+            };
+            req.onupgradeneeded = function(e) {
+                var thisDB = e.currentTarget.result;
+
+                if(!thisDB.objectStoreNames.contains('urls')) {
+                    var store = thisDB.createObjectStore('urls', {
+                        autoIncrement: true
+                    });
+                    store.createIndex('main', ['domain','id'], {unique:true});
+                }
+            };
+        }
+        ,addURLObj: function(url){
+            if(!window.ngAPI.Options.get('opt_rememberurls'))
+                return;
+            var  store = this.getObjectStore('urls', 'readwrite')
+                ,obj = this.objFromURL(url);
+            obj.time_added = new Date().valueOf();
+            req = store.add(obj);
+            req.onerror = function() {
+                console.error("addPublication error", this.error);
+            };
+        }
+        ,checkURLObj: function(url, callback) {
+            if(!window.ngAPI.Options.get('opt_rememberurls'))
+                return;
+            var  store = this.getObjectStore('urls', 'readonly')
+                ,index = store.index('main')
+                ,obj = this.objFromURL(url)
+                ,request = index.get(IDBKeyRange.only([obj.domain, obj.id]));
+
+            request.onsuccess = function(e) {
+                var result = e.target.result;
+                if(typeof callback != 'undefined') {
+                    callback(typeof result != 'undefined');
+                }
+            }
+        }
+        ,getObjectStore: function(store_name, mode) {
+            var tx = this.dbRes.transaction(store_name, mode);
+            return tx.objectStore(store_name);
+        }
+        ,objFromURL: function(url) {
+            // Workaround for broken searchstrings
+            var atPos = url.indexOf('&');
+            if(url.indexOf('?') == -1 && atPos > -1) {
+                url = url.substring(0,atPos)+'?'+url.substring(atPos+1);
+            }
+
+            this.aEl.href = url;
+            var osObj = {
+                domain: this.aEl.host
+                ,id: this.aEl.pathname
+            };
+
+            // Try to shorten URL based on a simple regex pattern
+            var match = this.aEl.pathname.match(/\/[0-9a-z_]+\/([0-9a-z]+)/);
+            if(match)
+                osObj.id = match[1];
+
+            return osObj;
+        }
+
+    }
 	/**
 	 * Option abstraction object. Handles everyting option related.
 	 */
@@ -317,6 +407,7 @@
 			,opt_password: 'tegbzn6789'
 			,opt_historyitems: 30
 			,opt_protocol: 'http'
+            ,opt_rememberurls: false
 		}
 		,load: function() {
 			Array.each($$('input[type=text],input[type=password],select'), function(o){
@@ -331,6 +422,9 @@
 		,get: function(opt) {
 			switch(true) {
 				case typeof localStorage[opt] != 'undefined':
+                    if(['true', 'false'].indexOf(localStorage[opt]) > -1){
+                        return localStorage[opt] === 'true';
+                    }
 					return localStorage[opt];
 				case typeof this.defaults[opt] != 'undefined':
 					return this.defaults[opt];
@@ -346,13 +440,16 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 	ngAPI.initialize();
-	
-	chrome.runtime.onMessage.addListener(function(m, sender, sendResponse) {
+
+	chrome.runtime.onMessage.addListener(function(m, sender, respCallback) {
 		if(m.message === 'optionsUpdated') {
 			ngAPI.initialize();
 		} else if(m.message === 'addURL') {
 			ngAPI.addURL(m.href, sender.tab.id, m.id);
-		}
+		} else if(m.message === 'checkCachedURL') {
+            ngAPI.cacheDb.checkURLObj(m.url, respCallback);
+            return true;
+        }
 	});
 	chrome.runtime.onConnect.addListener(function(port) {
 		port.onDisconnect.addListener(function(){

@@ -15,7 +15,7 @@ function findParentOfType(el, type){
  */
 function createNgIcon(id, href, cat){
 	eNgIcon = document.createElement('img');
-	eNgIcon.src=chrome.extension.getURL("img/icon16.png"); 
+	eNgIcon.src=chrome.extension.getURL("img/icon16.png");
 	eNgIcon.title="Click to download with NZBGet.";
 	eNgIcon.className = 'nzbgc_download';
 
@@ -34,7 +34,13 @@ function createNgIcon(id, href, cat){
 		return false;
 	});
 
-	
+	// Check for match in stored URLs
+	chrome.runtime.sendMessage(
+		{message: "checkCachedURL", url: href}, function(response) {
+		if(response)
+			document.getElementById(id).classList.add('nzbgc_added_ok');
+	});
+
 	return eNgIcon;
 }
 

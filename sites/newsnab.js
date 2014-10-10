@@ -3,10 +3,10 @@
  */
 
 dllinks = document.querySelectorAll('div.icon_nzb a[href*=\"/getnzb\"]');
-for(var i=0; i < dllinks.length; i++) { 
+for(var i=0; i < dllinks.length; i++) {
 	var dlitem = dllinks.item(i);
 	var category = '', lid = '';
-	
+
 	newdiv = document.createElement('div');
 	newdiv.className = 'icon icon_nzbget';
 
@@ -32,7 +32,7 @@ for(var i=0; i < dllinks.length; i++) {
 
 	newitem = createNgIcon(
 		lid+'_nzbgc',
-		dlitem.href, 
+		dlitem.href,
 		category
 	);
 

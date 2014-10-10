@@ -6,15 +6,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
-	var inputs = document.body.querySelectorAll('input[type=text],input[type=password],select')
+	var inputs = document.body.querySelectorAll(
+		'input[type=text],input[type=password],input[type=checkbox],select'
+	);
 
 	for(var i in inputs) {
-		inputs[i].value = opts.get(inputs[i].id);
+		if(inputs[i].type == 'checkbox') {
+			inputs[i].checked = opts.get(inputs[i].id);
+			console.log('set %o to %s',inputs[i],inputs[i].checked);
+		}
+		else {
+			inputs[i].value = opts.get(inputs[i].id);
+		}
 	}
-		
+
 	$('btn_save').addEventListener('click', function(){
 		for(var i in inputs) {
-			opts.set(inputs[i].id, inputs[i].value);
+			opts.set(inputs[i].id, inputs[i].type == 'checkbox' ? inputs[i].checked : inputs[i].value);
 		}
 		chrome.runtime.sendMessage({message: 'optionsUpdated'});
 	});

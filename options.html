@@ -22,9 +22,19 @@
 			<input type="text" id="opt_username">
 			<label for="opt_password">Password:</label>
 			<input type="password" id="opt_password">
-			<hr>
+
+			<div class="checkbox">
+				<label class="checkbox">
+					<input type="checkbox" id="opt_rememberurls">
+					Remember downloaded URLs
+					<div class="small">
+						Used to highlight downloaded links even after page reloads.
+					</div>
+				</label>
+			</div>
 			<label for="opt_historyitems">History items:</label>
 			<input size="4" class="small" type="text" id="opt_historyitems" title="Number of history items to show in popup">
+
 			<div id="connection_test"></div>
 			<div id="btn_grp">
 				<input type="button" id="btn_test" value="Test connection">
