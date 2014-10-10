@@ -40,6 +40,10 @@
 			"matches": [ "*://*.fanzub.com/*" ]
 			,"js": [ "sites/common.js", "sites/fanzub.js" ]
 			,"css": [ "sites/common.css" ]
+		},{
+			"matches": [ "*://*.dognzb.cr/*" ]
+			,"js": [ "sites/common.js", "sites/dognzb.js" ]
+			,"css": [ "sites/common.css" ]
 		}
 	]
 }
