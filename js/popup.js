@@ -1,7 +1,7 @@
 var dragging = null
 	,MAX32 = 4294967296;
 
-/* "Framework" stuff */ 
+/* "Framework" stuff */
 function $(o) {
 	return document.getElementById(o);
 }
@@ -25,7 +25,7 @@ function BigNumber(hi,lo) {
 };
 
 /**
- * function index() 
+ * function index()
  * Get elements "position" in relation to it's siblings
  */
 Element.prototype.index = function() {
@@ -37,7 +37,7 @@ Element.prototype.index = function() {
  * function toHRTimeDiff()
  * Compares Date object to current Date and outputs human readable time diff
  */
-Date.prototype.toHRTimeDiff = function(){ 
+Date.prototype.toHRTimeDiff = function(){
 	var	diff = (((new Date()).getTime() - this.getTime()) / 1000),
 		day_diff = Math.floor(diff / 86400);
 
@@ -55,7 +55,7 @@ Date.prototype.toHRTimeDiff = function(){
 };
 
 /**
- * function zeroPad() 
+ * function zeroPad()
  * adds a zero before an integer if needed to make it a string at least two characters wide
  */
 Number.prototype.zeroPad =  function() {
@@ -102,7 +102,7 @@ Number.prototype.toHRDataSize = function() {
 		}
 	}.bind(this));
 	return output !== null ? output : this + 'B';
-} 
+}
 
 /**
  * function detectGroupStatus()
@@ -128,22 +128,22 @@ function detectGroupStatus(group) {
 function detectHistoryStatus(hist) {
 	if (hist.Kind === 'NZB') {
 		switch(true) {
-			case hist.ParStatus == 'FAILURE': 
-			case hist.UnpackStatus == 'FAILURE': 
-			case hist.MoveStatus == 'FAILURE': 
+			case hist.ParStatus == 'FAILURE':
+			case hist.UnpackStatus == 'FAILURE':
+			case hist.MoveStatus == 'FAILURE':
 			case hist.ScriptStatus == 'FAILURE':
 				return 'failure';
 			case hist.ParStatus == 'MANUAL':
 				return 'damaged';
 			case hist.ScriptStatus == 'UNKNOWN':
 				return 'unknown';
-			case hist.ScriptStatus == 'SUCCESS': 
+			case hist.ScriptStatus == 'SUCCESS':
 			case hist.UnpackStatus == 'SUCCESS':
 			case hist.ParStatus == 'SUCCESS':
 				return 'success';
 			case hist.ParStatus == 'REPAIR_POSSIBLE':
 				return 'repairable';
-			case hist.ParStatus == 'NONE': 
+			case hist.ParStatus == 'NONE':
 				return 'unknown';
 		}
 	} else if (hist.Kind === 'URL') {
@@ -157,7 +157,7 @@ function detectHistoryStatus(hist) {
 
 /**
  * function cleanupList() - Remove unneeded elements and resort the list if needed
- * 
+ *
  * @var Array dataObj Array of objects containing at least sortorder
  * @var Element contEl container element for the list
  */
@@ -187,19 +187,19 @@ function cleanupList(dataObj, contEl) {
 			var el = contEl.querySelector('div.post[rel="' + order[i] + '"]');
 			if(el) contEl.appendChild(contEl.removeChild(el));
 		}
-		
+
 	}
 }
 
 /**
- * function onStatusUpdated() - Triggered whenever status is updated from server.  
+ * function onStatusUpdated() - Triggered whenever status is updated from server.
  * Sets speed, remaining and diskspace labels and resets pause/resume button.
  */
 function onStatusUpdated(){
 	var downloadPaused = api.status.Download2Paused;
 
 	$('tgl_pause').className = downloadPaused ? 'toggle resume' : 'toggle pause';
-
+	
 	// Set "global" labels
 	if(api.status.DownloadRate)
 		speedLabel = Number(api.status.DownloadRate).toHRDataSize() + '/s';
@@ -214,7 +214,7 @@ function onStatusUpdated(){
 }
 
 /**
- * function onGroupsUpdated() - Triggered when groups are updated from server. 
+ * function onGroupsUpdated() - Triggered when groups are updated from server.
  */
 function onGroupsUpdated(){
 	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
@@ -228,7 +228,7 @@ function onGroupsUpdated(){
 }
 
 /**
- * function onHistoryUpdated() - Triggered when history is updated from server. 
+ * function onHistoryUpdated() - Triggered when history is updated from server.
  */
 function onHistoryUpdated(){
 	var history = [];
@@ -257,7 +257,7 @@ function setupDraggable(post) {
 		ev.dataTransfer.dropEffect = 'move';
 
 		if(this.classList.contains('post')) {
-			if(dragging.offsetHeight) 
+			if(dragging.offsetHeight)
 				dragging.storedHeight = dragging.offsetHeight;
 			if(dragging.storedHeight) this.placeholder.style.height = dragging.storedHeight+'px';
 			dragging.style.display='none';
@@ -317,7 +317,7 @@ function setupDraggable(post) {
 			console.log(res);
 		});
 	});
-	
+
 	post.placeholder.addEventListener('dragover', dover);
 	post.placeholder.addEventListener('dragenter', dover);
 	post.placeholder.addEventListener('drop', drop);
@@ -330,7 +330,7 @@ function historyPost(item) {
 	item.status = detectHistoryStatus(item);
 	var post = $('history_container').querySelector('[rel="' + item.NZBID + '"]')
 		,update	= post !== null;
-	
+
 	if(update) {
 		post.querySelector('.left').innerText = new Date(item.HistoryTime*1000).toHRTimeDiff();
 	}
@@ -347,7 +347,7 @@ function historyPost(item) {
 				var details = info.appendChild($E({tag: 'div', className: 'details'}));
 					details.appendChild($E({tag: 'div', text: new Date(item.HistoryTime*1000).toHRTimeDiff(), className: 'left'}));
 					details.appendChild($E({tag: 'div', text: BigNumber(item.FileSizeHi, item.FileSizeLo).toHRDataSize(), className: 'right'}));
-	
+
 			$('history_container').appendChild(post);
 	}
 
@@ -490,7 +490,8 @@ document.addEventListener('DOMContentLoaded', function() {
 					onGroupsUpdated();
 					break;
 				case 'history':
-					setTimeout(onHistoryUpdated,1500);
+					if(api.Options.get('opt_historyitems') > 0)
+						setTimeout(onHistoryUpdated,1500);
 					break;
 				case 'status':
 					onStatusUpdated();
@@ -499,7 +500,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	);
 	onGroupsUpdated();
-	onHistoryUpdated();
+	if(api.Options.get('opt_historyitems') == 0)
+		$('history_table').style.display='none';
+	else
+		onHistoryUpdated();
+
 	onStatusUpdated();
 	document.body.addEventListener('click', function() {
 		var els = document.querySelectorAll('div.contextmenu');

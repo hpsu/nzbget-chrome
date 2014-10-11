@@ -15,7 +15,7 @@ function findParentOfType(el, type){
  */
 function createNgIcon(id, href, cat){
 	eNgIcon = document.createElement('img');
-	eNgIcon.src=chrome.extension.getURL("img/icon16.png");
+	eNgIcon.src=chrome.extension.getURL("img/nzbget-arrow.svg");
 	eNgIcon.title="Click to download with NZBGet.";
 	eNgIcon.className = 'nzbgc_download';
 

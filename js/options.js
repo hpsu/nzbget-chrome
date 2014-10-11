@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	api = chrome.extension.getBackgroundPage().ngAPI;
 	opts = api.Options;
 
+	document.querySelector('name').innerText = api.appName;
+	document.querySelector('version').innerText = api.appVersion;
+
 	var inputs = document.body.querySelectorAll(
 		'input[type=text],input[type=password],input[type=checkbox],select'
 	);

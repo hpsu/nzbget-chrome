@@ -7,6 +7,8 @@
  	,groups: {}
  	,connectionStatus: true
  	,isInitialized: false
+    ,appVersion: 0
+    ,appName: ''
 	/**
 	 * Setup version information
 	 */
@@ -211,7 +213,7 @@
 	 */
 	,notify: function(header, message, icon, timeout, onclick) {
 		if(typeof timeout === 'undefined') timeout = 5000;
-		if(typeof icon === 'undefined') icon = 'img/icon48.webp';
+		if(typeof icon === 'undefined') icon = 'img/icon48.png';
 		if(typeof onclick === 'undefined') onclick = function() {
 			window.ngAPI.switchToNzbGetTab();
 		};
@@ -298,6 +300,12 @@
 		}
 
 		chrome.browserAction.setBadgeText({text: ''});
+
+        var manifest = chrome.runtime.getManifest();
+        this.appName = manifest.name;
+        this.appVersion = manifest.version;
+
+        chrome.browserAction.setTitle({title: this.appName + ' v' + this.appVersion});
 
 		this.status = {
              DownloadRate: 0

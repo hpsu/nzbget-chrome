@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Options - NZBGet-chrome</title>
+	<title>Options - nzbget-chrome</title>
 	<script src="js/options.js"></script>
 	<link rel="stylesheet" type="text/css" href="options.css">
 	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,700,300|Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic)' rel='stylesheet' type='text/css'>
@@ -8,8 +8,9 @@
 <body>
 	<div class="card">
 		<header>
-			<img id="logo" src="img/nzbget-icon.svg">
+			<img id="logo" src="img/nzbget-arrow.svg">
 			<h1>Settings</h1>
+			<span><name></name> <version></version></span>
 		</header>
 		<fieldset>
 			<label for="opt_protocol">Protocol</label>
@@ -36,6 +37,9 @@
 				</label>
 			</div>
 			<label for="opt_historyitems">History items</label>
+			<div class="small">
+				History items shown in popup or 0 to disable history.
+			</div>
 			<input size="4" class="small" type="text" id="opt_historyitems"
 				title="Number of history items to show in popup">
 

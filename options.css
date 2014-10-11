@@ -69,18 +69,23 @@ header {
 	border-radius: 2px 2px 0 0;
 }
 
-h1 {
-	font-size: 36px;
+header h1 {
+	font-size: 48px;
 	font-weight: 500;
 	line-height: 1.1;
 	padding: 0;
 	margin: 0;
-	padding-top: 37px;
+	padding-top: 24px;
+
 }
 
-img#logo {
+header span {
+	font-size: 16px;
+
+}
+header img#logo {
 	float: left;
-	margin: 20px 24px 16px 45px;
+	margin: 16px 8px 16px 16px;
 	width: 96px;
 	height: 96px;
 	-webkit-filter: grayscale(100%) invert(100%) brightness(150%);
