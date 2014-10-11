@@ -199,7 +199,7 @@ function onStatusUpdated(){
 	var downloadPaused = api.status.Download2Paused;
 
 	$('tgl_pause').className = downloadPaused ? 'toggle resume' : 'toggle pause';
-	
+
 	// Set "global" labels
 	if(api.status.DownloadRate)
 		speedLabel = Number(api.status.DownloadRate).toHRDataSize() + '/s';

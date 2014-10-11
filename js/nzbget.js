@@ -389,7 +389,7 @@
             if(url.indexOf('?') == -1 && atPos > -1) {
                 url = url.substring(0,atPos)+'?'+url.substring(atPos+1);
             }
-
+            // Use A-element instead of URL() because A can handle relative URLs
             this.aEl.href = url;
             var osObj = {
                 domain: this.aEl.host
@@ -474,15 +474,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
 		if (changeInfo.status == 'complete') {
-			chrome.tabs.executeScript(tabId, {
-    			code: "var e = document.querySelector('div.icon_nzb a[href*=\"/getnzb\"]'); if(e) {e.href;}"
-				}, function(r) {
-					if(r && r[0] !== null) {
-						chrome.tabs.executeScript(tabId, {file: 'sites/common.js'});
-						chrome.tabs.executeScript(tabId, {file: 'sites/newsnab.js'});
-						chrome.tabs.insertCSS(tabId, {file: 'sites/common.css'});
-    				}
-			});
+
+            // Chrome <35 compatibility
+            if(!window.URL && window.webkitURL)
+                window.URL = window.webkitURL;
+
+            if(['http:', 'https:'].indexOf(new URL(tab.url).protocol) > -1) {
+    			chrome.tabs.executeScript(tabId, {
+        			code: "var e = document.querySelector('div.icon_nzb a[href*=\"/getnzb\"]'); if(e) {e.href;}"
+    				}, function(r) {
+    					if(r && r[0] !== null) {
+    						chrome.tabs.executeScript(tabId, {file: 'sites/common.js'});
+    						chrome.tabs.executeScript(tabId, {file: 'sites/newsnab.js'});
+    						chrome.tabs.insertCSS(tabId, {file: 'sites/common.css'});
+        				}
+    			});
+            }
 		}
 	});
 });
