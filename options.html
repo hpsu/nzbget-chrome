@@ -3,24 +3,27 @@
 	<title>Options - NZBGet-chrome</title>
 	<script src="js/options.js"></script>
 	<link rel="stylesheet" type="text/css" href="options.css">
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,700,300|Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic)' rel='stylesheet' type='text/css'>
 </head>
 <body>
-	<h2>Connection settings</h2>
-	<fieldset>
-		<img src="img/nzbget-icon.svg">
-		<div class="wrap">
-			<label for="opt_protocol">Protocol:</label>
+	<div class="card">
+		<header>
+			<img id="logo" src="img/nzbget-icon.svg">
+			<h1>Settings</h1>
+		</header>
+		<fieldset>
+			<label for="opt_protocol">Protocol</label>
 			<select id="opt_protocol">
 				<option value="http">HTTP</option>
 				<option value="https">HTTPS</option>
 			</select>
-			<label for="opt_host">Host:</label>
+			<label for="opt_host">Host</label>
 			<input type="text" id="opt_host">
-			<label for="opt_port">Port:</label>
+			<label for="opt_port">Port</label>
 			<input type="text" id="opt_port">
-			<label for="opt_username">Username:</label>
+			<label for="opt_username">Username</label>
 			<input type="text" id="opt_username">
-			<label for="opt_password">Password:</label>
+			<label for="opt_password">Password</label>
 			<input type="password" id="opt_password">
 
 			<div class="checkbox">
@@ -32,15 +35,16 @@
 					</div>
 				</label>
 			</div>
-			<label for="opt_historyitems">History items:</label>
-			<input size="4" class="small" type="text" id="opt_historyitems" title="Number of history items to show in popup">
+			<label for="opt_historyitems">History items</label>
+			<input size="4" class="small" type="text" id="opt_historyitems"
+				title="Number of history items to show in popup">
 
 			<div id="connection_test"></div>
 			<div id="btn_grp">
 				<input type="button" id="btn_test" value="Test connection">
 				<input type="button" id="btn_save" value="Save">
 			</div>
-		</div>
-	</fieldset>
+		</fieldset>
+	</div>
 </body>
 </html>

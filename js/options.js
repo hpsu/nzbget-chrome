@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			opts.set(inputs[i].id, inputs[i].type == 'checkbox' ? inputs[i].checked : inputs[i].value);
 		}
 		chrome.runtime.sendMessage({message: 'optionsUpdated'});
+
+		$('connection_test').innerText = 'Settings saved!';
+		$('connection_test').className = 'success';
 	});
 
 	$('btn_test').addEventListener('click', function(){
@@ -35,10 +38,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('connection_test').className = 'success';
 		}, function(reason){
 			$('connection_test').className = 'error';
-			$('connection_test').innerText = 'Connection failed! '+reason;
+			$('connection_test').innerHTML = '<strong>Connection failed!</strong> '+reason;
 		});
 	});
-
+	$('connection_test').addEventListener('click', function(){
+		this.innerHTML = '';
+		this.className = '';
+	});
 	// Parse text in host field and try to place URI-parts in their right form fields.
 	$('opt_host').addEventListener('blur', function() {
 		var prot = this.value.match(/^([a-z]+):\/\//);
