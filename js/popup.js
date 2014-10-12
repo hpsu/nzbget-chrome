@@ -220,10 +220,18 @@ var totalMBToDownload = 0;
 function onGroupsUpdated(){
 	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
 
+
+	var sortable = [];
+	for (var i in api.groups)
+		sortable.push(api.groups[i]);
+
+	sortable.sort(function(a,b) { return parseInt(a.sortorder) - parseFloat(b.sortorder) });
+
+
 	// Build or update active download list
 	totalMBToDownload = 0;
-	for(k in api.groups) {
-		downloadPost(api.groups[k]);
+	for(k in sortable) {
+		downloadPost(sortable[k]);
 	};
 
 	cleanupList(api.groups, $('download_container'));
