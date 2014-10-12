@@ -12,8 +12,8 @@
 	/**
 	 * Setup version information
 	 */
-	,version: function() {
-		return this.sendMessage('version', {}, false);
+	,version: function(success_func, fail_func, tmpOptions) {
+		return this.sendMessage('version', {}, success_func, fail_func, tmpOptions);
 	}
 	/**
 	 * Request history from JSON-RPC
@@ -39,15 +39,17 @@
 	 *
 	 * @var method "method" to call
 	 * @var params array of parameters to send
-	 * @var success_func function to execute on success. Turns async off if it evaluates to false.
+	 * @var success_func function to execute on success.
 	 * @var fail_func function to execute on failure
+     * @var alt_options use connection options from provided object
 	 */
-	,sendMessage: function(method, params, success_func, fail_func) {
-		var url = this.Options.get('opt_host')
-		,port = this.Options.get('opt_port')
-		,username = this.Options.get('opt_username')
-		,password = this.Options.get('opt_password')
-		,protocol = this.Options.get('opt_protocol')
+	,sendMessage: function(method, params, success_func, fail_func, alt_options) {
+		var opt = typeof alt_options === 'object' ? alt_options : this.Options;
+        var url = opt.get('opt_host')
+		,port = opt.get('opt_port')
+		,username = opt.get('opt_username')
+		,password = opt.get('opt_password')
+		,protocol = opt.get('opt_protocol')
 		,query = {
 			version: '1.1'
 			,method: method
@@ -66,14 +68,16 @@
 		xhr.onreadystatechange = function(r){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
-					this.setSuccess(true);
+					if(typeof alt_options !== 'object')
+                        this.setSuccess(true);
 					if(typeof success_func === 'function') {
 						success_func(r.target.responseText ? JSON.parse(r.target.responseText) : '');
 					}
 				} else {
-					this.setSuccess(false);
+                    if(typeof alt_options !== 'object')
+                        this.setSuccess(false);
 					if(typeof fail_func === 'function'){
-						fail_func(r.target.responseText ? JSON.parse(r.target.responseText) : '');
+						fail_func(r.target.statusText ? r.target.statusText : '');
 					}
 				}
 			}
@@ -87,7 +91,11 @@
 			xhr.send(JSON.stringify(query));
 		}
 		catch (e){
-			this.setSuccess(false);
+            if(typeof alt_options !== 'object')
+                this.setSuccess(false);
+            if(typeof fail_func === 'function'){
+                fail_func(e.name ? e.name : '');
+            }
 		}
 
 		if(!success_func) {

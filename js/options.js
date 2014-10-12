@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	for(var i in inputs) {
 		if(inputs[i].type == 'checkbox') {
 			inputs[i].checked = opts.get(inputs[i].id);
-			console.log('set %o to %s',inputs[i],inputs[i].checked);
 		}
 		else {
 			inputs[i].value = opts.get(inputs[i].id);
@@ -33,17 +32,30 @@ document.addEventListener('DOMContentLoaded', function() {
 		$('connection_test').className = 'success';
 	});
 
+
 	$('btn_test').addEventListener('click', function(){
-		$('connection_test').innerText = 'Trying to connect...';
 		$('connection_test').className = 'working';
-		api.sendMessage('version', {}, function(r){
+		$('connection_test').innerText = 'Trying to connect...';
+		$('connection_test').style.webkitAnimationName = 'flip';
+
+		var opOb = {get: function(v) {return this[v]}};
+		for(var i in inputs) {
+			opOb[inputs[i].id] =(inputs[i].id, inputs[i].type == 'checkbox' ? inputs[i].checked : inputs[i].value);
+		}
+
+		api.version(function(r){
 			$('connection_test').innerText = 'Successfully connected to NZBGet v'+r.result;
+			$('connection_test').style.webkitAnimationName = 'pulse';
 			$('connection_test').className = 'success';
 		}, function(reason){
 			$('connection_test').className = 'error';
+			$('connection_test').style.webkitAnimationName = 'shake';
 			$('connection_test').innerHTML = '<strong>Connection failed!</strong> '+reason;
-		});
+		}, opOb);
 	});
+	$('connection_test').addEventListener('webkitAnimationEnd', function(){
+		this.style.webkitAnimationName = '';
+	}, false);
 	$('connection_test').addEventListener('click', function(){
 		this.innerHTML = '';
 		this.className = '';
