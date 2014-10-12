@@ -150,7 +150,7 @@ div.post .title {
 
 .details .right {
 	position: absolute;
-color: #333;
+	color: #333;
 	font-weight: 300;
 	right: 3px;
 }
@@ -226,6 +226,15 @@ color: #333;
 	top: 3px;
 	left: 5px;
 }
+
+.bar-text.center {
+	top: 3px;
+	left: 0px;
+	text-align:center;
+	width: 100%;
+}
+
+
 .bar-text.right {
 	top: 3px;
 	right: 5px;

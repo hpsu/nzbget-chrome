@@ -216,10 +216,12 @@ function onStatusUpdated(){
 /**
  * function onGroupsUpdated() - Triggered when groups are updated from server.
  */
+var totalMBToDownload = 0;
 function onGroupsUpdated(){
 	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
 
 	// Build or update active download list
+	totalMBToDownload = 0;
 	for(k in api.groups) {
 		downloadPost(api.groups[k]);
 	};
@@ -380,11 +382,15 @@ function downloadPost(item) {
 	var totalMB		= item.FileSizeMB-item.PausedSizeMB
 		,remainingMB= item.RemainingSizeMB-item.PausedSizeMB
 		,percent	= Math.round((totalMB - remainingMB) / totalMB * 100)
-		,estRem		= ((item.RemainingSizeMB-item.PausedSizeMB)*1024/(api.status.DownloadRate/1024)).toHRTimeLeft()
+		,estRem		= api.status.DownloadRate ? ((totalMBToDownload + remainingMB)*1024/(api.status.DownloadRate/1024)).toHRTimeLeft() : ''
 		,post		= $('download_container').querySelector('[rel="' + item.NZBID + '"]')
 		,update		= post !== null
 		,leftLabel	= item.post ? item.post.ProgressLabel : percent+'%'
-		,rightLabel	= item.post ? '' : BigNumber(item.FileSizeHi, item.FileSizeLo).toHRDataSize();
+		,rightLabel	= item.post ? '' : BigNumber(item.FileSizeHi, item.FileSizeLo).toHRDataSize()
+		,centerLabel= item.post ? '' : estRem;
+
+	totalMBToDownload += remainingMB;
+
 	item.status = detectGroupStatus(item);
 
 	if(item.status === 'downloading' || (item.postprocess && !api.status.PostPaused))
@@ -398,6 +404,7 @@ function downloadPost(item) {
 		post.querySelector('.tag').className = 'tag '+item.status;
 		post.querySelector('.tag span').innerText = item.status;
 		post.querySelector('.bar-text.left').innerText = leftLabel;
+		post.querySelector('.bar-text.center').innerText = centerLabel;
 		post.querySelector('.bar-text.right').innerText = rightLabel;
 		post.querySelector('.bar').style.width = (percent)+'%';
 		post.querySelector('.bar').className = 'bar '+kind;
@@ -415,6 +422,7 @@ function downloadPost(item) {
 				var progress = info.appendChild($E({tag: 'div', className:'progress'}));
 					progress.appendChild($E({tag: 'div', className: 'bar '+kind, styles: {width: percent+'%'}}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text left', text: leftLabel}));
+					progress.appendChild($E({tag: 'div', className: 'bar-text center', text: centerLabel}));
 					progress.appendChild($E({tag: 'div', className: 'bar-text right', text: rightLabel}));
 
 			var dd = post.appendChild($E({tag: 'div', className: 'dropdown'})).appendChild($E({tag: 'div', 'className': 'down'}));
