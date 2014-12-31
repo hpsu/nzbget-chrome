@@ -177,11 +177,7 @@ function cleanupList(dataObj, contEl) {
 
 	if(sortNeeded) {
 		order = Object.keys(dataObj).sort(function(a,b) {
-			a = dataObj[a].sortorder;
-			b = dataObj[b].sortorder;
-			if(a < b) return -1;
-			if(a > b) return 1;
-			return 0;
+			return parseInt(dataObj[a].sortorder) - parseInt(dataObj[b].sortorder);
 		});
 		for(i in order) {
 			var el = contEl.querySelector('div.post[rel="' + order[i] + '"]');
@@ -225,7 +221,7 @@ function onGroupsUpdated(){
 	for (var i in api.groups)
 		sortable.push(api.groups[i]);
 
-	sortable.sort(function(a,b) { return parseInt(a.sortorder) - parseFloat(b.sortorder) });
+	sortable.sort(function(a,b) { return parseInt(a.sortorder) - parseInt(b.sortorder) });
 
 
 	// Build or update active download list
