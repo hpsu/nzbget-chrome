@@ -220,6 +220,7 @@
 	 * @var message
 	 */
 	,notify: function(header, message, icon, timeout, onclick) {
+        if(ngAPI.Options.get('opt_notifications') === false) return;
 		if(typeof timeout === 'undefined') timeout = 5000;
 		if(typeof icon === 'undefined') icon = 'img/icon48.png';
 		if(typeof onclick === 'undefined') onclick = function() {
@@ -424,6 +425,7 @@
 			,opt_historyitems: 30
 			,opt_protocol: 'http'
             ,opt_rememberurls: false
+            ,opt_notifications: true
 		}
 		,load: function() {
 			Array.each($$('input[type=text],input[type=password],select'), function(o){
