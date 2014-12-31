@@ -9,6 +9,7 @@
  	,isInitialized: false
     ,appVersion: 0
     ,appName: ''
+    ,activeNotifications: {}
 	/**
 	 * Setup version information
 	 */
@@ -142,15 +143,12 @@
 
 							},
 							function() {
-								window.ngAPI.notify(
-									'Error occured!'
-									,"Could not download link. Click to try again\n"+url
-									,'img/broken-arrow.svg'
-									,null
-									,function() {
-										window.ngAPI.addURL(url, tab);
-										this.close();
-									}
+								window.ngAPI.notify({
+                                    title: 'Error'
+                                    ,message: 'Could not download link.'
+                                    ,iconUrl: 'img/error80.png'
+                                    ,contextMessage: url
+                                    }, url, tab
 								);
 								if(tab) {
 									chrome.tabs.sendMessage(
@@ -161,23 +159,19 @@
 							}
 						);
 					} else {
-						window.ngAPI.notify(
-							'Not an NZB-file!?'
-							,"Link does not appear to be valid.\n"+url
-							,'img/broken-arrow.svg'
-							,null
-						);
+						window.ngAPI.notify({
+                            title: 'Error'
+                            ,message: 'Received invalid NZB-file.'
+                            ,iconUrl: 'img/error80.png'
+                            ,contextMessage: url
+                        });
 					}
 				} else {
-					window.ngAPI.notify(
-						'Download failed!'
-						,"Request failed with status: "+xhr.status+"\nClick to try again.\n"+url
-						,'img/broken-arrow.svg'
-						,null
-						,function() {
-							window.ngAPI.addURL(url, tab);
-							this.close();
-						}
+					window.ngAPI.notify({
+                            title: 'Error'
+                            ,message: 'Download failed.'
+                            ,contextMessage: url
+                        }, url, tab
 					);
 
 				}
@@ -216,26 +210,30 @@
 	/**
 	 * Display notification for 5 sec
 	 *
-	 * @var header
-	 * @var message
+	 * @var opt    Notification option object
+	 * @var url    Optional URL for retry purposes
+     * @var tab    Optional tab id for addURL
 	 */
-	,notify: function(header, message, icon, timeout, onclick) {
-        if(ngAPI.Options.get('opt_notifications') === false) return;
-		if(typeof timeout === 'undefined') timeout = 5000;
-		if(typeof icon === 'undefined') icon = 'img/icon48.png';
-		if(typeof onclick === 'undefined') onclick = function() {
-			window.ngAPI.switchToNzbGetTab();
-		};
-		var n = new Notification(header, {icon: icon, body: message});
+	,notify: function(opt, url, tab) {
+        if(ngAPI.Options.get('opt_notifications') === false
+            || typeof opt !== 'object'
+            || !chrome.notifications) return;
 
-		if(timeout !== null) {
-			n.onshow = function(){
-				setTimeout(function() {n.close();}, timeout);
-			};
-		}
-		if(onclick !== null) {
-			n.onclick = onclick;
-		}
+        if(typeof opt.iconUrl === 'undefined') opt.iconUrl= 'img/square80.png';
+        if(!opt.type) opt.type = 'basic';
+        if(url && !opt.buttons) opt.buttons = [
+                {title: 'Try again', iconUrl: 'img/refresh24.png'}
+        ];
+
+        chrome.notifications.create('', opt, function(nId){
+            if(url) {
+
+                window.ngAPI.activeNotifications[nId] = {
+                    url: url
+                    ,tab: tab
+                };
+            }
+        });
 	}
 	/**
 	 * Request new status information via NZBGET JSON-RPC.
@@ -286,7 +284,11 @@
 
 			if(this.groups) for(i in this.groups) {
 				if(!newIDs[i]) {
-					window.ngAPI.notify('Download complete!', this.groups[i].NZBName);
+					window.ngAPI.notify({
+                        title: 'Download complete!'
+                        ,message: this.groups[i].NZBName
+                        ,iconUrl: 'img/square80.png'
+                    });
 					delete this.groups[i];
 					chrome.runtime.sendMessage({statusUpdated: 'history'});
 				}
@@ -456,8 +458,35 @@
 	}
 }
 
+function prepareNotifications() {
+    if(!chrome.notifications)
+        return; // No notification support
+
+    chrome.notifications.onButtonClicked.addListener(function(nId, bId){
+        var not = window.ngAPI.activeNotifications[nId];
+
+        window.ngAPI.addURL(not.url, not.tab);
+        chrome.notifications.clear(nId, function(wasCleared) {});
+
+        delete window.ngAPI.activeNotifications[nId];
+    });
+
+    chrome.notifications.onClicked.addListener(function(nId) {
+        window.ngAPI.switchToNzbGetTab();
+        if(window.ngAPI.activeNotifications[nId])
+            delete window.ngAPI.activeNotifications[nId];
+    });
+
+    chrome.notifications.onClosed.addListener(function(nId, byUser) {
+        if(window.ngAPI.activeNotifications[nId])
+            delete window.ngAPI.activeNotifications[nId];
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	ngAPI.initialize();
+
+    prepareNotifications();
 
 	chrome.runtime.onMessage.addListener(function(m, sender, respCallback) {
 		if(m.message === 'optionsUpdated') {

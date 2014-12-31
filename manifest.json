@@ -13,7 +13,6 @@
 	"web_accessible_resources": [
 		"img/icon16.png"
 		,"img/nzbget-arrow.svg"
-		,"img/broken-arrow.svg"
 	],
 	"name": "nzbget-chrome",
 	"options_page": "options.html",
