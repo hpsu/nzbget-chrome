@@ -1,6 +1,6 @@
 {
 	"background": {
-		"scripts": [ "js/nzbget.js" ]
+		"scripts": [ "js/nzbget.js", "js/utilities.js" ]
 	},
 	"description": "Interact with and send NZB-files to NZBGet",
 	"icons": {

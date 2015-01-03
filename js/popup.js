@@ -120,41 +120,6 @@ function detectGroupStatus(group) {
 	return 'queued';
 }
 
-
-/**
- * function detectHistoryStatus()
- * Returns a string a history entrys status
- */
-function detectHistoryStatus(hist) {
-	if (hist.Kind === 'NZB') {
-		switch(true) {
-			case hist.ParStatus == 'FAILURE':
-			case hist.UnpackStatus == 'FAILURE':
-			case hist.MoveStatus == 'FAILURE':
-			case hist.ScriptStatus == 'FAILURE':
-				return 'failure';
-			case hist.ParStatus == 'MANUAL':
-				return 'damaged';
-			case hist.ScriptStatus == 'UNKNOWN':
-				return 'unknown';
-			case hist.ScriptStatus == 'SUCCESS':
-			case hist.UnpackStatus == 'SUCCESS':
-			case hist.ParStatus == 'SUCCESS':
-				return 'success';
-			case hist.ParStatus == 'REPAIR_POSSIBLE':
-				return 'repairable';
-			case hist.ParStatus == 'NONE':
-				return 'unknown';
-		}
-	} else if (hist.Kind === 'URL') {
-		switch (hist.UrlStatus) {
-			case 'SUCCESS': return 'success';
-			case 'FAILURE': return 'failure';
-			case 'UNKNOWN': return 'unknown';
-		}
-	}
-}
-
 /**
  * function cleanupList() - Remove unneeded elements and resort the list if needed
  *
@@ -333,7 +298,9 @@ function setupDraggable(post) {
  * Add or update a history entry
  */
 function historyPost(item) {
-	item.status = detectHistoryStatus(item);
+	var parsed = ngAPI.parse.historyStatus(item);
+	item.status = parsed[0];
+
 	var post = $('history_container').querySelector('[rel="' + item.NZBID + '"]')
 		,update	= post !== null;
 
