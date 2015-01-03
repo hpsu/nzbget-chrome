@@ -192,21 +192,21 @@ function cleanupList(dataObj, contEl) {
  * Sets speed, remaining and diskspace labels and resets pause/resume button.
  */
 function onStatusUpdated(){
-	var downloadPaused = api.status.Download2Paused;
+	var downloadPaused = ngAPI.status.Download2Paused;
 
 	$('tgl_pause').className = downloadPaused ? 'toggle resume' : 'toggle pause';
 
 	// Set "global" labels
-	if(api.status.DownloadRate)
-		speedLabel = Number(api.status.DownloadRate).toHRDataSize() + '/s';
+	if(ngAPI.status.DownloadRate)
+		speedLabel = Number(ngAPI.status.DownloadRate).toHRDataSize() + '/s';
 	else
 		speedLabel = downloadPaused ? '- PAUSED -' : 'idle';
 
-	var remainingLbl = BigNumber(api.status.RemainingSizeHi, api.status.RemainingSizeLo);
+	var remainingLbl = BigNumber(ngAPI.status.RemainingSizeHi, ngAPI.status.RemainingSizeLo);
 
 	$('lbl_speed').innerText = speedLabel;
 	$('lbl_remainingmb').innerText = remainingLbl == 0 ? 'nothing' : remainingLbl.toHRDataSize();
-	$('lbl_remainingdisk').innerText = BigNumber(api.status.FreeDiskSpaceHi, api.status.FreeDiskSpaceLo).toHRDataSize();
+	$('lbl_remainingdisk').innerText = BigNumber(ngAPI.status.FreeDiskSpaceHi, ngAPI.status.FreeDiskSpaceLo).toHRDataSize();
 }
 
 /**
@@ -214,12 +214,12 @@ function onStatusUpdated(){
  */
 var totalMBToDownload = 0;
 function onGroupsUpdated(){
-	$('download_table').style['display'] = Object.keys(api.groups).length > 0 ? 'block' : 'none';
+	$('download_table').style['display'] = Object.keys(ngAPI.groups).length > 0 ? 'block' : 'none';
 
 
 	var sortable = [];
-	for (var i in api.groups)
-		sortable.push(api.groups[i]);
+	for (var i in ngAPI.groups)
+		sortable.push(ngAPI.groups[i]);
 
 	sortable.sort(function(a,b) { return parseInt(a.sortorder) - parseInt(b.sortorder) });
 
@@ -230,7 +230,7 @@ function onGroupsUpdated(){
 		downloadPost(sortable[k]);
 	};
 
-	cleanupList(api.groups, $('download_container'));
+	cleanupList(ngAPI.groups, $('download_container'));
 }
 
 /**
@@ -238,8 +238,8 @@ function onGroupsUpdated(){
  */
 function onHistoryUpdated(){
 	var history = [];
-	api.history(function(j){
-		for(var i=0; i<api.Options.get('opt_historyitems'); i++) {
+	ngAPI.history(function(j){
+		for(var i=0; i<ngAPI.Options.get('opt_historyitems'); i++) {
 			history[j.result[i].NZBID] = j.result[i];
 			history[j.result[i].NZBID].sortorder = i;
 			historyPost(j.result[i]);
@@ -317,9 +317,9 @@ function setupDraggable(post) {
 		var oldI = e.detail.oldIndex
 			,newI = e.detail.newIndex
 			,diff = (newI-oldI)
-			,fileId = api.groups[e.detail.nzbID].LastID;
+			,fileId = ngAPI.groups[e.detail.nzbID].LastID;
 
-		api.sendMessage('editqueue', ['GroupMoveOffset', diff, '', [fileId]], function(res) {
+		ngAPI.sendMessage('editqueue', ['GroupMoveOffset', diff, '', [fileId]], function(res) {
 			console.log(res);
 		});
 	});
@@ -386,7 +386,7 @@ function downloadPost(item) {
 	var totalMB		= item.FileSizeMB-item.PausedSizeMB
 		,remainingMB= item.RemainingSizeMB-item.PausedSizeMB
 		,percent	= Math.round((totalMB - remainingMB) / totalMB * 100)
-		,estRem		= api.status.DownloadRate ? ((totalMBToDownload + remainingMB)*1024/(api.status.DownloadRate/1024)).toHRTimeLeft() : ''
+		,estRem		= ngAPI.status.DownloadRate ? ((totalMBToDownload + remainingMB)*1024/(ngAPI.status.DownloadRate/1024)).toHRTimeLeft() : ''
 		,post		= $('download_container').querySelector('[rel="' + item.NZBID + '"]')
 		,update		= post !== null
 		,leftLabel	= item.post ? item.post.ProgressLabel : percent+'%'
@@ -397,9 +397,9 @@ function downloadPost(item) {
 
 	item.status = detectGroupStatus(item);
 
-	if(item.status === 'downloading' || (item.postprocess && !api.status.PostPaused))
+	if(item.status === 'downloading' || (item.postprocess && !ngAPI.status.PostPaused))
 		var kind = 'success';
-	else if(item.status === 'paused' || (item.postprocess && api.status.PostPaused))
+	else if(item.status === 'paused' || (item.postprocess && ngAPI.status.PostPaused))
 		var kind = 'warning';
 	else
 		var kind = 'none';
@@ -462,33 +462,33 @@ function setupContextMenu(e){
 			e.stopPropagation();
 			this.style.display='none';
 			var nid = this.parentNode.parentNode.getAttribute('rel')
-				,fileId = api.groups[nid].LastID
-				,status = api.groups[nid].status
+				,fileId = ngAPI.groups[nid].LastID
+				,status = ngAPI.groups[nid].status
 				,method = (status == 'paused' ? 'GroupResume' : 'GroupPause');
 
-			api.sendMessage('editqueue', [method, 0, '', [fileId]], function(res) {});
+			ngAPI.sendMessage('editqueue', [method, 0, '', [fileId]], function(res) {});
 
 		}.bind(this.ctxm));
 		del.addEventListener('click', function(e){
 			e.stopPropagation();
 			this.style.display='none';
 			var nid = this.parentNode.parentNode.getAttribute('rel')
-				,fileId = api.groups[nid].LastID
-				,status = api.groups[nid].status;
+				,fileId = ngAPI.groups[nid].LastID
+				,status = ngAPI.groups[nid].status;
 			if(confirm('Are you sure?')) {
-				api.sendMessage('editqueue', ['GroupDelete', 0, '', [fileId]], function(res) {});
+				ngAPI.sendMessage('editqueue', ['GroupDelete', 0, '', [fileId]], function(res) {});
 			}
 		}.bind(this.ctxm));
 		ctxm = this.ctxm;
 	}
-	pse.innerText = api.groups[ctxm.parentNode.parentNode.getAttribute('rel')].status == 'paused' ? 'Resume' : 'Pause';
+	pse.innerText = ngAPI.groups[ctxm.parentNode.parentNode.getAttribute('rel')].status == 'paused' ? 'Resume' : 'Pause';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
 	chrome.runtime.connect();
-	window.api = chrome.extension.getBackgroundPage().ngAPI;
+	window.ngAPI = chrome.extension.getBackgroundPage().ngAPI;
 
-	if(!api.isInitialized || !api.connectionStatus) {
+	if(!ngAPI.isInitialized || !ngAPI.connectionStatus) {
 		$('download_table').style.display='none';
 		$('history_table').style.display='none';
 		$('setup_needed').style.display='block';
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					onGroupsUpdated();
 					break;
 				case 'history':
-					if(api.Options.get('opt_historyitems') > 0)
+					if(ngAPI.Options.get('opt_historyitems') > 0)
 						setTimeout(onHistoryUpdated,1500);
 					break;
 				case 'status':
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	);
 	onGroupsUpdated();
-	if(api.Options.get('opt_historyitems') == 0)
+	if(ngAPI.Options.get('opt_historyitems') == 0)
 		$('history_table').style.display='none';
 	else
 		onHistoryUpdated();
@@ -526,12 +526,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 	$('tgl_pause').addEventListener('click', function() {
 		method = this.classList.contains('pause') ? 'pausedownload2' : 'resumedownload2';
-		api.sendMessage(method, [], function() {
-			api.updateStatus();
-			api.updateGroups();
+		ngAPI.sendMessage(method, [], function() {
+			ngAPI.updateStatus();
+			ngAPI.updateGroups();
 		});
 	});
 	$('logo').addEventListener('click', function() {
-		api.switchToNzbGetTab();
+		ngAPI.switchToNzbGetTab();
 	});
 });
