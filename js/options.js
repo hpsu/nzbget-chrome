@@ -1,13 +1,9 @@
-function $(o) {
-	return document.getElementById(o);
-}
-
 document.addEventListener('DOMContentLoaded', function() {
-	api = chrome.extension.getBackgroundPage().ngAPI;
-	opts = api.Options;
+	ngAPI = chrome.extension.getBackgroundPage().ngAPI;
+	opts = ngAPI.Options;
 
-	document.querySelector('name').innerText = api.appName;
-	document.querySelector('version').innerText = api.appVersion;
+	document.querySelector('name').innerText = ngAPI.appName;
+	document.querySelector('version').innerText = ngAPI.appVersion;
 
 	var inputs = document.body.querySelectorAll(
 		'input[type=text],input[type=password],input[type=checkbox],select'
@@ -43,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			opOb[inputs[i].id] =(inputs[i].id, inputs[i].type == 'checkbox' ? inputs[i].checked : inputs[i].value);
 		}
 
-		api.version(function(r){
+		ngAPI.version(function(r){
 			$('connection_test').innerText = 'Successfully connected to NZBGet v'+r.result;
 			$('connection_test').style.webkitAnimationName = 'pulse';
 			$('connection_test').className = 'success';

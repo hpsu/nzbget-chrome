@@ -1,4 +1,3 @@
-
 ngAPI.parse = {
     /**
     * Returns a string a history entrys status
