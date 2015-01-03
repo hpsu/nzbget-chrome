@@ -259,6 +259,47 @@
 			}
 		}
 	}
+    /**
+    * Tries to show appropriate notification based on status in history.
+    */
+    ,notifyDownloadStatus: function(post) {
+        ngAPI.history(function(r) {
+            for(var i in r.result) {
+                if(r.result[i].NZBID == post.NZBID) {
+                    var status =
+                        window.ngAPI.parse.historyStatus(r.result[i]);
+
+                    var nob = {
+                        title: 'Download complete!'
+                        ,message: post.NZBName
+                        ,iconUrl: 'img/square80.png'
+                    };
+
+                    switch(status[0]) {
+                        case 'success':
+                            break;
+                        case 'warning':
+                            nob.title = 'Download finished with warnings!';
+                            break;
+                        case 'deleted':
+                            if(status[1] && status[1] == 'manual') return;
+                            if(status[1] && status[1] == 'dupe') {
+                                nob.title = 'Duplicate download removed';
+                                nob.iconUrl = 'img/error80.png';
+                            }
+                            break;
+                        default:
+                            nob.title = 'Download failed!';
+                            nob.contextMessage = status[1] ? 'Reason: '+status[1]:'';
+                            nob.iconUrl = 'img/error80.png';
+                    }
+                    window.ngAPI.notify(nob);
+
+                    break;
+                }
+            }
+        });
+    }
 	/**
 	 * Request new group information via NZBGET JSON-RPC.
 	 * Notifies on complete downloads
@@ -284,11 +325,7 @@
 
 			if(this.groups) for(i in this.groups) {
 				if(!newIDs[i]) {
-					window.ngAPI.notify({
-                        title: 'Download complete!'
-                        ,message: this.groups[i].NZBName
-                        ,iconUrl: 'img/square80.png'
-                    });
+                    window.ngAPI.notifyDownloadStatus(this.groups[i]);
 					delete this.groups[i];
 					chrome.runtime.sendMessage({statusUpdated: 'history'});
 				}
