@@ -1,7 +1,7 @@
 function $(o) {
     return document.getElementById(o);
 };
-function $E = function(params) {
+function $E(params) {
     var tmp = document.createElement(params.tag);
     if(params.className) tmp.className = params.className;
     if(params.text) tmp.appendChild(document.createTextNode(params.text));
