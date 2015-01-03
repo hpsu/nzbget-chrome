@@ -5,6 +5,7 @@
 	<script src="js/options.js"></script>
 	<link rel="stylesheet" type="text/css" href="options.css">
 	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,700,300|Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic)' rel='stylesheet' type='text/css'>
+	<link rel="import" href="elements/ng-checkbox.html">
 </head>
 <body>
 	<div class="card">
@@ -28,24 +29,17 @@
 			<label for="opt_password">Password</label>
 			<input type="password" id="opt_password">
 
-			<div class="checkbox">
-				<label class="checkbox">
-					<input type="checkbox" id="opt_rememberurls">
-					Remember downloaded URLs
-					<div class="small">
-						Used to highlight downloaded links even after page reloads.
-					</div>
-				</label>
-			</div>
-			<div class="checkbox">
-				<label class="checkbox">
-					<input type="checkbox" id="opt_notifications">
-					Enable notifications
-					<div class="small">
-						Popup notifications on completed downloads.
-					</div>
-				</label>
-			</div>
+			<ng-checkbox id="opt_rememberurls"
+				label="Remember downloaded URLs"
+				description="Used to highlight downloaded links
+					even after page reloads.">
+			</ng-checkbox>
+
+			<ng-checkbox id="opt_notifications"
+				label="Enable notifications"
+				description="Popup notifications on completed downloads.">
+			</ng-checkbox>
+
 			<label for="opt_historyitems">History items</label>
 			<div class="small">
 				History items shown in popup or 0 to disable history.

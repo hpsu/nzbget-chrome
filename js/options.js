@@ -5,22 +5,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.querySelector('name').innerText = ngAPI.appName;
 	document.querySelector('version').innerText = ngAPI.appVersion;
 
-	var inputs = document.body.querySelectorAll(
-		'input[type=text],input[type=password],input[type=checkbox],select'
+	var inputs = document.querySelectorAll(
+		'input[type=text],input[type=password],ng-checkbox,select'
 	);
 
-	for(var i in inputs) {
-		if(inputs[i].type == 'checkbox') {
-			inputs[i].checked = opts.get(inputs[i].id);
-		}
-		else {
-			inputs[i].value = opts.get(inputs[i].id);
-		}
+	for(var i=0; i < inputs.length; i++) {
+		inputs[i].value = opts.get(inputs[i].id);
 	}
 
 	$('btn_save').addEventListener('click', function(){
 		for(var i in inputs) {
-			opts.set(inputs[i].id, inputs[i].type == 'checkbox' ? inputs[i].checked : inputs[i].value);
+			opts.set(inputs[i].id, inputs[i].value);
 		}
 		chrome.runtime.sendMessage({message: 'optionsUpdated'});
 
@@ -36,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		var opOb = {get: function(v) {return this[v]}};
 		for(var i in inputs) {
-			opOb[inputs[i].id] =(inputs[i].id, inputs[i].type == 'checkbox' ? inputs[i].checked : inputs[i].value);
+			opOb[inputs[i].id] =(inputs[i].id, inputs[i].value);
 		}
 
 		ngAPI.version(function(r){

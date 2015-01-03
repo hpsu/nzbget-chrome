@@ -1,0 +1,67 @@
+<template>
+    <style>
+        :host {
+            display: block;
+            padding: 0.6rem 0 0.3rem 0;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        :host(:focus) {
+            border-style: solid;
+            border-color: #E91E63;
+            border-width:0 0 2px 0;
+            margin-bottom:3px;
+            outline: none;
+        }
+        checkbox-container {
+            position: relative;
+            width: 18px;
+            height: 18px;
+
+            display: inline-block;
+            cursor: pointer;
+        }
+        checkbox {
+            position: absolute;
+            box-sizing: border-box;
+            top: 0px;
+            left: 0px;
+            width: 18px;
+            height: 18px;
+            border: solid 2px #5a5a5a;
+            pointer-events: none;
+            transition: all 100ms linear;
+        }
+        checkbox.checked {
+            transform: rotate(45deg);
+            top: -4px;
+            left: 6px;
+            width: 10px;
+            height: 21px;
+            border-width: 0 2px 2px 0;
+            border-color: #0f9d58;
+        }
+        label {
+            display: flex;
+        }
+        div.text {
+            display: flex;
+            flex-direction: column;
+            padding-left: 14px;
+            margin-top: -5px;
+        }
+        description {
+            font-size: 0.6rem;
+        }
+    </style>
+    <label>
+        <checkbox-container>
+            <checkbox></checkbox>
+        </checkbox-container>
+        <div class="text">
+            <header></header>
+            <description></description>
+        </div>
+    </label>
+</template>
+<script src="ng-checkbox.js"></script>
