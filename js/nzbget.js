@@ -113,15 +113,18 @@
 			this.connectionStatus = false;
 		}
 	}
-	,addURL: function(url, tab, ident) {
-		var category = '';
+	,addURL: function(url, tab, ident, category) {
 		var nzbFileName = url.match(/\/([^\/]+)$/)[1];
 		var xhr = new XMLHttpRequest();
+
+        if(!category) category = '';
 		xhr.onreadystatechange = function(){
 			if (xhr.readyState == 4) {
 				if(xhr.status == 200) {
 					if(xhr.getResponseHeader('Content-Type').indexOf("application/x-nzb") > -1)  {
-						if(xhr.getResponseHeader('X-DNZB-Category')) category = xhr.getResponseHeader('X-DNZB-Category');
+                        if(xhr.getResponseHeader('X-DNZB-Category'))
+                            category = xhr.getResponseHeader('X-DNZB-Category');
+
 						/* Replace NZB file name with the one specified in response header if available. */
 						var disposition = xhr.getResponseHeader('Content-Disposition');
 						if(disposition) {
@@ -529,7 +532,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		if(m.message === 'optionsUpdated') {
 			ngAPI.initialize();
 		} else if(m.message === 'addURL') {
-			ngAPI.addURL(m.href, sender.tab.id, m.id);
+			ngAPI.addURL(
+                m.href
+                ,sender.tab.id
+                ,m.id
+                ,m.category ? m.category : null
+            );
 		} else if(m.message === 'checkCachedURL') {
             ngAPI.cacheDb.checkURLObj(m.url, respCallback);
             return true;

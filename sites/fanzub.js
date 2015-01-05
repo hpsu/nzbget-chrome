@@ -10,7 +10,13 @@ for(var i=0; i < dllinks.length; i++) {
 	var trParent = findParentOfType(dlitem, 'TR');
 	if(trParent) {
 		var chb = trParent.querySelector('TD INPUT[type=checkbox]');
-		if(chb && chb.value) lid = chb.value;
+		if(chb && chb.value)
+			lid = chb.value;
+
+		var cat = trParent.querySelector('TD A IMG');
+		console.log('cat');
+		if (cat && cat.alt)
+			category = cat.alt;
 	}
 
 	newitem = createNgIcon(
