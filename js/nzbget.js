@@ -36,6 +36,36 @@
 		});
 	}
 	/**
+	 * Build a URL-object from options
+	 *
+	 * @var boolean authenticate
+	 * @var [object] alt_options
+	 * @var [string] path_add path to append
+	 */
+	,buildServerURI: function(authenticate, alt_options, path_add) {
+		var opt = alt_options && alt_options.get ? alt_options : window.ngAPI.Options;
+		var x = new URL('');
+
+		var keys = [
+			'protocol', 'port'
+			,'pathname', 'host'];
+
+		if(authenticate) {
+			keys.push('username');
+			keys.push('password');
+		}
+
+		for(var i in keys) {
+			x[keys[i]] = opt.get('opt_' + keys[i]);
+		}
+
+		// Ensure pathname always does not end with a slash
+		x.pathname = x.pathname.replace(/\/$/,'') + (path_add ? path_add : '');
+
+		return x.href;
+	}
+
+	/**
 	 * Send XHR Request to NZBGet via JSON-RPC
 	 *
 	 * @var method "method" to call
@@ -46,11 +76,8 @@
 	 */
 	,sendMessage: function(method, params, success_func, fail_func, alt_options) {
 		var opt = typeof alt_options === 'object' ? alt_options : this.Options;
-        var url = opt.get('opt_host')
-		,port = opt.get('opt_port')
-		,username = opt.get('opt_username')
+		var username = opt.get('opt_username')
 		,password = opt.get('opt_password')
-		,protocol = opt.get('opt_protocol')
 		,query = {
 			version: '1.1'
 			,method: method
@@ -84,7 +111,7 @@
 			}
 		}.bind(this);
 
-		xhr.open('POST', protocol + '://' + url + ':' + port + '/jsonrpc');
+		xhr.open('POST', window.ngAPI.buildServerURI(false, opt, '/jsonrpc'));
 
 		xhr.setRequestHeader('Content-Type','text/json');
 		xhr.setRequestHeader('Authorization','Basic '+ window.btoa(username + ':' + password)); // Use Authorization header instead of passing user/pass. Otherwise request fails on larger nzb-files!?
@@ -197,16 +224,11 @@
 	 * Locate existing NZBGet-tab or open a new one
 	 */
 	,switchToNzbGetTab: function() {
-		var url = this.Options.get('opt_host')
-		,port = this.Options.get('opt_port')
-		,username = this.Options.get('opt_username')
-		,password = this.Options.get('opt_password')
-		,protocol = this.Options.get('opt_protocol');
-		chrome.tabs.query({url: protocol + '://' + url + ':' + port + '/*'}, function(tabs) {
+		chrome.tabs.query({url: window.ngAPI.buildServerURI(false, null, '/*')}, function(tabs) {
 			if(tabs.length) {
 				chrome.tabs.update(tabs[0].id, {selected: true});
 			} else {
-				chrome.tabs.create({url: protocol + '://' + username + ':' + password + '@' + url + ":" + port});
+				chrome.tabs.create({url: window.ngAPI.buildServerURI(true)});
 			}
 		});
 	}
@@ -464,6 +486,7 @@
 			opt_port: 6789
 			,opt_username: 'nzbget'
 			,opt_password: 'tegbzn6789'
+			,opt_pathname: '/'
 			,opt_historyitems: 30
 			,opt_protocol: 'http'
             ,opt_rememberurls: false
@@ -524,6 +547,10 @@ function prepareNotifications() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Chrome <35 compatibility
+    if(!window.URL && window.webkitURL)
+        window.URL = window.webkitURL;
+
 	ngAPI.initialize();
 
     prepareNotifications();
@@ -558,10 +585,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
 		if (changeInfo.status == 'complete') {
-
-            // Chrome <35 compatibility
-            if(!window.URL && window.webkitURL)
-                window.URL = window.webkitURL;
 
             if(['http:', 'https:'].indexOf(new URL(tab.url).protocol) > -1) {
     			chrome.tabs.executeScript(tabId, {

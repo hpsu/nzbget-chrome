@@ -172,8 +172,9 @@ input[type=button]#btn_test {
 input.small[type=text], input.small[type=password] {
 	width: 3rem;
 }
-div.small {
+div.small, span.small {
 	font-size: 0.6rem;
+	font-weight: normal;
 }
 .wrap {
 	display: inline-block;

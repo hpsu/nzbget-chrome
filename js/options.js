@@ -1,3 +1,19 @@
+function parseComponentsFromURL(value) {
+	var x = new URL(value);
+
+	$('opt_protocol').value = x.protocol.replace(':','');
+	$('opt_host').value = x.hostname;
+	$('opt_port').value = x.port ? x.port : 80;
+
+	var keys = ['username', 'password', 'pathname'];
+	for(var i in keys) {
+		var key = 'opt_' + keys[i]
+			,el = $(key);
+			el.value = x[keys[i]];
+	}
+	return x;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	ngAPI = chrome.extension.getBackgroundPage().ngAPI;
 	opts = ngAPI.Options;
@@ -56,16 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		var prot = this.value.match(/^([a-z]+):\/\//);
 
 		if(prot) {
-			var a = document.createElement('a');
-			a.href = this.value;
-			this.value = this.value.replace(/^[a-z]+:\/\//,'');
-			if(prot[1] == 'http' || prot[1] == 'https') {
-				$('opt_protocol').value = prot[1];
-			}
-			if(a.hostname) $('opt_host').value = a.hostname;
-			if(a.port) $('opt_port').value = a.port;
-			if(a.username) $('opt_username').value = a.username;
-			if(a.password) $('opt_password').value = a.password;
+			parseComponentsFromURL(this.value);
 		}
 	});
 });
