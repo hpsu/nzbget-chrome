@@ -243,11 +243,46 @@ div.post .title {
 }
 #setup_needed {
 	display: none;
-	width:200px;
-	padding: 3rem;
-	background:#fcc;
-	border: 0.3rem solid red;
+	padding: 2rem;
+	margin: 10px -23px;
+	background: #E9E9E9;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
 
+#setup_needed h2 {
+	font-size: 24px;
+}
+
+.btnbar {
+	text-align: right;
+	padding-top: 20px;
+	margin-right: -2rem;
+
+}
+
+.btnbar a {
+	padding: 8px 30px;
+	text-decoration: none;
+	margin: 10px 1px 0 1px;
+	border-radius: 4px;
+	text-transform: uppercase;
+	transition: box-shadow .28s cubic-bezier(0.4,0,.2,1);
+	outline: 0!important;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	white-space: nowrap;
+	vertical-align: middle;
+
+	background-color: transparent;
+	color: #E91E63;
+
+}
+.btnbar a:hover {
+	box-shadow: 0 3px 6px rgba(0,0,0,.2),0 3px 6px rgba(0,0,0,.28);
+}
+.btnbar a:active {
+	box-shadow: 0 10px 20px rgba(0,0,0,.19),0 6px 6px rgba(0,0,0,.23);
 }
 
 div.control {
