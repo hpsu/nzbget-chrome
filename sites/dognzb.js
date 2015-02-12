@@ -35,6 +35,16 @@ if (document.getElementsByTagName('title')[0].text.match(/Browse/)) {
         var dlparent = dlitem.parentElement;
         dlparent.parentElement.insertBefore(newtd,dlparent);
     }
+
+    var warnings = document.querySelectorAll('div.dog-icon-warning');
+    for (var i = 0; i < warnings.length; i++) {
+        var warningitem = warnings.item(i);
+
+        // we add an empty td to preserve the layout
+        var newtd = document.createElement('td');
+        var warningparent = warningitem.parentElement;
+        warningparent.parentElement.insertBefore(newtd, warningparent);
+    }
 }
 
 // else use the details mode
