@@ -155,9 +155,11 @@
 						/* Replace NZB file name with the one specified in response header if available. */
 						var disposition = xhr.getResponseHeader('Content-Disposition');
 						if(disposition) {
-							match = disposition.replace(/.+filename=["']?([^'":;]+).*$/i, '$1');
-							if(match) {
-								nzbFileName = match.replace('.nzb','');
+							rawName = disposition.replace(/.+filename=["]?([^";]+).*$/i, '$1');
+							if(rawName) {
+								// Remove potential path from filenameand strip
+								// .nzb-extension if present
+								nzbFileName = rawName.replace(/(.+[\/\\]{1})?(.+?)(\.nzb)?$/i, "$2");
 							}
 						}
 						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", category, 0, false, window.btoa(xhr.responseText)],
