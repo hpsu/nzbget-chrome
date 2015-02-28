@@ -468,14 +468,13 @@
             this.aEl.href = url;
             var osObj = {
                 domain: this.aEl.host
-                ,id: this.aEl.pathname
+                ,id: this.aEl.pathname + this.aEl.search
             };
 
             // Try to shorten URL based on a simple regex pattern
             var match = this.aEl.pathname.match(/\/[0-9a-z_]+\/([0-9a-z]+)/);
             if(match)
                 osObj.id = match[1];
-
             return osObj;
         }
 
@@ -586,19 +585,27 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
-		if (changeInfo.status == 'complete') {
-
-            if(['http:', 'https:'].indexOf(new URL(tab.url).protocol) > -1) {
-    			chrome.tabs.executeScript(tabId, {
-        			code: "var e = document.querySelector('div.icon_nzb a[href*=\"/getnzb\"]'); if(e) {e.href;}"
-    				}, function(r) {
-    					if(r && r[0] !== null) {
-    						chrome.tabs.executeScript(tabId, {file: 'sites/common.js'});
-    						chrome.tabs.executeScript(tabId, {file: 'sites/newsnab.js'});
-    						chrome.tabs.insertCSS(tabId, {file: 'sites/common.css'});
-        				}
-    			});
-            }
+		if(chrome.runtime.lastError) {
+			return;
+		}
+		if (changeInfo.status == 'loading') {
+			if(['http:', 'https:'].indexOf(new URL(tab.url).protocol) > -1) {
+				chrome.tabs.executeScript(tabId, {
+					code: "({isSpotweb: document.querySelector('meta[name=generator][content*=SpotWeb]') != null, isNewznab: document.querySelector('div.icon_nzb a[href*=\"/getnzb\"]') != null});"
+				}, function(r) {
+					if(r && typeof r[0] == 'object') {
+						chrome.tabs.executeScript(tabId, {file: 'sites/common.js'});
+						chrome.tabs.insertCSS(tabId, {file: 'sites/common.css'});
+						if(r[0].isNewznab) {
+							chrome.tabs.executeScript(tabId, {file: 'sites/newsnab.js'});
+						}
+						else if(r[0].isSpotweb) {
+							chrome.tabs.executeScript(tabId, {file: 'sites/spotweb.js'});
+							chrome.tabs.insertCSS(tabId, {file: 'sites/spotweb.css'});
+						}
+					}
+				});
+			}
 		}
 	});
 });

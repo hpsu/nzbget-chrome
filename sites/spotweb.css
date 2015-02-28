@@ -1,0 +1,12 @@
+table.spots a.nzb {
+	display: inline;
+}
+
+div.spots table.spots td.nzb, div.spots table.spots th.nzb {
+	width: 45px;
+
+}
+
+.nzbgc_download {
+	vertical-align: middle;
+}
