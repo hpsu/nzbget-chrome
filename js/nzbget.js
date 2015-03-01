@@ -209,7 +209,7 @@
 				}
 			}
 		}.bind(this);
-		xhr.open('POST', url);
+		xhr.open('GET', url);
 		xhr.send();
 	}
 
