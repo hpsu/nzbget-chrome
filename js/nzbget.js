@@ -488,6 +488,7 @@
 			,opt_username: 'nzbget'
 			,opt_password: 'tegbzn6789'
 			,opt_pathname: '/'
+			,opt_downloaditems: 30
 			,opt_historyitems: 30
 			,opt_protocol: 'http'
             ,opt_rememberurls: false
