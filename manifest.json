@@ -32,7 +32,7 @@
 			,"js": [ "sites/common.js", "sites/nzbclub.js" ]
 			,"css": [ "sites/common.css" ]
 		},{
-			"matches": [ "*://*.nzbindex.nl/*" ]
+			"matches": [ "*://*.nzbindex.nl/*", "*://*.nzbindex.com/*" ]
 			,"js": [ "sites/common.js", "sites/nzbindex.js" ]
 			,"css": [ "sites/common.css" ]
 		},{
