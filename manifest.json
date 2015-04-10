@@ -36,6 +36,10 @@
 			,"js": [ "sites/common.js", "sites/nzbindex.js" ]
 			,"css": [ "sites/common.css" ]
 		},{
+			"matches": [ "*://*.binsearch.info/*" ]
+			,"js": [ "sites/common.js", "sites/binsearch.js" ]
+			,"css": [ "sites/common.css" ]
+		},{
 			"matches": [ "*://*.fanzub.com/*" ]
 			,"js": [ "sites/common.js", "sites/fanzub.js" ]
 			,"css": [ "sites/common.css" ]

@@ -140,7 +140,7 @@
 			this.connectionStatus = false;
 		}
 	}
-	,addURL: function(url, tab, ident, category) {
+	,addURL: function(url, tab, ident, category, name_override) {
 		var nzbFileName = url.match(/\/([^\/]+)$/)[1];
 		var xhr = new XMLHttpRequest();
 
@@ -162,7 +162,7 @@
 								nzbFileName = rawName.replace(/(.+[\/\\]{1})?(.+?)(\.nzb)?$/i, "$2");
 							}
 						}
-						window.ngAPI.sendMessage('append', [nzbFileName + ".nzb", category, 0, false, window.btoa(xhr.responseText)],
+						window.ngAPI.sendMessage('append', [(name_override ? name_override : nzbFileName + ".nzb"), category, 0, false, window.btoa(xhr.responseText)],
 							function() {
 								window.ngAPI.updateGroups();
 								if(tab) {
@@ -565,6 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 ,sender.tab.id
                 ,m.id
                 ,m.category ? m.category : null
+                ,m.name_override ? m.name_override : null
             );
 		} else if(m.message === 'checkCachedURL') {
             ngAPI.cacheDb.checkURLObj(m.url, respCallback);

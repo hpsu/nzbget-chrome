@@ -13,7 +13,7 @@ function findParentOfType(el, type){
 /**
  * Create an IMG-element with properties and events ready to inject into a sites markup
  */
-function createNgIcon(id, href, cat){
+function createNgIcon(id, href, cat, name_override){
 	eNgIcon = document.createElement('img');
 	eNgIcon.src=chrome.extension.getURL("img/nzbget-arrow.svg");
 	eNgIcon.title="Click to download with NZBGet.";
@@ -21,13 +21,14 @@ function createNgIcon(id, href, cat){
 
 	eNgIcon.href = href;
 	eNgIcon.id = id;
+	eNgIcon.nameOverride = name_override;
 	eNgIcon.category = cat;
 
 	eNgIcon.addEventListener('click', function(e) {
 		e.preventDefault();
 
 		//console.log('ID: '+this.id,'HREF:'+this.href,'CATEGORY:'+this.category);
-		chrome.runtime.sendMessage({message: "addURL", href: this.href, id: this.id, category: this.category});
+		chrome.runtime.sendMessage({message: "addURL", href: this.href, id: this.id, category: this.category, name_override: this.nameOverride});
 
 		this.classList.add('nzbgc_adding');
 
