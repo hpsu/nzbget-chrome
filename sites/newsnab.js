@@ -8,7 +8,7 @@ for(var i=0; i < dllinks.length; i++) {
 	var category = '', lid = '';
 
 	newdiv = document.createElement('div');
-	newdiv.className = 'icon icon_nzbget';
+	newdiv.className = 'icon icon_nzbgc';
 
 	// Try to find category and an unique id
 	var tabParent = document.getElementById('details');

@@ -11,7 +11,7 @@ if (document.getElementsByTagName('title')[0].text.match(/Browse/)) {
 
         // create the element we want to insert into the html
         var newtd = document.createElement('td');
-        newtd.className = 'icon_nzbget';
+        newtd.className = 'icon_nzbgc';
         newtd.style.padding = '0 2px';
         var trParent = findParentOfType(dlitem, 'TR');
         if(trParent && trParent.id) lid = trParent.id;

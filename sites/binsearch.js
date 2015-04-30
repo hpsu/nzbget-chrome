@@ -31,7 +31,7 @@ for(var i=0; i < dllinks.length; i++) {
 		name = nameTag.childNodes[0].textContent.replace(/\[[0-9]+\/[0-9]+\]\s*-\s*/g,'').replace(/\s*\([0-9]+\/[0-9]+\)/g, '').replace(/"/g,'').replace(/\s*yEnc\s*/, '').replace(/\//g,'')
 	}
 
-	newSpan.className = 'icon_nzbget';
+	newSpan.className = 'icon_nzbgc';
 	newSpan.style.padding = '0 5px';
 
 	var newitem = createNgIcon(
