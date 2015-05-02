@@ -176,7 +176,11 @@ function onGroupsUpdated(){
 
 	// Build or update active download list
 	totalMBToDownload = 0;
+	var i = 0;
+	var maxDownloadItems = ngAPI.Options.get('opt_downloaditems') * 1;
 	for(k in sortable) {
+	    // Show up to opt_downloaditems items in the list
+	    if(maxDownloadItems && i++ >= maxDownloadItems)break;
 		downloadPost(sortable[k]);
 	};
 
