@@ -4,6 +4,13 @@
 Google chrome extension to interact with nzbget
 
 ### Version history
+#### 1.3
+* Make popup notifications optional and use new rich notification API.
+* Try to lookup status in notified downloads
+* Use category Detected from site markup when no category is present in header.
+* Support one-click integration for spotweb, binsearch, nzbindex.com
+* Fixes and polish
+
 #### 1.2
 * Better handling of connection failures.
 * support one-click integration on nzbindex.nl
