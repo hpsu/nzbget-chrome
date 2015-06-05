@@ -4,14 +4,19 @@
 Google chrome extension to interact with nzbget
 
 ### Version history
-#### 1.3
+#### 1.4 (current dev)
+---
+
+
+#### 1.3 - 2015-06-05
 * Make popup notifications optional and use new rich notification API.
 * Try to lookup status in notified downloads
 * Use category Detected from site markup when no category is present in header.
 * Support one-click integration for spotweb, binsearch, nzbindex.com
 * Fixes and polish
+---
 
-#### 1.2
+#### 1.2 - 2014-10-13
 * Better handling of connection failures.
 * support one-click integration on nzbindex.nl
 * support one-click integration on fanzub.com
@@ -20,8 +25,9 @@ Google chrome extension to interact with nzbget
 * Updated appearance
 * New feature: [optional] Persistent download status on download icons.
 * Progress bars now show estimated remaining download time
+---
 
-#### 1.1
+#### 1.1 - 2014-05-31
 * Protocol selector (Thanks dakky)
 * Less strict nzb header check (Thanks dakky)
 * One-click site integration for newznab, feedly and nzbclub
@@ -30,8 +36,9 @@ Google chrome extension to interact with nzbget
 * Show nzb health in popup on low quality nzbs
 * Use webp-icon in notifications, since rich notifications lost support for SVG
 * Additional polish and bugfixes
+---
 
-#### 1.0
+#### 1.0 - 2013-12-31
 * Initial release
 
 ### Current main features
