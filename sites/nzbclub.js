@@ -1,29 +1,32 @@
 /**
  * Inject nzbgc-markup to nzbclub.com
  */
+(function() {
+    'use strict';
+    var containers = document.querySelectorAll(
+        '.row .project-action[collectionid]:first-child');
+    for(var i = 0; i < containers.length; i++) {
+        var container = containers.item(i);
+        var lid = container.getAttribute('collectionid');
+        var resultaction = container.querySelector('div');
+        var newdiv = document.createElement('button');
 
-var dllinks = document.querySelectorAll('a[href*="/nzb_get/"]');
-for(var i = 0; i < dllinks.length; i++) {
-    var dlitem = dllinks.item(i);
-    var category = '', lid = '';
-    var newdiv = document.createElement('span');
-    var trParent = findParentOfType(dlitem, 'TR');
+        newdiv.className = 'btn btn-xs icon_nzbgc';
+        //newdiv.style.padding = '0 5px';
 
-    newdiv.className = 'icon_nzbgc';
-    newdiv.style.padding = '0 5px';
+        var newitem = createNgIcon(
+            lid + '_nzbgc',
+            window.location.protocol +
+                '//' + window.location.host + '/nzb_get/' + lid
+        );
+        newitem.style.marginTop = '0';
+        newitem.style.marginBottom = '0';
+        newitem.style.width = 'auto';
+        newitem.style.height = '11px';
+        newitem.style.borderRadius = '0';
 
-    if(trParent && trParent.id) {
-        lid = trParent.id;
+        newdiv.appendChild(newitem);
+
+        resultaction.appendChild(newdiv);
     }
-
-    var newitem = createNgIcon(
-        lid + '_nzbgc',
-        dlitem.href,
-        category
-    );
-
-    newdiv.appendChild(newitem);
-
-    var dlparent = dlitem.parentElement;
-    dlparent.parentElement.insertBefore(newdiv, dlparent);
-}
+})();
