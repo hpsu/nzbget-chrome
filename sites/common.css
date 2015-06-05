@@ -8,24 +8,24 @@
 }
 
 .nzbgc_download {
-	-webkit-filter: grayscale(0.8);
-	-webkit-transition: all 250ms ease-in-out;
-	cursor: pointer;
+    -webkit-filter: grayscale(0.8);
+    -webkit-transition: all 250ms ease-in-out;
+    cursor: pointer;
     width: 16px;
     width: 16px;
 
 }
 .nzbgc_download.nzbgc_added_ok{
-	-webkit-filter: grayscale(0);
+    -webkit-filter: grayscale(0);
 }
 
 .nzbgc_download.nzbgc_adding{
-	-webkit-animation-name: spin;
+    -webkit-animation-name: spin;
     -webkit-animation-duration: 500ms;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: linear;
 }
 
 .nzbgc_download:hover {
-	-webkit-filter: grayscale(0.5);
+    -webkit-filter: grayscale(0.5);
 }

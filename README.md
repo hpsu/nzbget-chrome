@@ -14,6 +14,7 @@ Google chrome extension to interact with nzbget
 * Use category Detected from site markup when no category is present in header.
 * Support one-click integration for spotweb, binsearch, nzbindex.com
 * Fixes and polish
+
 ---
 
 #### 1.2 - 2014-10-13
@@ -25,6 +26,7 @@ Google chrome extension to interact with nzbget
 * Updated appearance
 * New feature: [optional] Persistent download status on download icons.
 * Progress bars now show estimated remaining download time
+
 ---
 
 #### 1.1 - 2014-05-31
@@ -36,6 +38,7 @@ Google chrome extension to interact with nzbget
 * Show nzb health in popup on low quality nzbs
 * Use webp-icon in notifications, since rich notifications lost support for SVG
 * Additional polish and bugfixes
+
 ---
 
 #### 1.0 - 2013-12-31
