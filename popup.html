@@ -3,45 +3,46 @@
         <script src="js/framework.js"></script>
         <script src="js/popup.js"></script>
         <link rel="stylesheet" type="text/css" href="popup.css">
-        <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,700,300|Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic)' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700)'
+              rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+              rel="stylesheet">
     </head>
     <body>
-        <div class="infobox">
-            <img id="logo" src="img/nzbget-icon.svg">
-            <dl>
-                <dt>Current speed:</dt>
-                <dd id="lbl_speed">0 KB/s</dd>
-                <dt>Remaining:</dt>
-                <dd id="lbl_remainingmb">0 MiB</dd>
-                <dt>Free diskspace:</dt>
-                <dd id="lbl_remainingdisk">0 MiB</dd>
-            </dl>
-            <div class="control">
-                <div id="tgl_pause" class="toggle" title="Pause download">
-                    <span>&nbsp;</span>
+        <div class="header">
+            <div class="infobox">
+                <img id="logo" src="img/nzbget-arrow.svg">
+                <dl>
+                    <dt id="lbl_speed">0 KB/s</dt>
+                    <dt id="lbl_remainingmb">0 MiB</dt>
+                    <dt id="lbl_remainingdisk">0 MiB</dt>
+                </dl>
+                <div class="control">
+                    <i id="tgl_pause" class="material-icons">pause</i>
+                    <!--<i id="tgl_alarm" class="material-icons">more_vert</i>-->
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab active" data-container="download_container">
+                    Downloads
+                </div>
+                <div class="tab" data-container="history_container">
+                    History
                 </div>
             </div>
         </div>
-
-        <div id="download_table">
-            <h2>Active downloads</h2>
-            <div id="download_container">
+        <div class="body">
+            <div id="download_container" class="active">
+                <div class="inactive">No active downloads.</div>
             </div>
-        </div>
-
-        <div id="history_table">
-            <h2>History</h2>
             <div id="history_container">
             </div>
         </div>
-
-        <div id="setup_needed">
-            <h2>Connection failure!</h2>
-            Could not connect to NZBGet.
-            Please ensure that the server is running and
-            check your connection settings on the
-            <div class="btnbar">
-                <a target="_blank" href="options.html">options page</a>
+        <div class="shroud">
+            <div class="messagebox">
+                <h2></h2>
+                <p></p>
+                <div class="btnbar"></div>
             </div>
         </div>
     </body>

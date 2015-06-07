@@ -259,7 +259,7 @@ var totalMBToDownload = 0;
             pse = ctxm.querySelector('li.pause');
         }
         else {
-            e.target.ctxm = e.target.appendChild($E({
+            e.target.ctxm = e.target.parentNode.appendChild($E({
                 tag: 'div',
                 className: 'contextmenu'}));
             var ul = e.target.ctxm.appendChild($E({tag: 'ul'}));
@@ -275,7 +275,7 @@ var totalMBToDownload = 0;
             pse.addEventListener('click', function(clickEvent) {
                 clickEvent.stopPropagation();
                 this.style.display = 'none';
-                var nid = this.parentNode.parentNode.getAttribute('rel'),
+                var nid = this.parentNode.getAttribute('rel'),
                     fileId = window.ngAPI.groups[nid].LastID,
                     status = window.ngAPI.groups[nid].status,
                     method = status === 'paused' ?
@@ -303,7 +303,7 @@ var totalMBToDownload = 0;
             ctxm = e.target.ctxm;
         }
         pse.innerText = window.ngAPI.groups[
-            ctxm.parentNode.parentNode.getAttribute('rel')
+            ctxm.parentNode.getAttribute('rel')
         ].status === 'paused' ? 'Resume' : 'Pause';
     }
 
@@ -416,12 +416,15 @@ var totalMBToDownload = 0;
                 className: 'bar-text right',
                 text: rightLabel}));
 
-            var dd = post.appendChild($E({
+            var more = post.appendChild($E({
+                tag: 'i',
+                className: 'material-icons',
+                text: 'more_vert'}));
+
+            post.appendChild($E({
                 tag: 'div',
-                className: 'dropdown'})).appendChild($E({
-                    tag: 'div',
-                    'className': 'down'}));
-            dd.parentNode.addEventListener('click', setupContextMenu);
+                className: 'dropdown'}));
+            more.addEventListener('click', setupContextMenu);
 
             setupDraggable(post);
             document.querySelector('#download_container').appendChild(post);
@@ -483,9 +486,12 @@ var totalMBToDownload = 0;
     function onStatusUpdated(){
         var downloadPaused = window.ngAPI.status.Download2Paused;
 
-        document.querySelector('#tgl_pause').className = downloadPaused ?
+        /*document.querySelector('#tgl_pause').className = downloadPaused ?
                                                          'toggle resume' :
-                                                         'toggle pause';
+                                                         'toggle pause';*/
+        document.querySelector('#tgl_pause').innerText = downloadPaused ?
+                                                         'play_arrow' :
+                                                         'pause';
 
         // Set "global" labels
         var speedLabel = '';
@@ -494,7 +500,7 @@ var totalMBToDownload = 0;
                 Number(window.ngAPI.status.DownloadRate)) + '/s';
         }
         else {
-            speedLabel = downloadPaused ? '- PAUSED -' : 'idle';
+            speedLabel = downloadPaused ? '- PAUSED -' : '';
         }
 
         var remainingLbl = bigNumber(
@@ -503,10 +509,11 @@ var totalMBToDownload = 0;
 
         document.querySelector('#lbl_speed').innerText = speedLabel;
         document.querySelector('#lbl_remainingmb').innerText =
-            remainingLbl === 0 ? 'nothing' : toHRDataSize(remainingLbl);
+            remainingLbl === 0 ? '' : toHRDataSize(remainingLbl);
         document.querySelector('#lbl_remainingdisk').innerText =
             toHRDataSize(bigNumber(window.ngAPI.status.FreeDiskSpaceHi,
-                                   window.ngAPI.status.FreeDiskSpaceLo));
+                                   window.ngAPI.status.FreeDiskSpaceLo)) +
+                         ' free';
     }
 
     /**
@@ -516,10 +523,6 @@ var totalMBToDownload = 0;
      * @return {void}
      */
     function onGroupsUpdated(){
-        document.querySelector('#download_table').style.display = Object.keys(
-            window.ngAPI.groups).length > 0 ? 'block' : 'none';
-
-
         var sortable = [];
         for (var i in window.ngAPI.groups)
             sortable.push(window.ngAPI.groups[i]);
@@ -537,6 +540,15 @@ var totalMBToDownload = 0;
 
         cleanupList(window.ngAPI.groups,
                     document.querySelector('#download_container'));
+
+        var inactiveContainer =
+            document.querySelector('#download_container .inactive');
+        if(!Object.keys(window.ngAPI.groups).length) {
+            inactiveContainer.classList.add('shown');
+        }
+        else {
+            inactiveContainer.classList.remove('shown');
+        }
     }
 
     /**
@@ -609,16 +621,75 @@ var totalMBToDownload = 0;
         cleanupList(history, document.querySelector('#history_container'));
     }
 
+    function resetTabs() {
+        var tabs = document.querySelectorAll('.tab');
+        for(var tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+            tabs[tabIndex].classList.remove('active');
+            var container = document.getElementById(
+                tabs[tabIndex].getAttribute('data-container'));
+            container.classList.remove('active');
+        }
+    }
+
+    function modalDialog(header, body, buttons) {
+        var shroud = document.querySelector('.shroud');
+        shroud.querySelector('h2').innerHTML = header;
+        shroud.querySelector('p').innerHTML = body;
+        var btnbar = shroud.querySelector('.btnbar');
+        btnbar.innerHTML = '';
+
+        var clickFunc = function() {
+            if(this.clickfunc) {
+                this.clickfunc();
+            }
+            shroud.classList.remove('active');
+        };
+
+        for(var i in buttons) {
+            var button = $E({
+                tag: 'a',
+                text: buttons[i].title});
+
+            if(buttons[i].href) {
+                button.href = buttons[i].href;
+                button.target = '_blank';
+            } else {
+                button.href = '#';
+            }
+            button.clickfunc = buttons[i].onClick;
+            button.closeOnClick = buttons[i].closeOnClick;
+            button.addEventListener('click', clickFunc);
+
+            btnbar.appendChild(button);
+
+        }
+        shroud.classList.add('active');
+    }
+
+    function switchTab(event) {
+        resetTabs();
+        event.target.classList.add('active');
+        var container = document.getElementById(
+            event.target.getAttribute('data-container'));
+        container.classList.add('active');
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         chrome.runtime.connect();
         window.ngAPI = chrome.extension.getBackgroundPage().ngAPI;
+        var tabs = document.querySelectorAll('.tab');
+        for(var tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
+            tabs[tabIndex].addEventListener('click', switchTab);
+        }
 
         if(!window.ngAPI.isInitialized || !window.ngAPI.connectionStatus) {
-            document.querySelector('#download_table').style.display = 'none';
-            document.querySelector('#history_table').style.display = 'none';
-            document.querySelector('#setup_needed').style.display = 'block';
-            return;
+            modalDialog(
+                'Connection failure!',
+                'Could not connect to NZBGet.<br>' +
+                    'Please ensure that the server is running and ' +
+                    'check your connection settings.',
+                [{title: 'options page', href: 'options.html'}]
+            );
         }
 
         chrome.runtime.onMessage.addListener(
@@ -640,7 +711,7 @@ var totalMBToDownload = 0;
         );
         onGroupsUpdated();
         if(window.ngAPI.Options.get('opt_historyitems') === 0) {
-            document.querySelector('#history_table').style.display = 'none';
+            document.querySelector('#history_container').style.display = 'none';
         }
         else {
             onHistoryUpdated();
@@ -655,7 +726,7 @@ var totalMBToDownload = 0;
         });
         document.querySelector('#tgl_pause')
         .addEventListener('click', function() {
-            var method = this.classList.contains('pause') ?
+            var method = !window.ngAPI.status.Download2Paused ?
                          'pausedownload2' :
                          'resumedownload2';
             window.ngAPI.sendMessage(method, [], function() {
