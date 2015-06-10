@@ -3,7 +3,7 @@
         <script src="js/framework.js"></script>
         <script src="js/popup.js"></script>
         <link rel="stylesheet" type="text/css" href="popup.css">
-        <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700)'
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500,700'
               rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet">
@@ -36,6 +36,14 @@
                 <div class="inactive">No active downloads.</div>
             </div>
             <div id="history_container">
+                <div class="searchcontainer">
+                    <i class="material-icons">search</i>
+                    <input class="search"
+                           type="search"
+                           incremental="true"
+                           placeholder="Search">
+                </div>
+                <div id="history_list"></div>
             </div>
         </div>
         <div class="shroud">

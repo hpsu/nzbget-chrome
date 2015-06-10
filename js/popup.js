@@ -1,9 +1,8 @@
-var dragging = null,
-    MAX32 = 4294967296;
-var totalMBToDownload = 0;
-
 (function(){
     'use strict';
+    var dragging = null,
+        MAX32 = 4294967296,
+        totalMBToDownload = 0;
 
     /**
      * bigNumber
@@ -563,7 +562,7 @@ var totalMBToDownload = 0;
         item.status = parsed[0];
 
         post = document.querySelector(
-                '#history_container [rel="' + item.NZBID + '"]');
+                '#history_list [rel="' + item.NZBID + '"]');
         var update = post !== null;
 
         if(update) {
@@ -594,10 +593,30 @@ var totalMBToDownload = 0;
                                                   item.FileSizeLo)),
                                     className: 'right'}));
 
-            document.querySelector('#history_container').appendChild(post);
+            document.querySelector('#history_list').appendChild(post);
         }
 
         return post;
+    }
+
+    function searchHistory(historyList) {
+        var srchElement = document.querySelector('.search'),
+            filteredList = [];
+        if(!srchElement.value) {
+            return false;
+        }
+        for(var i = 0; i < historyList.length; i++) {
+            if(!historyList[i].Name
+                   .toLowerCase()
+                   .replace(/[^0-9a-z]+/g, ' ')
+                   .match(srchElement.value
+                          .toLowerCase()
+                          .replace(/[^0-9a-z]+/g, ' '))) {
+                continue;
+            }
+            filteredList.push(historyList[i]);
+        }
+        return filteredList;
     }
 
     /**
@@ -609,16 +628,22 @@ var totalMBToDownload = 0;
     function onHistoryUpdated() {
         var history = [];
         window.ngAPI.history(function(j) {
+            var historyList = j.result,
+                filteredList = searchHistory(historyList);
+            if(filteredList !== false) {
+                historyList = filteredList;
+            }
             for(var i = 0;
-                    i < window.ngAPI.Options.get('opt_historyitems');
+                    i < window.ngAPI.Options.get('opt_historyitems') &&
+                    i < historyList.length;
                     i++) {
-                history[j.result[i].NZBID] = j.result[i];
-                history[j.result[i].NZBID].sortorder = i;
-                historyPost(j.result[i]);
+                history[historyList[i].NZBID] = historyList[i];
+                history[historyList[i].NZBID].sortorder = i;
+                historyPost(historyList[i]);
             }
         });
 
-        cleanupList(history, document.querySelector('#history_container'));
+        cleanupList(history, document.querySelector('#history_list'));
     }
 
     function resetTabs() {
@@ -716,6 +741,11 @@ var totalMBToDownload = 0;
         else {
             onHistoryUpdated();
         }
+
+        document.querySelector('.search')
+        .addEventListener('search', function() {
+            onHistoryUpdated();
+        });
 
         onStatusUpdated();
         document.body.addEventListener('click', function() {

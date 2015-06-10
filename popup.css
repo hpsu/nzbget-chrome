@@ -37,6 +37,26 @@ div.inactive.shown {
     font-size: 16px;
 }
 
+.searchcontainer {
+    margin: 4px 7px;
+    background: #fff;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    display: flex;
+}
+.searchcontainer i {
+    margin: 10px;
+    color: #666;
+}
+input.search {
+    width: 100%;
+    padding: 7px 5px 7px 10px;
+    font-size: 18px;
+    outline: 0;
+    border: 0;
+    background: transparent;
+}
+
 @-webkit-keyframes animatedStripes {
     from { background-position: 0 0; }
     to   { background-position: 60px 30px; }
@@ -98,12 +118,18 @@ dd {
     padding: 10px 0;
     transition: opacity 0.1s cubic-bezier(0.4, 0.0, 1, 1);
     transform: translateZ(0);
-    overflow: auto;
     position: absolute;
     top: 0;
     z-index: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#history_list {
+    flex: 1;
+    height: 100%;
+    overflow: auto;
 }
 .body {
     flex: 1;
