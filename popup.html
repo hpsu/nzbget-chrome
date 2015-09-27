@@ -7,6 +7,7 @@
               rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet">
+        <link rel="import" href="elements/download-item.html">
     </head>
     <body>
         <div class="header">
@@ -34,6 +35,8 @@
         <div class="body">
             <div id="download_container" class="active">
                 <div class="inactive">No active downloads.</div>
+                <div id="download_list">
+                </div>
             </div>
             <div id="history_container">
                 <div class="searchcontainer">
@@ -43,7 +46,8 @@
                            incremental="true"
                            placeholder="Search">
                 </div>
-                <div id="history_list"></div>
+                <div id="history_list">
+                </div>
             </div>
         </div>
         <div class="shroud">

@@ -1,21 +1,9 @@
 (function(){
     'use strict';
     var dragging = null,
-        MAX32 = 4294967296,
-        totalMBToDownload = 0;
-
-    /**
-     * bigNumber
-     * Combines two 32-bit integers to a 64-bit Double
-     * (may lose data with extreme sizes)
-     *
-     * @param  {integer} hi high-end int
-     * @param  {integer} lo low-end int
-     * @return {number}  Larger number
-     */
-    function bigNumber(hi, lo) {
-        return Number(hi * MAX32 + lo);
-    }
+        totalMBToDownload = 0,
+        api = chrome.extension.getBackgroundPage().ngAPI,
+        parse = api.parse;
 
     /**
      * function index()
@@ -97,51 +85,6 @@
     }
 
     /**
-     * function formatHRSize()
-     * Formats an integer of seconds to a human readable string
-     *
-     * @param  {integer} bytes size in bytes
-     * @return {string} Human readable representation of bytes
-     */
-    function toHRDataSize(bytes) {
-        var sizes = {
-                1: ['KiB', 0],
-                2: ['MiB', 1],
-                3: ['GiB', 2],
-                4: ['TiB', 2]
-            },
-            output = null;
-        Object.keys(sizes).reverse().forEach( function(i) {
-            if(!output && this >= Math.pow(1024, i)) {
-                var nmr = this / Math.pow(1024, i);
-                output = nmr.toFixed(nmr < 100 ? sizes[i][1] : 0) +
-                         ' ' + sizes[i][0];
-            }
-        }.bind(bytes));
-        return output !== null ? output : bytes + 'B';
-    }
-
-    /**
-     * function detectGroupStatus()
-     * Returns a string representing current download status
-     *
-     * @param {object} group Group object
-     * @return {string} Group status
-     */
-    function detectGroupStatus(group) {
-        switch(true) {
-            case typeof group.post !== 'undefined':
-                return 'postprocess';
-            case group.ActiveDownloads > 0:
-                return 'downloading';
-            case group.PausedSizeLo !== 0 &&
-                 group.RemainingSizeLo === group.PausedSizeLo:
-                return 'paused';
-        }
-        return 'queued';
-    }
-
-    /**
      * function setupDraggable()
      * Setup drag'n'drop on an element with all associated event handlers
      * also adds a placeholder element that gets moved around while dragging
@@ -158,7 +101,7 @@
             ev.preventDefault();
             ev.dataTransfer.dropEffect = 'move';
 
-            if(this.classList.contains('post')) {
+            if(this.tagName === 'DOWNLOAD-ITEM') {
                 if(dragging.offsetHeight) {
                     dragging.storedHeight = dragging.offsetHeight;
                 }
@@ -221,7 +164,7 @@
         post.addEventListener('dragover', dover);
         post.addEventListener('dragenter', dover);
         post.addEventListener('drop', drop);
-        post.addEventListener('sortupdate', function(e){
+        post.addEventListener('sortupdate', function(e) {
             var oldI = e.detail.oldIndex,
                 newI = e.detail.newIndex,
                 diff = newI - oldI,
@@ -240,99 +183,6 @@
         post.placeholder.addEventListener('dragover', dover);
         post.placeholder.addEventListener('dragenter', dover);
         post.placeholder.addEventListener('drop', drop);
-
-    }
-
-    function setupContextMenu(e){
-        e.stopPropagation();
-        var ctxm = e.target.querySelector('div.contextmenu'),
-            pse = null;
-        if(ctxm) {
-            if(getComputedStyle(ctxm).display === 'block') {
-                ctxm.style.display = 'none';
-            }
-            else {
-                ctxm.style.display = 'block';
-            }
-
-            pse = ctxm.querySelector('li.pause');
-        }
-        else {
-            e.target.ctxm = e.target.parentNode.appendChild($E({
-                tag: 'div',
-                className: 'contextmenu'}));
-            var ul = e.target.ctxm.appendChild($E({tag: 'ul'}));
-            pse = ul.appendChild($E({
-                tag: 'li',
-                className: 'pause',
-                text: 'Pause'}));
-            var del = ul.appendChild($E({
-                tag: 'li',
-                className: 'delete',
-                text: 'Delete'}));
-
-            pse.addEventListener('click', function(clickEvent) {
-                clickEvent.stopPropagation();
-                this.style.display = 'none';
-                var nid = this.parentNode.getAttribute('rel'),
-                    fileId = window.ngAPI.groups[nid].LastID,
-                    status = window.ngAPI.groups[nid].status,
-                    method = status === 'paused' ?
-                            'GroupResume' :
-                            'GroupPause';
-
-                window.ngAPI.sendMessage(
-                    'editqueue',
-                    [method, 0, '', [fileId]],
-                    function() {});
-            }.bind(e.target.ctxm));
-
-            del.addEventListener('click', function(clickEvent){
-                clickEvent.stopPropagation();
-                this.style.display = 'none';
-                var nid = this.parentNode.parentNode.getAttribute('rel'),
-                    fileId = window.ngAPI.groups[nid].LastID;
-                if(confirm('Are you sure?')) {
-                    window.ngAPI.sendMessage(
-                        'editqueue',
-                        ['GroupDelete', 0, '', [fileId]],
-                        function() {});
-                }
-            }.bind(e.target.ctxm));
-            ctxm = e.target.ctxm;
-        }
-        pse.innerText = window.ngAPI.groups[
-            ctxm.parentNode.getAttribute('rel')
-        ].status === 'paused' ? 'Resume' : 'Pause';
-    }
-
-    /**
-     * Health warning badge
-     *
-     * @param  {object}  item NZBGet item
-     * @param  {Element} post inject element
-     * @return {void}
-     */
-    function hwBadge(item, post) {
-        if(item.Health < 1000 && (!item.postprocess ||
-                                  item.status === 'pp-queued' &&
-                                  item.post.TotalTimeSec === 0)) {
-            var hwContainer = post.querySelector('span.health-warning'),
-                hwClass = 'health-warning' + (
-                    item.Health < item.CriticalHealth ? ' critical' : ''),
-                hwLbl = 'health: ' + Math.floor(item.Health / 10) + '%';
-
-            if(hwContainer) {
-                hwContainer.className = hwClass;
-                hwContainer.innerText = hwLbl;
-            } else {
-                var h = $E({
-                    tag: 'span',
-                    className: hwClass,
-                    text: hwLbl});
-                post.querySelector('.title').appendChild(h);
-            }
-        }
     }
 
     /**
@@ -342,94 +192,22 @@
      * @return {void}
      */
     function downloadPost(item) {
-        var totalMB = item.FileSizeMB - item.PausedSizeMB,
-            remainingMB = item.RemainingSizeMB - item.PausedSizeMB,
-            percent = Math.round((totalMB - remainingMB) / totalMB * 100),
-            estRem = window.ngAPI.status.DownloadRate ? toHRTimeLeft(
-                        (totalMBToDownload + remainingMB) * 1024 /
-                        (window.ngAPI.status.DownloadRate / 1024)) :
-                     '',
-            post = document.querySelector(
-                '#download_container [rel="' + item.NZBID + '"]'),
-            update = post !== null,
-            leftLabel = item.post ? item.post.ProgressLabel : percent + '%',
-            rightLabel = item.post ?
-                         '' :
-                         toHRDataSize(bigNumber(item.FileSizeHi,
-                                   item.FileSizeLo)),
-            centerLabel = item.post ? '' : estRem,
-            kind = 'none';
+        var elm = document.querySelector('download-item[rel="' +
+                  item.NZBID + '"]'),
+            remainingMB = item.RemainingSizeMB - item.PausedSizeMB;
 
+        if(!elm) {
+            elm = $E({tag: 'download-item', rel: item.NZBID});
+            elm.item = item;
+            setupDraggable(elm);
+            document.querySelector('#download_list').appendChild(elm);
+        }
+
+        item.estRem = api.status.DownloadRate ?
+                      toHRTimeLeft((totalMBToDownload + remainingMB) *
+                                    1024 / (api.status.DownloadRate / 1024)) :
+                      '';
         totalMBToDownload += remainingMB;
-
-        item.status = detectGroupStatus(item);
-
-        if(item.status === 'downloading' ||
-           item.postprocess && !window.ngAPI.status.PostPaused) {
-            kind = 'success';
-        }
-        else if(item.status === 'paused' ||
-                item.postprocess && window.ngAPI.status.PostPaused) {
-            kind = 'warning';
-        }
-
-        if(update) {
-            post.querySelector('.tag').className = 'tag ' + item.status;
-            post.querySelector('.tag span').innerText = item.status;
-            post.querySelector('.bar-text.left').innerText = leftLabel;
-            post.querySelector('.bar-text.center').innerText = centerLabel;
-            post.querySelector('.bar-text.right').innerText = rightLabel;
-            post.querySelector('.bar').style.width = percent + '%';
-            post.querySelector('.bar').className = 'bar ' + kind;
-        }
-        else {
-            post = $E({tag: 'div', className: 'post', rel: item.NZBID});
-            // Tag
-            post.appendChild($E({tag: 'div', className: 'tag ' + item.status}))
-                .appendChild($E({tag: 'span', text: item.status}));
-
-            // Info
-            var info = post.appendChild($E({tag: 'div', className: 'info'}));
-            info.appendChild($E({
-                tag: 'div',
-                text: item.NZBName,
-                className: 'title'}));
-
-            var progress = info.appendChild($E({
-                    tag: 'div',
-                    className: 'progress'}));
-            progress.appendChild($E({
-                tag: 'div',
-                className: 'bar ' + kind,
-                styles: {width: percent + '%'}}));
-            progress.appendChild($E({
-                tag: 'div',
-                className: 'bar-text left',
-                text: leftLabel}));
-            progress.appendChild($E({
-                tag: 'div',
-                className: 'bar-text center',
-                text: centerLabel}));
-            progress.appendChild($E({
-                tag: 'div',
-                className: 'bar-text right',
-                text: rightLabel}));
-
-            var more = post.appendChild($E({
-                tag: 'i',
-                className: 'material-icons',
-                text: 'more_vert'}));
-
-            post.appendChild($E({
-                tag: 'div',
-                className: 'dropdown'}));
-            more.addEventListener('click', setupContextMenu);
-
-            setupDraggable(post);
-            document.querySelector('#download_container').appendChild(post);
-        }
-
-        hwBadge(item, post);
     }
 
     /**
@@ -443,10 +221,10 @@
     function cleanupList(dataObj, contEl) {
         var i = 0,
             sortNeeded = false,
-            trElements = contEl.querySelectorAll('div.post');
+            trElements = contEl.querySelectorAll('download-item');
 
         for(var k = 0; k < trElements.length; k++) {
-            var id = trElements[k].getAttribute('rel');
+            var id = trElements[k].item.NZBID;
             if(dataObj[id]) {
                 if(i++ !== Number(dataObj[id].sortorder)) {
                     sortNeeded = true;
@@ -458,13 +236,14 @@
         }
 
         if(sortNeeded) {
+            // Sort order changed externally
             var order = Object.keys(dataObj).sort(function(a, b) {
                 return parseInt(dataObj[a].sortorder) -
                        parseInt(dataObj[b].sortorder);
             });
-            for(i in order) {
+            for(var j in order) {
                 var el = contEl.querySelector(
-                    'div.post[rel="' + order[i] + '"]');
+                    'download-item[rel="' + order[j] + '"]');
                 if(el) {
                     contEl.appendChild(contEl.removeChild(el));
                 }
@@ -485,9 +264,6 @@
     function onStatusUpdated(){
         var downloadPaused = window.ngAPI.status.Download2Paused;
 
-        /*document.querySelector('#tgl_pause').className = downloadPaused ?
-                                                         'toggle resume' :
-                                                         'toggle pause';*/
         document.querySelector('#tgl_pause').innerText = downloadPaused ?
                                                          'play_arrow' :
                                                          'pause';
@@ -495,24 +271,25 @@
         // Set "global" labels
         var speedLabel = '';
         if(window.ngAPI.status.DownloadRate) {
-            speedLabel = toHRDataSize(
+            speedLabel = parse.toHRDataSize(
                 Number(window.ngAPI.status.DownloadRate)) + '/s';
         }
         else {
             speedLabel = downloadPaused ? '- PAUSED -' : '';
         }
 
-        var remainingLbl = bigNumber(
+        var remainingLbl = parse.bigNumber(
             window.ngAPI.status.RemainingSizeHi,
             window.ngAPI.status.RemainingSizeLo);
 
         document.querySelector('#lbl_speed').innerText = speedLabel;
         document.querySelector('#lbl_remainingmb').innerText =
-            remainingLbl === 0 ? '' : toHRDataSize(remainingLbl);
+            remainingLbl === 0 ? '' : parse.toHRDataSize(remainingLbl);
         document.querySelector('#lbl_remainingdisk').innerText =
-            toHRDataSize(bigNumber(window.ngAPI.status.FreeDiskSpaceHi,
-                                   window.ngAPI.status.FreeDiskSpaceLo)) +
-                         ' free';
+            parse.toHRDataSize(
+                parse.bigNumber(window.ngAPI.status.FreeDiskSpaceHi,
+                                window.ngAPI.status.FreeDiskSpaceLo)) +
+                ' free';
     }
 
     /**
@@ -538,7 +315,7 @@
         }
 
         cleanupList(window.ngAPI.groups,
-                    document.querySelector('#download_container'));
+                    document.querySelector('#download_list'));
 
         var inactiveContainer =
             document.querySelector('#download_container .inactive');
@@ -588,8 +365,8 @@
                                         new Date(item.HistoryTime * 1000)),
                                     className: 'left'}));
             details.appendChild($E({tag: 'div',
-                                    text: toHRDataSize(
-                                        bigNumber(item.FileSizeHi,
+                                    text: parse.toHRDataSize(
+                                        parse.bigNumber(item.FileSizeHi,
                                                   item.FileSizeLo)),
                                     className: 'right'}));
 
@@ -748,10 +525,10 @@
         });
 
         onStatusUpdated();
-        document.body.addEventListener('click', function() {
-            var els = document.querySelectorAll('div.contextmenu');
+        document.body.addEventListener('mousedown', function() {
+            var els = document.querySelectorAll('download-item');
             for(var i = 0; i < els.length; i++) {
-                els[i].style.display = 'none';
+                els[i].closeContextMenu();
             }
         });
         document.querySelector('#tgl_pause')

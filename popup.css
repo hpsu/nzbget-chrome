@@ -164,8 +164,8 @@ div.post {
 }
 
 div.placeholder {
-    border: 1px #333 dotted;
-    display: flex;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.1);
 }
 div.post .tag {
     max-width: 10px;
@@ -447,4 +447,7 @@ div.post i:active {
 }
 .contextmenu ul li:hover {
     background: #e5e5e5;
+}
+#download_list {
+    overflow: auto;
 }

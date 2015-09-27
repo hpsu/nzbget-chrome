@@ -1,0 +1,197 @@
+<template>
+    <style>
+        :host {
+            display: flex;
+            border-bottom: 1px solid #dadada;
+            padding: 15px;
+            background: #fff;
+            overflow: hidden;
+        }
+        .info {
+            flex: 1;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: normal;
+            padding-bottom: 5px;
+            word-wrap: break-word;
+        }
+        .postinfo {
+            font-size: 12px;
+            color: #999;
+            word-wrap: break-word;
+        }
+
+        .info .bar {
+            width: 0;
+            background-color: #c0c0c0;
+            height: 8px;
+            transition: width 0.6s ease;
+        }
+        .progress_bar {
+            background-color: #e0e0e0;
+        }
+        .progress_bar.paused {
+            background-color: #fff59d;
+        }
+        .progress_bar.paused .bar {
+            background-color: #fdd835;
+        }
+        .progress_bar.postprocess {
+            background-color: #d7ccc8;
+        }
+        .progress_bar.postprocess .bar {
+            background-color: #795548;
+        }
+
+        .progress_bar.downloading {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+        .progress_bar.downloading .bar {
+            background-color: #59b75c
+        }
+
+        .text {
+            padding: 5px 0;
+        }
+        .health-warning {
+            position: absolute;
+            background-color: #ff5722;
+            right: 10px;
+            bottom: 0px;
+            padding: 4px;
+            border-radius: 2px;
+            color: #fff;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: scale(0);
+            transition: opacity 0.2s cubic-bezier(0.4, 0.0, 1, 1),
+                        transform 0.2s cubic-bezier(0.4, 0.0, 1, 1);
+        }
+        .health-warning.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .menu {
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s linear;
+
+        }
+        .menu:hover {
+            transform: scale(1.1);
+        }
+        .contextmenu {
+            background: #fafafa;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+                        0 1px 5px 0 rgba(0, 0, 0, 0.12),
+                        0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            right: 15px;
+            padding: 0;
+            display: block;
+            min-width: 150px;
+            transition: z-index 0s linear 0.2s,
+                        transform 0.1s linear,
+                        opacity 0.2s linear;
+
+            opacity: 0;
+            z-index:-1;
+            transform: scale(0, 0);
+            transform-origin: top right;
+        }
+        .contextmenu.show {
+            opacity: 1;
+            z-index: 2;
+            transition-delay:0s;
+            transform: scale(1, 1);
+        }
+
+        .contextmenu ul {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+        }
+
+        .contextmenu ul li {
+            padding: 7px 15px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .contextmenu ul li:hover {
+            background: #e5e5e5;
+        }
+        .contextmenu i {
+            vertical-align: top;
+            padding-right: 10px;
+            color: rgba(0, 0, 0, 0.54);
+            z-index: 1;
+        }
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;  /* Preferred icon size */
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+
+            /* Support for all WebKit browsers. */
+            -webkit-font-smoothing: antialiased;
+            /* Support for Safari and Chrome. */
+            text-rendering: optimizeLegibility;
+        }
+        .ripple {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: opacity 2s linear;
+            opacity: 0;
+        }
+        .ripple.animate {
+            animation: ripple 0.15s cubic-bezier(0.4, 0.0, 1, 1);
+            animation-fill-mode: forwards;
+            animation-iteration-count: 1;
+        }
+
+        @keyframes ripple {
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+    <div class="info">
+        <div class="title"></div>
+        <div class="postinfo"></div>
+        <div class="progress_bar">
+            <div class="bar barpct"></div>
+        </div>
+        <div class="text"></div>
+        <span class="health-warning"></span>
+    </div>
+    <i class="material-icons menu">more_vert</i>
+    <div class="contextmenu">
+        <ul>
+            <li id="btn_pause"><i class="material-icons">pause</i>
+                <span>Pause</span>
+            </li>
+            <li id="btn_delete"><i class="material-icons">delete</i>
+                <span>Delete</span>
+            </li>
+        </ul>
+    </div>
+</template>
+<script src="download-item.js"></script>
