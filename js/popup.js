@@ -221,7 +221,7 @@
     function cleanupList(dataObj, contEl) {
         var i = 0,
             sortNeeded = false,
-            trElements = contEl.querySelectorAll('download-item');
+            trElements = contEl.querySelectorAll('download-item,div.post');
 
         for(var k = 0; k < trElements.length; k++) {
             var id = trElements[k].item.NZBID;
@@ -348,6 +348,7 @@
         }
         else {
             post = $E({tag: 'div', className: 'post', rel: item.NZBID});
+            post.item = item;
 
             // Tag
             post.appendChild($E({tag: 'div', className: 'tag ' + item.status}))
