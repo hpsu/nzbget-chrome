@@ -91,11 +91,6 @@
         if(item.postInfo) {
             obj.postElement.innerHTML = item.postInfo;
         }
-
-        //obj.progressLabel.innerText = item.percent;
-        //obj.tag.classList.add(item.status);
-        //obj.tag.querySelector('span').innerText = item.status;
-
     }
 
 
@@ -105,15 +100,6 @@
             clone = document.importNode(template.content, true);
 
         shadowRoot.appendChild(clone);
-        /*Object.observe(this, function(changes) {
-            for(var i in changes) {
-                if(changes[i].name === 'item') {
-                    //setupItem(changes[i].object);
-                    console.log('shit is up');
-                }
-            }
-        });*/
-
 
         this.titleElement = shadowRoot.querySelector('.title');
         this.progressBar = shadowRoot.querySelector('.progress_bar');
