@@ -262,6 +262,9 @@
      * @return {void}
      */
     function onStatusUpdated(){
+        if(!window.ngAPI.status) {
+            return;
+        }
         var downloadPaused = window.ngAPI.status.Download2Paused;
 
         document.querySelector('#tgl_pause').innerText = downloadPaused ?
