@@ -20,13 +20,13 @@
 
         return stringParts.join('.');
     }
+
     function parseItem(item) {
         var totalMB = item.FileSizeMB,
             remainingMB = item.RemainingSizeMB,
             percent = (totalMB - remainingMB) / totalMB * 100,
             percentString = stringRound(percent, 1) + '%',
             kind = 'none';
-
         item.status = parse.groupStatus(item);
         if(item.status === 'downloading' ||
            item.postprocess && !window.ngAPI.status.PostPaused) {
@@ -205,17 +205,16 @@
         });
 
         setupItem(this);
-        Object.observe(this.item, function(changes) {
-            for(var i in changes) {
-                if(['Log', 'ServerStats', 'Parameters', 'ScriptStatuses']
-                   .indexOf(changes[i].name) > -1) {
-                    continue;
-                }
-                else {
-                    setupItem(this);
-                }
-            }
-        }.bind(this));
+
+        Object.defineProperty(this.item, 'FileSizeMB', {
+            get: function() {
+                return this.item._FileSizeMB;
+            }.bind(this),
+            set: function(nv){
+                this.item._FileSizeMB = nv;
+                setupItem(this);
+            }.bind(this)
+        });
 
         this.closeContextMenu = function() {
             this.shadowRoot.querySelector('.contextmenu')

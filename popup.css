@@ -451,4 +451,5 @@ div.post i:active {
 }
 #download_list {
     overflow: auto;
+    height: 100%;
 }
