@@ -78,7 +78,9 @@
     function setupItem(obj) {
         var item = parseItem(obj.item);
 
-        obj.titleElement.innerHTML = item.name;
+        if(obj.titleElement.innerHTML !== item.name) {
+            obj.titleElement.innerHTML = item.name;
+        }
         obj.textElement.innerText = item.statusText;
         obj.progressBar.querySelector('.bar').style.width = item.percent + '%';
         obj.progressBar.className = 'progress_bar ' + item.progressClass;
