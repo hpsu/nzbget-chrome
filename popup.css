@@ -178,6 +178,7 @@ div.post .info {
     flex: 1;
     position: relative;
     padding: 0 5px;
+    overflow: hidden;
 }
 
 div.post .tag:hover  {
