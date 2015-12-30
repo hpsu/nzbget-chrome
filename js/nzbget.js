@@ -60,7 +60,7 @@
             var opt = altOptions && altOptions.get ?
                       altOptions :
                       window.ngAPI.Options;
-            var x = new URL('');
+            var x = new URL('http://localhost');
 
             var keys = [
                 'protocol',
