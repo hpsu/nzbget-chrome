@@ -19,22 +19,30 @@ CBProto.createdCallback = function() {
             this.toggle();
         }
     };
-    Object.observe(this, function(changes) {
-        for(var i in changes) {
-            switch(changes[i].name) {
-                case 'checked':
-                    changes[i].object.checkboxElement.className =
-                        changes[i].object.checked ? 'checked' : '';
-                    break;
-                case 'label':
-                    changes[i].object.labelElement.textContent =
-                        changes[i].object.label;
-                    break;
-                case 'description':
-                    changes[i].object.descriptionElement.textContent =
-                        changes[i].object.description;
-                    break;
-            }
+    Object.defineProperty(this, 'checked', {
+        get: function() {return this._checked;},
+        set: function(newValue) {
+            this.checkboxElement.className = newValue ? 'checked' : '';
+            this._checked = newValue;
+        }
+    });
+    Object.defineProperty(this, 'value', {
+        get: function() {return this._checked;},
+        set: function(newValue) {
+            this.checked = newValue;
+        }
+    });
+    Object.defineProperty(this, 'label', {
+        get: function() {return this.value;},
+        set: function(newValue) {
+            this.labelElement.textContent = newValue;
+            
+        }
+    });
+    Object.defineProperty(this, 'description', {
+        set: function(newValue) {
+            this.descriptionElement.textContent = newValue;
+            
         }
     });
 
@@ -47,16 +55,7 @@ CBProto.createdCallback = function() {
     this.tabIndex = 0;
     this.label = this.getAttribute('label');
     this.description = this.getAttribute('description');
-    this.checked = this.value === true;
-
-    Object.defineProperty(this, 'value', {
-        get: function() {
-            return this.checked;
-        },
-        set: function(v) {
-            this.checked = v === true;
-        }
-    });
+    this.checked = this.checked === true;
 };
 
 CBProto.attributeChangedCallback = function(attr, oldVal, newVal) {
