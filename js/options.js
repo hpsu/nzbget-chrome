@@ -24,6 +24,13 @@
 
         document.querySelector('name').innerText = window.ngAPI.appName;
         document.querySelector('version').innerText = window.ngAPI.appVersion;
+        document.querySelector('#opt_protocol')
+        .addEventListener('change', function(evt) {
+            var port = document.querySelector('#opt_port');
+            if(port.value === '6789' || port.value === '6791') {
+                port.value = evt.target.value === 'http' ? '6789' : '6791';
+            }
+        });
 
         var inputs = document.querySelectorAll(
             'input[type=text],input[type=password],ng-checkbox,select'
