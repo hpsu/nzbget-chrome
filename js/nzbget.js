@@ -734,9 +734,6 @@
         });
 
         chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
-            if(chrome.runtime.lastError) {
-                return;
-            }
             if(changeInfo.status === 'loading' &&
                ['http:', 'https:'].indexOf(new URL(tab.url).protocol) > -1) {
                 chrome.tabs.executeScript(tabId, {
@@ -749,7 +746,8 @@
                           '       != null' +
                           '});'
                 }, function(r) {
-                    if(r && typeof r[0] === 'object') {
+                    if(!chrome.runtime.lastError && r &&
+                       typeof r[0] === 'object') {
                         chrome.tabs.executeScript(
                             tabId,
                             {file: 'sites/common.js'});
