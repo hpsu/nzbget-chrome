@@ -4,7 +4,15 @@
 Google chrome extension to interact with nzbget
 
 ### Version history
-#### 1.4 (current dev)
+#### 1.5 - (current dev)
+
+---
+
+#### 1.4 - 2016-01-19
+* New tabbed popup appearance
+* History search
+* Chromium 49 compatibility fixes
+
 ---
 
 
