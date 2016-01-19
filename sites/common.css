@@ -29,3 +29,7 @@
 .nzbgc_download:hover {
     -webkit-filter: grayscale(0.5);
 }
+
+a.headerInfo-expanded-img .nzbgc_download {
+    padding: 3px;
+}
