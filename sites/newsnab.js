@@ -15,6 +15,12 @@
             dlparent = dlitem.parentElement,
             tdCat = '';
 
+        // Skip if already processed
+        if(dlitem.nzbGetProcessed) {
+            continue;
+        }
+        dlitem.nzbGetProcessed = true;
+
         newdiv.className = 'icon icon_nzbgc';
 
         // Try to find category and an unique id
