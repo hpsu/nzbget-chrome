@@ -24,6 +24,25 @@
             return this.sendMessage(
                 'version', {}, successFunc, failFunc, tmpOptions);
         },
+        updateCategories: function() {
+            ngAPI.sendMessage('config', {}, this.parseCategories.bind(this));
+        },
+        parseCategories: function(data) {
+            var result = data.result,
+                categories = [];
+
+            if(!result || !result.length) {
+                return false;
+            }
+
+            for(var i in result) {
+                var match = result[i].Name.match('Category([0-9]+)\.Name');
+                if(match) {
+                    categories.push(result[i].Value);
+                }
+            }
+            this.Options.set('opt_categories', JSON.stringify(categories));
+        },
         /**
          * Request history from JSON-RPC
          *
@@ -505,6 +524,7 @@
                 Download2Paused: false,
                 DownloadPaused: false
             };
+            this.updateCategories();
             this.updateGroups();
             this.updateStatus();
             this.loadMenu();
@@ -618,7 +638,8 @@
                 'opt_historyitems': 30,
                 'opt_protocol': 'http',
                 'opt_rememberurls': false,
-                'opt_notifications': true
+                'opt_notifications': true,
+                'opt_categories': []
             },
             load: function() {
                 Array.each(
