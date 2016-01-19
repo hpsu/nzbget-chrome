@@ -30,11 +30,13 @@ function findParentOfType(el, type){
  */
 function createNgIcon(id, href, cat, nameOverride){
     'use strict';
-    var eNgIcon = document.createElement('img');
+    var eNgIcon = document.createElement('img'),
+        eNgContainer = document.createElement('a');
     eNgIcon.src = chrome.extension.getURL('img/nzbget-arrow.svg');
-    eNgIcon.title = 'Click to download with NZBGet.';
+    eNgContainer.title = 'Click to download with NZBGet.';
     eNgIcon.className = 'nzbgc_download';
 
+    eNgContainer.href = href;
     eNgIcon.href = href;
     eNgIcon.id = id;
     eNgIcon.nameOverride = nameOverride;
@@ -65,8 +67,8 @@ function createNgIcon(id, href, cat, nameOverride){
             }
         }
     );
-
-    return eNgIcon;
+    eNgContainer.appendChild(eNgIcon);
+    return eNgContainer;
 }
 
 /**
