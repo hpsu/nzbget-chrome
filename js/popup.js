@@ -176,8 +176,7 @@
                     diff,
                     '',
                     [fileId]
-                ], function() {
-            });
+                ], function() {});
         });
 
         post.placeholder.addEventListener('dragover', dover);

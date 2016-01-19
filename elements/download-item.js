@@ -110,7 +110,7 @@
         var that = this;
 
         shadowRoot.querySelector('#btn_pause')
-            .addEventListener('mousedown', function() {
+        .addEventListener('mousedown', function() {
             var fileId = that.item.LastID,
                 status = that.item.status,
                 method = status === 'paused' ? 'GroupResume' :
@@ -122,7 +122,7 @@
         });
 
         shadowRoot.querySelector('#btn_delete')
-            .addEventListener('mousedown', function() {
+        .addEventListener('mousedown', function() {
             var fileId = that.item.LastID;
             if(confirm('Are you sure?')) {
                 window.ngAPI.sendMessage(

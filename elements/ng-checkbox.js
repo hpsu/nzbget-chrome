@@ -36,13 +36,11 @@ CBProto.createdCallback = function() {
         get: function() {return this.value;},
         set: function(newValue) {
             this.labelElement.textContent = newValue;
-            
         }
     });
     Object.defineProperty(this, 'description', {
         set: function(newValue) {
             this.descriptionElement.textContent = newValue;
-            
         }
     });
 

@@ -265,10 +265,7 @@
                                     message: 'Could not download link.',
                                     iconUrl: 'img/error80.png',
                                     contextMessage: url
-                                    },
-                                    url,
-                                    tab
-                                );
+                                }, url, tab);
                                 if(!tab) {
                                     return;
                                 }
@@ -631,15 +628,15 @@
          */
         Options: {
             defaults: {
-                'opt_port': 6789,
-                'opt_username': 'nzbget',
-                'opt_password': 'tegbzn6789',
-                'opt_pathname': '/',
-                'opt_historyitems': 30,
-                'opt_protocol': 'http',
-                'opt_rememberurls': false,
-                'opt_notifications': true,
-                'opt_categories': []
+                opt_port: 6789,
+                opt_username: 'nzbget',
+                opt_password: 'tegbzn6789',
+                opt_pathname: '/',
+                opt_historyitems: 30,
+                opt_protocol: 'http',
+                opt_rememberurls: false,
+                opt_notifications: true,
+                opt_categories: []
             },
             load: function() {
                 Array.each(
@@ -726,7 +723,7 @@
                     sender.tab.id,
                     m.id,
                     m.category ? m.category : null,
-                    m.name_override ? m.name_override : null
+                    m.nameOverride ? m.nameOverride : null
                 );
             } else if(m.message === 'checkCachedURL') {
                 window.ngAPI.cacheDb.checkURLObj(m.url, respCallback);
