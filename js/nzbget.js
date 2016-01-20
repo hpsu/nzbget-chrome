@@ -62,10 +62,35 @@
 
             chrome.contextMenus.create({
                 contexts: ['link'],
-                id: '-1',
+                id: 'root',
                 title: 'Send to NZBGet',
-                onclick: window.ngAPI.addLink
+                onclick: window.ngAPI.addLink.bind(this)
             });
+
+            var categories = JSON.parse(this.Options.get('opt_categories'));
+            if(categories && categories.length) {
+                chrome.contextMenus.create({
+                    contexts: ['link'],
+                    parentId: 'root',
+                    title: 'No category',
+                    id: 'cat:',
+                    onclick: window.ngAPI.addLink.bind(this)
+                });
+                chrome.contextMenus.create({
+                    contexts: ['link'],
+                    parentId: 'root',
+                    type: 'separator'
+                });
+                for(var i in categories) {
+                    chrome.contextMenus.create({
+                        contexts: ['link'],
+                        parentId: 'root',
+                        title: categories[i],
+                        id: 'cat:' + i,
+                        onclick: window.ngAPI.addLink.bind(this)
+                    });
+                }
+            }
         },
         /**
          * Build a URL-object from options
@@ -315,7 +340,16 @@
          * @return {void}
          */
         addLink: function(info, tab) {
-            window.ngAPI.addURL(info.linkUrl, tab);
+            var category = '';
+            if(info.menuItemId && info.menuItemId !== 'root') {
+                var id = info.menuItemId.split(':'),
+                    categories = JSON.parse(
+                        this.Options.get('opt_categories'));
+                if(id[1]) {
+                    category = categories[id[1]];
+                }
+            }
+            this.addURL(info.linkUrl, tab, null, category);
         },
         /**
          * Locate existing NZBGet-tab or open a new one
@@ -640,7 +674,7 @@
                 opt_protocol: 'http',
                 opt_rememberurls: false,
                 opt_notifications: true,
-                opt_categories: []
+                opt_categories: '[]'
             },
             load: function() {
                 Array.each(
