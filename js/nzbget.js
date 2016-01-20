@@ -249,14 +249,16 @@
                                 if(!tab) {
                                     return;
                                 }
-                                chrome.tabs.sendMessage(
-                                    tab, {
-                                        message: 'addedurl',
-                                        url: url,
-                                        status: true,
-                                        id: ident
-                                    }
-                                );
+                                if(ident) {
+                                    chrome.tabs.sendMessage(
+                                        tab, {
+                                            message: 'addedurl',
+                                            url: url,
+                                            status: true,
+                                            id: ident
+                                        }
+                                    );
+                                }
                                 window.ngAPI.cacheDb.addURLObj(url);
                             },
                             function() {
@@ -269,15 +271,17 @@
                                 if(!tab) {
                                     return;
                                 }
-                                chrome.tabs.sendMessage(
-                                    tab,
-                                    {
-                                        message: 'addedurl',
-                                        url: url,
-                                        status: false,
-                                        id: ident
-                                    }
-                                );
+                                if(ident) {
+                                    chrome.tabs.sendMessage(
+                                        tab,
+                                        {
+                                            message: 'addedurl',
+                                            url: url,
+                                            status: false,
+                                            id: ident
+                                        }
+                                    );
+                                }
                             }
                         );
                     } else {
