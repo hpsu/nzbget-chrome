@@ -109,6 +109,29 @@
 
         var that = this;
 
+        shadowRoot.querySelector('#btn_move_top')
+        .addEventListener('mousedown', function() {
+            var fileId = that.item.LastID;
+            window.ngAPI.sendMessage(
+                'editqueue', [
+                    'GroupMoveTop',
+                    0,
+                    '',
+                    [fileId]
+                ], function() {});
+        });
+        shadowRoot.querySelector('#btn_move_bottom')
+        .addEventListener('mousedown', function() {
+            var fileId = that.item.LastID;
+            window.ngAPI.sendMessage(
+                'editqueue', [
+                    'GroupMoveBottom',
+                    0,
+                    '',
+                    [fileId]
+                ], function() {});
+        });
+
         shadowRoot.querySelector('#btn_pause')
         .addEventListener('mousedown', function() {
             var fileId = that.item.LastID,
