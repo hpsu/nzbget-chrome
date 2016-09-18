@@ -799,7 +799,9 @@
                           '       != null,' +
                           '   isNewznab: document.querySelector(' +
                           "     'div.icon_nzb a[href*=\"/getnzb\"]')" +
-                          '       != null' +
+                          '       != null,' +
+                          '   isTtRSS: document.querySelector(' +
+                          "     '#ttrssMain') != null" +
                           '});'
                 }, function(r) {
                     if(!chrome.runtime.lastError && r &&
@@ -822,6 +824,11 @@
                             chrome.tabs.insertCSS(
                                 tabId,
                                 {file: 'sites/spotweb.css'});
+                        }
+                        else if(r[0].isTtRSS) {
+                            chrome.tabs.executeScript(
+                                tabId,
+                                {file: 'sites/ttrss.js'});
                         }
                     }
                 });
