@@ -67,6 +67,7 @@
             name: item.NZBName.replace(/_/g, ' ')
                               .replace(/([.\/\\-])/g, '$1<wbr>'),
             status: parse.groupStatus(item),
+            category: item.Category,
             progressClass: kind,
             statusText: statusText,
             health: health,
@@ -85,9 +86,17 @@
         obj.progressBar.querySelector('.bar').style.width = item.percent + '%';
         obj.progressBar.className = 'progress_bar ' + item.progressClass;
         if(item.health < 100) {
-            obj.badgeElement.innerText = 'health: ' + item.health + '%';
+            obj.badgeElement.innerText = item.health + '%' + ' health';
             obj.badgeElement.classList.add('active');
         }
+        if(item.category) {
+            obj.categoryBadge.innerText = item.category;
+            obj.categoryBadge.classList.remove('add');
+        } else {
+            obj.categoryBadge.innerText = 'No category';
+            obj.categoryBadge.classList.add('add');
+        }
+
         if(item.postInfo) {
             obj.postElement.innerHTML = item.postInfo;
         }
@@ -98,7 +107,6 @@
         var shadowRoot = this.createShadowRoot(),
             template = owner.querySelector('template'),
             clone = document.importNode(template.content, true);
-
         shadowRoot.appendChild(clone);
 
         this.titleElement = shadowRoot.querySelector('.title');
@@ -106,6 +114,7 @@
         this.textElement = shadowRoot.querySelector('.text');
         this.badgeElement = shadowRoot.querySelector('.health-warning');
         this.postElement = shadowRoot.querySelector('.postinfo');
+        this.categoryBadge = shadowRoot.querySelector('.category-badge');
 
         var that = this;
 
@@ -206,6 +215,34 @@
             ripple.classList.add('animate');
         });
 
+        var createCategoryItem = function(itemText, id) {
+            var item = $E({tag: 'li', text: itemText});
+            item.setAttribute('data-category', id);
+            item.addEventListener('mousedown', function() {
+                window.ngAPI.setGroupCategory(
+                    that._item.LastID,
+                    this.getAttribute('data-category'));
+            });
+            return item;
+        };
+
+        var categories = JSON.parse(ngAPI.Options.get('opt_categories'));
+        var menu = this.categoryBadge.nextElementSibling.querySelector('ul');
+        menu.appendChild(createCategoryItem(
+            'No category', ''
+        ));
+        for(var category in categories) {
+            menu.appendChild(createCategoryItem(
+                categories[category],
+                categories[category]
+            ));
+        }
+
+        this.categoryBadge.addEventListener('click', function() {
+            var ctx = this.nextElementSibling;
+            ctx.classList.toggle('show');
+        });
+
         shadowRoot.querySelector('.menu')
         .addEventListener('click', function() {
             var ctx = this.nextElementSibling,
@@ -243,8 +280,10 @@
         });
 
         this.closeContextMenu = function() {
-            this.shadowRoot.querySelector('.contextmenu')
-            .classList.remove('show');
+            var menus =  this.shadowRoot.querySelectorAll('.contextmenu');
+            for(var i=0; i<menus.length; i++) {
+                menus[i].classList.remove('show');
+            }
         };
     };
     document.registerElement('download-item', {prototype: CBProto});

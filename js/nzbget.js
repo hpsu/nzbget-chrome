@@ -24,6 +24,28 @@
             return this.sendMessage(
                 'version', {}, successFunc, failFunc, tmpOptions);
         },
+        /**
+         * Set group category
+         *
+         * @param  {int}      groupId      ID
+         * @param  {string}   categoryName Name of new category
+         * @param  {function} successFunc  Callback function on success
+         * @param  {function} failFunc     Callback function on failure
+         * @return {void}
+         */
+        setGroupCategory: function(groupId, categoryName,
+                                   successFunc, failFunc) {
+            if(!successFunc) {
+                successFunc = ngAPI.updateGroups;
+            }
+            return ngAPI.sendMessage(
+                'editqueue', [
+                    'GroupApplyCategory',
+                    0,
+                    categoryName,
+                    [groupId]
+                ], successFunc, failFunc);
+        },
         updateCategories: function() {
             ngAPI.sendMessage('config', {}, this.parseCategories.bind(this));
         },
@@ -487,20 +509,20 @@
          * @return {void}
          */
         updateGroups: function() {
-            this.sendMessage('listgroups', [], function(j){
+            ngAPI.sendMessage('listgroups', [], function(j) {
                 var newIDs = [];
                 for(var i in j.result) {
                     var id = j.result[i].NZBID;
                     newIDs[id] = true;
-                    if(this.groups[id]) {
+                    if(ngAPI.groups[id]) {
                         for(var attr in j.result[i]) {
-                            this.groups[id][attr] = j.result[i][attr];
+                            ngAPI.groups[id][attr] = j.result[i][attr];
                         }
                     }
                     else {
-                        this.groups[id] = j.result[i];
+                        ngAPI.groups[id] = j.result[i];
                     }
-                    this.groups[id].sortorder = i;
+                    ngAPI.groups[id].sortorder = i;
                 }
                 if(j.result.length) {
                     window.ngAPI.sendMessage(
@@ -509,11 +531,11 @@
                         window.ngAPI.updatePostQueue);
                 }
 
-                if(this.groups) {
-                    for(i in this.groups) {
+                if(ngAPI.groups) {
+                    for(i in ngAPI.groups) {
                         if(!newIDs[i]) {
-                            window.ngAPI.notifyDownloadStatus(this.groups[i]);
-                            delete this.groups[i];
+                            window.ngAPI.notifyDownloadStatus(ngAPI.groups[i]);
+                            delete ngAPI.groups[i];
                             chrome.runtime.sendMessage(
                                 {statusUpdated: 'history'});
                         }
@@ -524,7 +546,7 @@
                     j.result.length.toString() :
                     ''});
                 chrome.runtime.sendMessage({statusUpdated: 'groups'});
-            }.bind(this));
+            });
         },
         /**
          * Setup polling timers and stuff
