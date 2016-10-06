@@ -76,7 +76,7 @@
 
 
     function setupItem(obj) {
-        var item = parseItem(obj.item);
+        var item = parseItem(obj._item);
 
         if(obj.titleElement.innerHTML !== item.name) {
             obj.titleElement.innerHTML = item.name;
@@ -111,7 +111,7 @@
 
         shadowRoot.querySelector('#btn_move_top')
         .addEventListener('mousedown', function() {
-            var fileId = that.item.LastID;
+            var fileId = that._item.LastID;
             window.ngAPI.sendMessage(
                 'editqueue', [
                     'GroupMoveTop',
@@ -122,7 +122,7 @@
         });
         shadowRoot.querySelector('#btn_move_bottom')
         .addEventListener('mousedown', function() {
-            var fileId = that.item.LastID;
+            var fileId = that._item.LastID;
             window.ngAPI.sendMessage(
                 'editqueue', [
                     'GroupMoveBottom',
@@ -134,8 +134,8 @@
 
         shadowRoot.querySelector('#btn_pause')
         .addEventListener('mousedown', function() {
-            var fileId = that.item.LastID,
-                status = that.item.status,
+            var fileId = that._item.LastID,
+                status = that._item.status,
                 method = status === 'paused' ? 'GroupResume' :
                                                'GroupPause';
             window.ngAPI.sendMessage(
@@ -146,7 +146,7 @@
 
         shadowRoot.querySelector('#btn_delete')
         .addEventListener('mousedown', function() {
-            var fileId = that.item.LastID;
+            var fileId = that._item.LastID;
             if(confirm('Are you sure?')) {
                 window.ngAPI.sendMessage(
                     'editqueue',
@@ -208,23 +208,38 @@
 
         shadowRoot.querySelector('.menu')
         .addEventListener('click', function() {
-            var ctx = this.parentNode.querySelector('.contextmenu'),
-                label = that.item.status === 'paused' ? 'Resume' :
-                                                        'Pause';
+            var ctx = this.nextElementSibling,
+                label = that._item.status === 'paused' ? 'Resume' :
+                                                         'Pause';
             ctx.classList.toggle('show');
             ctx.querySelector('#btn_pause span').innerText = label;
         });
 
-        setupItem(this);
+        var setItemProperty = function(item) {
+            that._item = item;
+            setupItem(that);
 
-        Object.defineProperty(this.item, 'FileSizeMB', {
+            Object.defineProperty(that._item, 'FileSizeMB', {
+                get: function() {
+                    return that._item._FileSizeMB;
+                },
+                set: function(nv){
+                    that._item._FileSizeMB = nv;
+                    setupItem(that);
+                }
+            });
+
+        };
+        if(this.item) {
+            setItemProperty(this.item);
+        }
+        Object.defineProperty(that, 'item', {
             get: function() {
-                return this.item._FileSizeMB;
-            }.bind(this),
-            set: function(nv){
-                this.item._FileSizeMB = nv;
-                setupItem(this);
-            }.bind(this)
+                return that._item;
+            },
+            set: function(value) {
+                setItemProperty(value);
+            }
         });
 
         this.closeContextMenu = function() {
