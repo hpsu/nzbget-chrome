@@ -49,42 +49,25 @@
         }
     }
     function injectDetailsMode() {
-        var dllinks = document.querySelectorAll('i.icon-download');
-        for(var i = 0; i < dllinks.length; i++) {
-            var dlitem = dllinks.item(i);
-            var category = '', lid = 'details';
+        var dlitem = document.querySelector('i.icon-download');
+        var category = '', lid = 'details';
+        // read the nzb id from the onclick attribute
+        var nzbid = dlitem.parentNode.getAttribute('onclick').split("'")[1];
 
-            // create the new hirarchy for the modified download menu
-            var newtr = document.createElement('tr');
-            var newtdpadding = document.createElement('td');
-            newtdpadding.width = '4';
-            var newtd1 = document.createElement('td');
-            var newtd2 = document.createElement('td');
+        // we need the personal token to assemble the download link below
+        var rssToken = document.getElementsByName('rsstoken')[0].value;
 
-            // read the nzb id from the onclick attribute
-            var nzbid = dlitem.parentNode.getAttribute('onclick');
-            nzbid = nzbid.split("'")[1];
-
-            // we need the personal token to assemble the download link below
-            var rssToken = document.getElementsByName('rsstoken')[0].value;
-
-            // create the nzbget icon and assemble the download link
-            var newitem = createNgIcon(
-                lid + '_nzbgc',
-                'https://dognzb.cr' + '/fetch/' + nzbid + '/' + rssToken,
-                category
-            );
-
-            // assemble the modified download menu hirarchy
-            newtd1.appendChild(newitem);
-            newtd2.appendChild(dlitem.parentNode);
-            newtr.appendChild(newtdpadding);
-            newtr.appendChild(newtd1);
-            newtr.appendChild(newtd2);
-
-            document.getElementsByClassName('multiple')[0].appendChild(newtr);
-        }
+        // create the nzbget icon and assemble the download link
+        var newitem = createNgIcon(
+            lid + '_nzbgc',
+            'https://dognzb.cr' + '/fetch/' + nzbid + '/' + rssToken,
+            category
+        );
+        newitem.querySelector('img').style.paddingRight='5px';
+        var container = document.querySelector('#details strong');
+        container.insertBefore(newitem, container.childNodes[0]);
     }
+
     if(document.querySelector('title').text.match(/Browse/)) {
         injectBrowsingMode();
     } else {
