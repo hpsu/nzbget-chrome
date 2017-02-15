@@ -46,6 +46,28 @@
                     [groupId]
                 ], successFunc, failFunc);
         },
+        /**
+         * Set group name
+         *
+         * @param  {int}      groupId      ID
+         * @param  {string}   groupName    New name
+         * @param  {function} successFunc  Callback function on success
+         * @param  {function} failFunc     Callback function on failure
+         * @return {void}
+         */
+        setGroupName: function(groupId, groupName,
+                               successFunc, failFunc) {
+            if(!successFunc) {
+                successFunc = ngAPI.updateGroups;
+            }
+            return ngAPI.sendMessage(
+                'editqueue', [
+                    'GroupSetName',
+                    0,
+                    groupName,
+                    [groupId]
+                ], successFunc, failFunc);
+        },
         updateCategories: function() {
             ngAPI.sendMessage('config', {}, this.parseCategories.bind(this));
         },
@@ -823,7 +845,10 @@
                           "     'div.icon_nzb a[href*=\"/getnzb\"]')" +
                           '       != null,' +
                           '   isTtRSS: document.querySelector(' +
-                          "     '#ttrssMain') != null" +
+                          "     '#ttrssMain') != null," +
+                          '   isFreshRSS: document.querySelector(' +
+                          "     'meta[name=apple-mobile-web-app-title][" +
+                          "           content=FreshRSS]') != null" +
                           '});'
                 }, function(r) {
                     if(!chrome.runtime.lastError && r &&
@@ -851,6 +876,11 @@
                             chrome.tabs.executeScript(
                                 tabId,
                                 {file: 'sites/ttrss.js'});
+                        }
+                        else if(r[0].isFreshRSS) {
+                            chrome.tabs.executeScript(
+                                tabId,
+                                {file: 'sites/freshrss.js'});
                         }
                     }
                 });
