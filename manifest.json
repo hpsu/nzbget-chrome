@@ -43,6 +43,10 @@
 			"matches": [ "*://*.dognzb.cr/*" ]
 			,"js": [ "sites/common.js", "sites/dognzb.js" ]
 			,"css": [ "sites/common.css" ]
+		},{
+			"matches": [ "*://*.newzleech.com/*" ]
+			,"js": [ "sites/common.js", "sites/newzleech.js" ]
+			,"css": [ "sites/common.css", "sites/newzleech.css" ]
 		}
 	]
 }
