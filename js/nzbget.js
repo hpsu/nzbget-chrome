@@ -156,11 +156,6 @@
                 'pathname',
                 'host'];
 
-            if(authenticate) {
-                keys.push('username');
-                keys.push('password');
-            }
-
             for(var i in keys) {
                 x[keys[i]] = opt.get('opt_' + keys[i]);
             }
