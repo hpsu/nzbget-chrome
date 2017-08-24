@@ -56,7 +56,7 @@
         .addEventListener('click', function(){
             elConnectionTest.className = 'working';
             elConnectionTest.innerText = 'Trying to connect...';
-            elConnectionTest.style.webkitAnimationName = 'flip';
+            elConnectionTest.style.animationName = 'flip';
 
             var opOb = {get: function(v) {return this[v]; }};
             for(var input in inputs) {
@@ -67,11 +67,11 @@
             window.ngAPI.version(function(r){
                 elConnectionTest.innerText = 'Successfully connected ' +
                                              'to NZBGet v' + r.result;
-                elConnectionTest.style.webkitAnimationName = 'pulse';
+                elConnectionTest.style.animationName = 'pulse';
                 elConnectionTest.className = 'success';
             }, function(reason){
                 elConnectionTest.className = 'error';
-                elConnectionTest.style.webkitAnimationName = 'shake';
+                elConnectionTest.style.animationName = 'shake';
                 elConnectionTest.innerHTML = '<strong>' +
                                              'Connection failed!' +
                                              '</strong> ' + reason;

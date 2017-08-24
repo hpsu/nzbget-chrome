@@ -58,7 +58,7 @@ input.search {
     background: transparent;
 }
 
-@-webkit-keyframes animatedStripes {
+@keyframes animatedStripes {
     from { background-position: 0 0; }
     to   { background-position: 60px 30px; }
 }
@@ -79,7 +79,7 @@ input.search {
     cursor: pointer;
     width:64px;
     height: 64px;
-    -webkit-filter: grayscale(100%) invert(100%) brightness(150%);
+    filter: grayscale(100%) invert(100%) brightness(150%);
     padding-top: 13px;
 }
 
@@ -281,7 +281,7 @@ div.post .title {
                                       transparent 75%,
                                       transparent);
     background-size: 30px 30px;
-    -webkit-animation: animatedStripes 4s linear infinite;
+    animation: animatedStripes 4s linear infinite;
     box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15),
                 1px 0px 3px rgba(0,0,0,0.3);
 }
