@@ -34,15 +34,14 @@ function createNgIcon(id, href, cat, nameOverride){
         eNgContainer = document.createElement('a');
     eNgIcon.src = chrome.extension.getURL('img/nzbget-arrow.svg');
     eNgContainer.title = 'Click to download with NZBGet.';
-    eNgIcon.className = 'nzbgc_download';
+    eNgContainer.className = 'nzbgc_download';
 
     eNgContainer.href = href;
-    eNgIcon.href = href;
-    eNgIcon.id = id;
-    eNgIcon.nameOverride = nameOverride;
-    eNgIcon.category = cat;
+    eNgContainer.id = id;
+    eNgContainer.nameOverride = nameOverride;
+    eNgContainer.category = cat;
 
-    eNgIcon.addEventListener('click', function(e) {
+    eNgContainer.addEventListener('click', function(e) {
         e.preventDefault();
 
         chrome.runtime.sendMessage({

@@ -1,0 +1,114 @@
+<script src="../binsearch.js"></script>
+<link rel="stylesheet" type="text/css" href="../../popup.css">
+
+<table cellpadding="0" cellspacing="0" class="mt">
+    <tbody><tr>
+        <td class="g" width="3%">&nbsp;
+        </td><td class="g" width="*">
+            <table width="100%">
+                <tbody><tr><td width="33%" nowrap="">
+                    <p><!--[if IE]><br><![endif]--></p><h1>binsearch.info</h1>	   	
+                </td><td width="90%" nowrap="">
+                    <a href="/">basic search</a> - <a href="/index.php?adv_sort=date">advanced search</a> - <a href="/faq.php">F.A.Q.</a> - <a href="/index.php?watchlist=1">watchlist</a> - <a href="/disclaimer.php">disclaimer</a> - <a href="/groups.php">browse newsgroups</a> - <a href="/rssfeed.php">RSS</a>
+                </td><td width="10%">&nbsp;	
+                </td></tr></tbody></table>					
+            </td><td class="g">&nbsp;
+            </td><td class="g" width="1%">&nbsp;
+            </td></tr><tr><td>&nbsp;</td><td height="100%" valign="top" colspan="2">
+                &nbsp;
+                <h2>Search!</h2>
+                
+                <form method="get" action="">
+                    <input class="b" type="text" name="q" size="50" value="ubuntu"><br>
+                    
+                    <table><tbody><tr><td>Results per page: </td><td><select name="max" style="width: 100%">
+                        <option>25</option>
+                        <option>50</option>
+                        <option selected="">100</option>
+                        <option>250</option>
+                    </select>
+                </td></tr><tr><td>Maximum age of post: 
+                </td><td><select name="adv_age">
+                    <option value="1">24 hours</option><option value="7">1 week</option><option value="14">2 weeks</option><option value="21">3 weeks</option><option value="50">50 days</option><option value="70">70 days</option><option value="99">99 days</option><option value="120">120 days</option><option value="365">365 days</option><option value="600">600 days</option><option value="1100" selected="">1100 days</option><option value="">-- show all --</option></select>
+                </td></tr></tbody></table>
+                [<a href="prefs.php">change default settings</a>]<p>
+                    <input type="radio" name="server" value="" checked=""> search in the most popular groups <input type="radio" name="server" value="2"> search in the other groups 
+                    
+                    
+                </p><p> 
+                    <input class="b" type="submit" value="search">
+                </p></form>
+                
+                
+                <p></p>
+                <h3>Results</h3>
+                <form method="post" action="/fcgi/nzb.fcgi?q=ubuntu&amp;max=100&amp;adv_age=1100&amp;server=" onsubmit="return check(this);" name="r">
+                    <input class="b" type="button" value="Inverse">
+                    <input class="b" type="submit" value="Create NZB">
+                    <input class="b" type="submit" name="watchlist" value="Add to watchlist" onclick="document.forms['r'].action=''; return true;">
+                    <p>
+                        <table class="xMenuT" id="r2">
+                            <tbody>
+                                <tr><th>&nbsp;</th><th align="left"></th><th align="left">Subject</th><th align="left">Poster</th><th align="left">Group</th><th align="left">Age<!--
+                    <tr bgcolor="#FFFFFF" onMouseover="this.style.background='#D5D4F1';" onMouseout="this.style.background='#FFFFFF';"><td>1. <td><input type="checkbox" name="00000001" ><td><span class="s">&quot;Binsearch may only be used for personal use. Commercial use, in any shape or form, is strictly prohibited.&quot; Yes, this means integrating our service in 3rd-party programs is not allowed either. People should not be made to pay money for search results we provide for free - Yenc - size: 1 GB (1/1)</span><td><a href="/?max=250&amp;g=alt.binaries.boneless&amp;a=abc">JBinUp </a><td><a href="browse.php?bg=alt.binaries.boneless&amp;server=0">a.b.boneless</a><td>2d
+                    -->
+                </th></tr>
+                <tr bgcolor="#FFFFFF" style="background: rgb(255, 255, 255);">
+                    <td>1. </td>
+                    <td><input type="checkbox" name="231260664"></td>
+                    <td><span class="s">Windows 8.1 Ubuntu Edition (x64).rar (1/265)</span></td>
+                    <td><a href="/?max=250&amp;g=alt.binaries.warez.ibm-pc.german&amp;a=Yenc%40power-post.org+%28Yenc-PP-A%26A%29">Yenc-PP-A&amp;A</a></td>
+                    <td><a href="browse.php?bg=alt.binaries.warez.ibm-pc.german&amp;server=0">a.b.warez.ibm-pc.german</a></td>
+                    <td>7d</td></tr>
+                <tr bgcolor="#F6F7FA" style="background: rgb(246, 247, 250);">
+                    <td>2. </td>
+                    <td><input type="checkbox" name="231260663"></td>
+                    <td><span class="s">Windows 8.1 Ubuntu Edition (x64) 2015.rar (1/265)</span></td>
+                    <td><a href="/?max=250&amp;g=alt.binaries.warez.ibm-pc.german&amp;a=Yenc%40power-post.org+%28Yenc-PP-A%26A%29">Yenc-PP-A&amp;A</a></td>
+                    <td><a href="browse.php?bg=alt.binaries.warez.ibm-pc.german&amp;server=0">a.b.warez.ibm-pc.german</a></td>
+                    <td>7d</td></tr>
+                <tr bgcolor="#FFFFFF" style="background: rgb(255, 255, 255);">
+                    <td>3. </td>
+                    <td><input type="checkbox" name="231155106"></td>
+                    <td><span class="s">VirtualBox - Ubuntu 14.04 LTS amd64 ALPHA1 Desktop VirtualBox VDI Virtual Computer.rar (1/265)</span></td>
+                    <td><a href="/?max=250&amp;g=alt.binaries.warez.ibm-pc.german&amp;a=Yenc%40power-post.org+%28Yenc-PP-A%26A%29">Yenc-PP-A&amp;A</a></td>
+                    <td><a href="browse.php?bg=alt.binaries.warez.ibm-pc.german&amp;server=0">a.b.warez.ibm-pc.german</a></td>
+                    <td>7d</td></tr>
+                <tr bgcolor="#F6F7FA" style="background: rgb(246, 247, 250);">
+                    <td>4. </td>
+                    <td><input type="checkbox" name="230983095"></td>
+                    <td><span class="s">Ubuntu Studio 15.04 (x86.x64).rar (1/265)</span></td>
+                    <td><a href="/?max=250&amp;g=alt.binaries.warez.ibm-pc.german&amp;a=Yenc%40power-post.org+%28Yenc-PP-A%26A%29">Yenc-PP-A&amp;A</a></td>
+                    <td><a href="browse.php?bg=alt.binaries.warez.ibm-pc.german&amp;server=0">a.b.warez.ibm-pc.german</a></td>
+                    <td>7d</td></tr>
+</tbody>
+</table>
+<table class="xMenuT">
+<tbody>
+<tr>
+<td align="center">&lt;&lt; &lt; 100+ records <a href=
+"?q=ubuntu&amp;max=100&amp;adv_age=1100&amp;server=&amp;min=100">&gt;</a></td>
+</tr>
+</tbody>
+</table>
+<input type="hidden" name="action" value="nzb">
+<p><input class="b" type="submit" value="Create NZB"></p>
+</form>
+<br>
+<br>
+<small>Generated in 0.03 seconds.</small></td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td class="g">&nbsp;</td>
+<td class="g">
+<p>Copyright © 2006-2011 binsearch - <a href=
+"/disclaimer.php">disclaimer</a></p>
+</td>
+<td></td>
+<td class="g"></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

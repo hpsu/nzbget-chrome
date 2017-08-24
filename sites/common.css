@@ -11,8 +11,12 @@
     filter: grayscale(0.8);
     transition: all 250ms ease-in-out;
     cursor: pointer;
+    display: inline-block;
+}
+
+.nzbgc_download img {
     width: 16px;
-    width: 16px;
+ }
 
  .nzbgc_download.nzbgc_added_ok{
     filter: grayscale(0);
