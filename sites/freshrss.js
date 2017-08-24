@@ -21,12 +21,17 @@
 
             var eParent = dlitem.parentElement;
             var eRoot = findParentOfType(eParent, 'DIV');
+            if(eRoot.querySelector('.nzbgc_download')) {
+                return;
+            }
             var eContent = eRoot.querySelector('DIV.flux_content');
             var eTarget = eContent.querySelector('H1');
+
             var eBody = eTarget.nextElementSibling;
             var catMatch = eBody.innerHTML.replace(/<(?:.|\n)*?>/gm, '\n')
                 .match(/Category[\s-:]*([^\n]+)/);
             var category = catMatch && catMatch.length ? catMatch[1] : '';
+
             var newItem = createNgIcon(
                 eRoot.id + ' _nzbgc',
                 dlitem.href,
