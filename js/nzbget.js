@@ -139,12 +139,11 @@
         /**
          * Build a URL-object from options
          *
-         * @param  {boolean} authenticate Whether or not to authenticate
          * @param  {object}  altOptions   Optional alternate options
          * @param  {string}  pathAdd      Path to append
          * @return {void}
          */
-        buildServerURI: function(authenticate, altOptions, pathAdd) {
+        buildServerURI: function(altOptions, pathAdd) {
             var opt = altOptions && altOptions.get ?
                       altOptions :
                       window.ngAPI.Options;
@@ -155,11 +154,6 @@
                 'port',
                 'pathname',
                 'host'];
-
-            if(authenticate) {
-                keys.push('username');
-                keys.push('password');
-            }
 
             for(var i in keys) {
                 x[keys[i]] = opt.get('opt_' + keys[i]);
@@ -231,7 +225,7 @@
 
             xhr.open(
                 'POST',
-                window.ngAPI.buildServerURI(false, opt, '/jsonrpc'));
+                window.ngAPI.buildServerURI(opt, '/jsonrpc'));
 
             xhr.setRequestHeader('Content-Type', 'text/json');
             xhr.setRequestHeader(
@@ -401,13 +395,13 @@
          */
         switchToNzbGetTab: function() {
             chrome.tabs.query({
-                url: window.ngAPI.buildServerURI(false, null, '/*')
+                url: window.ngAPI.buildServerURI(null, '/*')
             }, function(tabs) {
                 if(tabs.length) {
                     chrome.tabs.update(tabs[0].id, {selected: true});
                 } else {
                     chrome.tabs.create(
-                        {url: window.ngAPI.buildServerURI(true)});
+                        {url: window.ngAPI.buildServerURI()});
                 }
             });
         },
