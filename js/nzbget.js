@@ -364,6 +364,17 @@
                     url,
                     tab
                     );
+                    if(tab && ident) {
+                        chrome.tabs.sendMessage(
+                            tab,
+                            {
+                                message: 'addedurl',
+                                url: url,
+                                status: false,
+                                id: ident
+                            }
+                        );
+                    }
                 }
             };
             xhr.open('GET', url);

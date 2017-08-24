@@ -89,6 +89,8 @@ chrome.runtime.onMessage.addListener(function(m) {
             eInject.classList.remove('nzbgc_adding');
             if(m.status) {
                 eInject.classList.add('nzbgc_added_ok');
+            } else {
+                eInject.classList.add('nzbgc_added_failed');
             }
             break;
     }

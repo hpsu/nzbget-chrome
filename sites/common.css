@@ -14,9 +14,12 @@
     width: 16px;
     width: 16px;
 
+ .nzbgc_download.nzbgc_added_ok{
+    filter: grayscale(0);
 }
-.nzbgc_download.nzbgc_added_ok{
-    -webkit-filter: grayscale(0);
+
+ .nzbgc_download.nzbgc_added_failed{
+    opacity:0.5;
 }
 
 .nzbgc_download.nzbgc_adding{
