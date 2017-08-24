@@ -120,7 +120,7 @@ input[type=text], input[type=password], select {
     outline: 0;
     border: 0;
     border-bottom: 1px solid #7e7e7e;
-    outline-width: 2px 0 0 0;
+    outline-width: 2px;
     padding-left: 0;
     margin-bottom:1px;
     background: transparent;

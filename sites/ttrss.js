@@ -45,7 +45,7 @@
                 eParent = eSibling.parentElement,
                 eBody = eRoot.querySelector('.cdmContent .cdmContentInner'),
                 catMatch = eBody.innerText.match(/Category[\s-:]*(.+)/),
-                category = catMatch && catMatch.length ? catMatch[1] : ''
+                category = catMatch && catMatch.length ? catMatch[1] : '';
             var newitem = createNgIcon(
                 eRoot.id + ' _nzbgc',
                 dlitem.href,
