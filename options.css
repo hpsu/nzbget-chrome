@@ -46,21 +46,20 @@
 
 body {
     text-align: center;
-    background: #eee;
 }
 
 header {
     background-color: #E91E63;
-    margin: -48px;
+    margin: -44px;
     margin-bottom: 16px;
-    height: 128px;
+    height: 96px;
     box-shadow: 0 2px 6px rgba(0,0,0,.16),0 2px 6px rgba(0,0,0,.23);
     color: #fff;
     border-radius: 2px 2px 0 0;
 }
 
 header h1 {
-    font-size: 48px;
+    font-size: 36px;
     font-weight: 500;
     line-height: 1.1;
     padding: 0;
@@ -76,8 +75,8 @@ header span {
 header img#logo {
     float: left;
     margin: 16px 8px 16px 16px;
-    width: 96px;
-    height: 96px;
+    width: 64px;
+    height: 64px;
     filter: grayscale(100%) invert(100%) brightness(150%);
 }
 
@@ -89,9 +88,8 @@ div.card {
     text-align: left;
     display: inline-block;
     background: #fff;
-    box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);
     border-radius: 2px;
-    padding: 48px;
+    padding: 36px;
     margin: 0;
     width: 350px;
     color: #333;

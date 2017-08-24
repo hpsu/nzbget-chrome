@@ -15,7 +15,10 @@
 		,"img/nzbget-arrow.svg"
 	],
 	"name": "nzbget-chrome",
-	"options_page": "options.html",
+	"options_ui": {
+		"page": "options.html",
+		"chrome_style": false
+	},
 	"permissions": [ "*://*/", "contextMenus", "tabs", "notifications", "storage" ],
 	"version": "1.5",
 	"browser_action": {
