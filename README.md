@@ -4,8 +4,14 @@
 Google chrome extension to interact with nzbget
 
 ### Version history
-#### 1.5 - (current dev)
+#### 1.6 - (current dev)
 
+---
+
+#### 1.5 - 2017-09-12
+* Category support
+* New site scripts for  ttRSS, FreshRSS
+* Bug fixes and polish
 ---
 
 #### 1.4 - 2016-01-19
