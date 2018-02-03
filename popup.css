@@ -393,3 +393,27 @@ div.post i:active {
     height: 100%;
     overflow: auto;
 }
+
+@font-face {
+    font-family: 'icons';
+    src: url('icons.woff') format('woff');
+}
+
+.icons {
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    direction: ltr;
+    display: inline-block;
+    font-family: 'icons';
+    font-feature-settings: 'liga';
+    font-size: 24px;
+    font-style: normal;
+    font-variant-ligatures: discretionary-ligatures;
+    font-variant: normal;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 1;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+}

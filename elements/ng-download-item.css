@@ -169,9 +169,8 @@ ng-download-item .contextmenu i {
     z-index: 1;
 }
 
-ng-download-item .material-icons {
+ng-download-item .icons {
     display: inline-block;
-    font-family: 'Material Icons';
     font-size: 24px;
     font-style: normal;
     font-weight: 400;

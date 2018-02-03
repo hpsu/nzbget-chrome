@@ -32,7 +32,7 @@ class NgDownloadItem extends NgElement {
 
         this._elements.root.appendChild(
             this.$element('i', 'moreVert', {
-                class: 'material-icons menu ripple', text: 'more_vert'})
+                class: 'icons menu ripple', text: 'more_vert'})
         );
 
         this._elements.root.appendChild(
@@ -40,19 +40,19 @@ class NgDownloadItem extends NgElement {
                 this.$element('ul', 'ccont', [
                     this.$element('li', 'btn_pause', [
                         this.$element('i', 'pauseI', {
-                            class: 'material-icons', text: 'pause'}),
+                            class: 'icons', text: 'pause'}),
                         this.$element('span', 'pauseSpan')
                     ]),
                     this.$element('li', 'btn_delete', [
                         this.$element('i', 'deleteI', {
-                            class: 'material-icons', text: 'delete'}),
+                            class: 'icons', text: 'delete'}),
                         this.$element('span', 'deleteSpan', {
                             text: 'Delete'
                         })
                     ]),
                     this.$element('li', 'btn_move_top', [
                         this.$element('i', 'moveTopI', {
-                            class: 'material-icons',
+                            class: 'icons',
                             text: 'vertical_align_top'}),
                         this.$element('span', 'moveTopSpan', {
                             text: 'Move to top'
@@ -60,7 +60,7 @@ class NgDownloadItem extends NgElement {
                     ]),
                     this.$element('li', 'btn_move_bottom', [
                         this.$element('i', 'moveBottomI', {
-                            class: 'material-icons',
+                            class: 'icons',
                             text: 'vertical_align_bottom'}),
                         this.$element('span', 'moveBottomSpan', {
                             text: 'Move to bottom'
