@@ -32,7 +32,7 @@ class NgDownloadItem extends NgElement {
 
         this._elements.root.appendChild(
             this.$element('i', 'moreVert', {
-                class: 'material-icons menu rpl', text: 'more_vert'})
+                class: 'material-icons menu ripple', text: 'more_vert'})
         );
 
         this._elements.root.appendChild(
