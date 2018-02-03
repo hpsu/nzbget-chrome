@@ -470,16 +470,6 @@
                 }
             }.bind(this));
         },
-        updatePostQueue: function(j) {
-            for(var i in j.result) {
-                var post = j.result[i];
-                for(var x in window.ngAPI.groups) {
-                    if(post.NZBID === Number(x)) {
-                        window.ngAPI.groups[x].post = post;
-                    }
-                }
-            }
-        },
         /**
         * Tries to show appropriate notification based on status in history.
         *
@@ -551,13 +541,6 @@
                     }
                     ngAPI.groups[id].sortorder = i;
                 }
-                if(j.result.length) {
-                    window.ngAPI.sendMessage(
-                        'postqueue',
-                        [],
-                        window.ngAPI.updatePostQueue);
-                }
-
                 if(ngAPI.groups) {
                     for(i in ngAPI.groups) {
                         if(!newIDs[i]) {
