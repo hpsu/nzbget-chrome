@@ -1,0 +1,206 @@
+ng-download-item {
+    background: #fff;
+    border-bottom: 1px solid #dadada;
+    display: flex;
+    padding: 15px;
+    position: relative;
+}
+ng-download-item .info {
+    flex: 1;
+    padding: 0 10px;
+    position: relative;
+}
+
+ng-download-item .title {
+    font-size: 16px;
+    font-weight: normal;
+    padding-bottom: 5px;
+    word-wrap: break-word;
+}
+ng-download-item .postinfo {
+    color: #999;
+    font-size: 12px;
+    word-wrap: break-word;
+}
+
+ng-download-item .info .progress_piece {
+    background-color: #c0c0c0;
+    height: 8px;
+    transition: width 0.6s ease;
+    width: 0;
+}
+ng-download-item .progress_bar {
+    background-color: #e0e0e0;
+    display: flex;
+}
+ng-download-item .progress_piece.paused {
+    opacity: 0.2;
+}
+ng-download-item .progress_bar.paused {
+    background-color: #fff59d;
+}
+ng-download-item .progress_bar.paused .progress_piece {
+    background-color: #fdd835;
+}
+ng-download-item .progress_bar.postprocess {
+    background-color: #d7ccc8;
+}
+ng-download-item .progress_bar.postprocess .progress_piece {
+    background-color: #795548;
+}
+
+ng-download-item .progress_bar.downloading {
+    background-color: rgba(76, 175, 80, 0.2);
+}
+ng-download-item .progress_bar.downloading .progress_piece {
+    background-color: #59b75c
+}
+
+ng-download-item .text {
+    flex: 1;
+    padding: 5px 0;
+}
+ng-download-item .healthWarning {
+    background-color: #ff5722;
+    border-radius: 2px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 80%;
+    margin: 3px;
+    max-height: 16px;
+    opacity: 0;
+    padding: 4px;
+    transform: scale(0);
+    transition: opacity 0.2s cubic-bezier(0.4, 0.0, 1, 1),
+                transform 0.2s cubic-bezier(0.4, 0.0, 1, 1);
+}
+ng-download-item .categoryBadge {
+    border-radius: 10%;
+    cursor: pointer;
+    margin: 0 0 0 0;
+    padding: 5px;
+}
+ng-download-item .categoryBadge.add {
+    font-size: 80%;
+    font-style: italic;
+    opacity: 0.8;
+    padding: 4px;
+}
+ng-download-item .healthWarning.active {
+    opacity: 1;
+    transform: scale(1);
+}
+ng-download-item .menu {
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+}
+ng-download-item .contextmenu {
+    background: #fafafa;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+                0 1px 5px 0 rgba(0, 0, 0, 0.12),
+                0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    display: block;
+    min-width: 150px;
+    opacity: 0;
+    padding: 0;
+    position: absolute;
+    right: 15px;
+    transform: scale(0, 0);
+    transform-origin: top right;
+    transition: z-index 0s linear 0.2s,
+                transform 0.1s linear,
+                opacity 0.2s linear;
+    z-index:-1;
+}
+ng-download-item .contextmenu.show {
+    opacity: 1;
+    transform: scale(1, 1);
+    transition-delay:0s;
+    z-index: 2;
+}
+
+ng-download-item .contextmenu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ng-download-item .contextmenu ul li {
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    padding: 7px 15px;
+}
+ng-download-item .contextmenu ul li:hover {
+    background: #e5e5e5;
+}
+ng-download-item .contextmenu i {
+    color: rgba(0, 0, 0, 0.54);
+    padding-right: 10px;
+    vertical-align: top;
+    z-index: 1;
+}
+ng-download-item .material-icons {
+    display: inline-block;
+    font-family: 'Material Icons';
+    font-size: 24px;
+    font-style: normal;
+    font-weight: normal;
+    height: 1em;
+    letter-spacing: normal;
+    line-height: 1;
+    text-rendering: optimizeLegibility;
+    text-transform: none;
+    width: 1em;
+    word-wrap: normal;
+}
+
+ng-download-item .bottom_box {
+    display: flex;
+}
+
+/* Highlight on click */
+
+ng-download-item .ripple {
+    --ripple-left: 0;
+    --ripple-top: 0;
+    overflow: hidden;
+    position: relative;
+    transform: translate3d(0, 0, 0);
+    transition: box-shadow .3s ease-in, background-color .3s ease-in;
+}
+.ripple:hover {
+    background-color: rgba(0,0,0,0.05);
+    box-shadow:
+        0 3px 1px -2px rgba(0, 0, 0, 0.2),
+        0 2px 2px 0 rgba(0, 0, 0, 0.14),
+        0 1px 5px 0 rgba(0, 0, 0, 0.12);
+
+}
+.ripple:after {
+    background: rgba(0, 0, 0, 1.2);
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 10%;
+    left: var(--ripple-left);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: var(--ripple-top);
+    transform: scale(0);
+    width: 10%;
+}
+.ripple.animate:after {
+    animation: ripple-in 325ms ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes ripple-in {
+    100% {
+        opacity: .2;
+        transform: scale(27);
+    }
+}

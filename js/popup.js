@@ -101,7 +101,7 @@
             ev.preventDefault();
             ev.dataTransfer.dropEffect = 'move';
 
-            if(this.tagName === 'DOWNLOAD-ITEM') {
+            if(this.tagName === 'NG-DOWNLOAD-ITEM') {
                 if(dragging.offsetHeight) {
                     dragging.storedHeight = dragging.offsetHeight;
                 }
@@ -191,16 +191,18 @@
      * @return {void}
      */
     function downloadPost(item) {
-        var elm = document.querySelector('download-item[rel="' +
+        var elm = document.querySelector('ng-download-item[rel="' +
                   item.NZBID + '"]'),
             remainingMB = item.RemainingSizeMB - item.PausedSizeMB;
 
         if(!elm) {
-            elm = $E({tag: 'download-item', rel: item.NZBID});
+            elm = $E({tag: 'ng-download-item', rel: item.NZBID});
             elm.item = item;
+            new NgDownloadItem(elm);
             setupDraggable(elm);
             document.querySelector('#download_list').appendChild(elm);
         }
+        elm.refresh();
 
         item.estRem = api.status.DownloadRate ?
                       toHRTimeLeft((totalMBToDownload + remainingMB) *
@@ -220,7 +222,7 @@
     function cleanupList(dataObj, contEl) {
         var i = 0,
             sortNeeded = false,
-            trElements = contEl.querySelectorAll('download-item,div.post');
+            trElements = contEl.querySelectorAll('ng-download-item,div.post');
 
         for(var k = 0; k < trElements.length; k++) {
             var id = trElements[k].item.NZBID;
@@ -242,7 +244,7 @@
             });
             for(var j in order) {
                 var el = contEl.querySelector(
-                    'download-item[rel="' + order[j] + '"]');
+                    'ng-download-item[rel="' + order[j] + '"]');
                 if(el) {
                     contEl.appendChild(contEl.removeChild(el));
                 }
@@ -529,9 +531,9 @@
 
         onStatusUpdated();
         document.body.addEventListener('mousedown', function() {
-            var els = document.querySelectorAll('download-item');
-            for(var i = 0; i < els.length; i++) {
-                els[i].closeContextMenu();
+            var menus =  document.querySelectorAll('.contextmenu');
+            for(var i=0; i < menus.length; i++) {
+                menus[i].classList.remove('show');
             }
         });
         document.querySelector('#tgl_pause')
