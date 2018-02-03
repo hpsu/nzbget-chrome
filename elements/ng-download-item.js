@@ -300,8 +300,6 @@ class NgDownloadItem extends NgElement {
             this._elements.categoryBadge.innerText = 'No category';
             this._elements.categoryBadge.classList.add('add');
         }
-
-        this._elements.categoryBadge.classList.add('animate');
     }
 
     _setHealth() {
