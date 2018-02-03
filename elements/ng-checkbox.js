@@ -1,71 +1,68 @@
-var owner = document.currentScript.ownerDocument;
-var CBProto = Object.create(HTMLElement.prototype);
+'use strict';
 
-CBProto.createdCallback = function() {
-    'use strict';
-    var shadowRoot = this.createShadowRoot(),
-        template = owner.querySelector('template'),
-        clone = document.importNode(template.content, true);
+class NgCheckBox extends NgElement {
 
-    shadowRoot.appendChild(clone);
-
-    // Events
-    this.toggle = function() {
-        this.checked = !this.checked;
-    };
-    this.onclick = this.toggle;
-    this.onkeydown = function(e) {
-        if(e.keyCode === 32) {
-            this.toggle();
-        }
-    };
-    Object.defineProperty(this, 'checked', {
-        get: function() {return this._checked;},
-        set: function(newValue) {
-            this.checkboxElement.className = newValue ? 'checked' : '';
-            this._checked = newValue;
-        }
-    });
-    Object.defineProperty(this, 'value', {
-        get: function() {return this._checked;},
-        set: function(newValue) {
-            this.checked = newValue;
-        }
-    });
-    Object.defineProperty(this, 'label', {
-        get: function() {return this.value;},
-        set: function(newValue) {
-            this.labelElement.textContent = newValue;
-        }
-    });
-    Object.defineProperty(this, 'description', {
-        set: function(newValue) {
-            this.descriptionElement.textContent = newValue;
-        }
-    });
-
-    // Shadow elements
-    this.labelElement = shadowRoot.querySelector('header');
-    this.descriptionElement = shadowRoot.querySelector('description');
-    this.checkboxElement = shadowRoot.querySelector('checkbox');
-
-    // Initial value setup
-    this.tabIndex = 0;
-    this.label = this.getAttribute('label');
-    this.description = this.getAttribute('description');
-    this.checked = this.checked === true;
-};
-
-CBProto.attributeChangedCallback = function(attr, oldVal, newVal) {
-    'use strict';
-    switch(attr) {
-        case 'label':
-            this.label = newVal;
-            break;
-        case 'description':
-            this.description = newVal;
-            break;
+    constructor(ob) {
+        super(ob);
+        this._setup();
     }
-};
 
-document.registerElement('ng-checkbox', {prototype: CBProto});
+    get checked() {
+        return this._elements.root.getAttribute('checked') !== null;
+    }
+
+    set checked(value) {
+        if(value) {
+            this._elements.root.setAttribute('checked', '');
+        }
+        else {
+            this._elements.root.removeAttribute('checked');
+        }
+    }
+
+    _sync() {
+        this._elements.heading.innerText =
+            this._elements.root.getAttribute('label');
+        this._elements.root.label =
+            this._elements.root.getAttribute('label');
+        this._elements.description.innerText =
+            this._elements.root.getAttribute('description');
+        this._elements.root.checked = this.checked;
+    }
+
+    _setup() {
+        Object.defineProperty(this._elements.root, 'value', {
+            get: () => {
+                return this.checked;
+            },
+            set: (value) => {
+                this.checked = value;
+            }
+        });
+        var observer = new MutationObserver(() => {
+            this._sync();
+        });
+        observer.observe(this._elements.root, {attributes: true});
+        this._elements.root.addEventListener('click', () => {
+            this.checked = !this.checked;
+        });
+
+        this._elements.root.appendChild(
+            this.$element('label', 'label', [
+                this.$element('div', 'checkboxContainer', [
+                    this.$element('div', 'checkbox')
+                ]),
+                this.$element('div', 'textContainer', [
+                    this.$element('header', 'heading'),
+                    this.$element('description')
+                ])
+            ])
+        );
+        this._sync();
+    }
+}
+
+var list = document.querySelectorAll('ng-checkbox');
+list.forEach(function(ob) {
+    new NgCheckBox(ob);
+});
