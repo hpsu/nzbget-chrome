@@ -1,11 +1,13 @@
 /*
-    Animatioms are copied and modified from animate.css - http://daneden.me/animate
+    Animatioms are copied and modified from animate.css
+    http://daneden.me/animate
 */
 @keyframes flip {
     0% {
         transform: rotateY(-360deg);
         animation-timing-function: ease-out;
     }
+
     50% {
         transform: rotateY(0deg);
         animation-timing-function: ease-in;
@@ -41,38 +43,43 @@
 }
 
 * {
-    font-family: "Roboto Condensed", Helvetica, Arial, sans-serif;
+    font-family:
+        'Roboto Condensed',
+        Helvetica,
+        Arial,
+        sans-serif;
 }
 
 body {
     text-align: center;
 }
 
-header {
-    background-color: #E91E63;
+.header {
+    background-color: #e91e63;
     margin: -44px;
     margin-bottom: 16px;
     height: 96px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.16),0 2px 6px rgba(0,0,0,.23);
+    box-shadow:
+        0 2px 6px rgba(0,0,0,.16),
+        0 2px 6px rgba(0,0,0,.23);
     color: #fff;
     border-radius: 2px 2px 0 0;
 }
 
-header h1 {
+.header h1 {
     font-size: 36px;
     font-weight: 500;
     line-height: 1.1;
     padding: 0;
     margin: 0;
     padding-top: 24px;
-
 }
 
-header span {
+.header span {
     font-size: 16px;
-
 }
-header img#logo {
+
+.header img#logo {
     float: left;
     margin: 16px 8px 16px 16px;
     width: 64px;
@@ -96,6 +103,7 @@ div.card {
     font-size: 14px;
     line-height: 1.42857143;
 }
+
 fieldset {
     border: none;
     padding: 0;
@@ -112,7 +120,7 @@ input[type=text], input[type=password], select {
     display: block;
     padding: 0.3rem 0.6rem;
     width: 100%;
-    font-size:18px;
+    font-size: 18px;
     line-height: 1.33;
     color: #555;
     outline: 0;
@@ -120,18 +128,19 @@ input[type=text], input[type=password], select {
     border-bottom: 1px solid #7e7e7e;
     outline-width: 2px;
     padding-left: 0;
-    margin-bottom:1px;
+    margin-bottom: 1px;
     background: transparent;
 }
+
 input[type=text]:focus, input[type=password]:focus, select:focus {
-    border-color: #E91E63;
-    border-width:2px;
-    margin-bottom:0px;
+    border-color: #e91e63;
+    border-width: 2px;
+    margin-bottom: 0;
 }
+
 input[type=button] {
     background-color: #4285f4;
     border-color: #285e8e;
-    font-size:1.2rem;
     padding: 8px 30px;
     border: 0;
     margin: 10px 1px 0 1px;
@@ -147,33 +156,38 @@ input[type=button] {
     vertical-align: middle;
     color: rgba(255,255,255,.84);
 }
+
 input[type=button]:hover {
-    box-shadow: 0 3px 6px rgba(0,0,0,.2),0 3px 6px rgba(0,0,0,.28);
+    box-shadow:
+        0 3px 6px rgba(0,0,0,.2),
+        0 3px 6px rgba(0,0,0,.28);
 }
+
 input[type=button]:active {
-    box-shadow: 0 10px 20px rgba(0,0,0,.19),0 6px 6px rgba(0,0,0,.23);
+    box-shadow:
+        0 10px 20px rgba(0,0,0,.19),
+        0 6px 6px rgba(0,0,0,.23);
 }
+
 input[type=button]#btn_test {
     color: rgba(0,0,0,.84);
     background-color: transparent;
 }
+
 input.small[type=text], input.small[type=password] {
     width: 3rem;
 }
+
 div.small, span.small {
     font-size: 0.6rem;
-    font-weight: normal;
+    font-weight: 400;
 }
-.wrap {
-    display: inline-block;
-    float: left;
-    padding: 0;
-    margin-left: 2rem;
-}
+
 #connection_test {
-    display:block;
+    display: block;
     animation-timing-function: linear;
 }
+
 #connection_test.working {
     animation-duration: 2s;
     animation-iteration-count: infinite;
@@ -188,7 +202,6 @@ div.small, span.small {
     background-color: #f44336;
     animation-duration: 500ms;
     animation-iteration-count: 1;
-
     padding: 10px;
     margin: 10px 0;
 }
@@ -197,7 +210,6 @@ div.small, span.small {
     color: #fff;
     animation-duration: 250ms;
     animation-iteration-count: 1;
-
     background-color: #0f9d58;
     padding: 10px;
     margin: 10px 0;
