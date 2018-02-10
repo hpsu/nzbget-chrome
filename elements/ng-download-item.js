@@ -150,7 +150,7 @@ class NgDownloadItem extends NgElement {
             'mousedown', () => this._editQueue('GroupMoveBottom')
         );
 
-        this._elements.moreVert.addEventListener('mouseup', () => {
+        this._elements.moreVert.addEventListener('click', () => {
             const label =
                 this._item.Status === 'PAUSED' ?
                     'Resume' :
