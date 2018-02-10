@@ -32,13 +32,13 @@
         }
 
         return dayDiff === 0 && (
-                diff < 60 && 'just now' ||
-                diff < 120 && '1 min ago' ||
-                diff < 3600 && Math.floor(diff / 60) + ' mins ago' ||
-                diff < 7200 && '1 hour ago' ||
-                diff < 86400 && Math.floor(diff / 3600) + ' hours ago') ||
-               dayDiff === 1 && 'Yesterday ' + inputDate.toLocaleTimeString() ||
-               inputDate.toLocaleString();
+            diff < 60 && 'just now' ||
+            diff < 120 && '1 min ago' ||
+            diff < 3600 && Math.floor(diff / 60) + ' mins ago' ||
+            diff < 7200 && '1 hour ago' ||
+            diff < 86400 && Math.floor(diff / 3600) + ' hours ago') ||
+            dayDiff === 1 && 'Yesterday ' + inputDate.toLocaleTimeString() ||
+            inputDate.toLocaleString();
     }
 
     /**
@@ -205,9 +205,9 @@
         elm.refresh();
 
         item.estRem = api.status.DownloadRate ?
-                      toHRTimeLeft((totalMBToDownload + remainingMB) *
-                                    1024 / (api.status.DownloadRate / 1024)) :
-                      '';
+            toHRTimeLeft((totalMBToDownload + remainingMB) *
+                1024 / (api.status.DownloadRate / 1024))
+            : '';
         totalMBToDownload += remainingMB;
     }
 
@@ -269,8 +269,8 @@
         var downloadPaused = window.ngAPI.status.Download2Paused;
 
         document.querySelector('#tgl_pause').innerText = downloadPaused ?
-                                                         'play_arrow' :
-                                                         'pause';
+            'play_arrow' :
+            'pause';
 
         // Set "global" labels
         var speedLabel = '';
@@ -291,8 +291,9 @@
             remainingLbl === 0 ? '' : parse.toHRDataSize(remainingLbl);
         document.querySelector('#lbl_remainingdisk').innerText =
             parse.toHRDataSize(
-                parse.bigNumber(window.ngAPI.status.FreeDiskSpaceHi,
-                                window.ngAPI.status.FreeDiskSpaceLo)) +
+                parse.bigNumber(
+                    window.ngAPI.status.FreeDiskSpaceHi,
+                    window.ngAPI.status.FreeDiskSpaceLo)) +
                 ' free';
     }
 
@@ -318,8 +319,9 @@
             downloadPost(sortable[k]);
         }
 
-        cleanupList(window.ngAPI.groups,
-                    document.querySelector('#download_list'));
+        cleanupList(
+            window.ngAPI.groups,
+            document.querySelector('#download_list'));
 
         var inactiveContainer =
             document.querySelector('#download_container .inactive');
@@ -343,7 +345,7 @@
         item.status = parsed[0];
 
         post = document.querySelector(
-                '#history_list [rel="' + item.NZBID + '"]');
+            '#history_list [rel="' + item.NZBID + '"]');
         var update = post !== null;
 
         if(update) {
@@ -360,20 +362,24 @@
 
             // Info
             var info = post.appendChild($E({tag: 'div', className: 'info'}));
-            info.appendChild($E({tag: 'div',
-                                 text: item.Name,
-                                 className: 'title'}));
-            var details = info.appendChild($E({tag: 'div',
-                                               className: 'details'}));
-            details.appendChild($E({tag: 'div',
-                                    text: toHRTimeDiff(
-                                        new Date(item.HistoryTime * 1000)),
-                                    className: 'left'}));
-            details.appendChild($E({tag: 'div',
-                                    text: parse.toHRDataSize(
-                                        parse.bigNumber(item.FileSizeHi,
-                                                  item.FileSizeLo)),
-                                    className: 'right'}));
+            info.appendChild($E({
+                tag: 'div',
+                text: item.Name,
+                className: 'title'}));
+            var details = info.appendChild($E({
+                tag: 'div',
+                className: 'details'}));
+            details.appendChild($E({
+                tag: 'div',
+                text: toHRTimeDiff(
+                    new Date(item.HistoryTime * 1000)),
+                className: 'left'}));
+            details.appendChild($E({
+                tag: 'div',
+                text: parse.toHRDataSize(
+                    parse.bigNumber(item.FileSizeHi,
+                        item.FileSizeLo)),
+                className: 'right'}));
 
             document.querySelector('#history_list').appendChild(post);
         }
@@ -389,11 +395,11 @@
         }
         for(var i = 0; i < historyList.length; i++) {
             if(!historyList[i].Name
-                   .toLowerCase()
-                   .replace(/[^0-9a-z]+/g, ' ')
-                   .match(srchElement.value
-                          .toLowerCase()
-                          .replace(/[^0-9a-z]+/g, ' '))) {
+                .toLowerCase()
+                .replace(/[^0-9a-z]+/g, ' ')
+                .match(srchElement.value
+                    .toLowerCase()
+                    .replace(/[^0-9a-z]+/g, ' '))) {
                 continue;
             }
             filteredList.push(historyList[i]);
@@ -416,9 +422,9 @@
                 historyList = filteredList;
             }
             for(var i = 0;
-                    i < window.ngAPI.Options.get('opt_historyitems') &&
-                    i < historyList.length;
-                    i++) {
+                i < window.ngAPI.Options.get('opt_historyitems') &&
+                i < historyList.length;
+                i++) {
                 history[historyList[i].NZBID] = historyList[i];
                 history[historyList[i].NZBID].sortorder = i;
                 historyPost(historyList[i]);
@@ -525,9 +531,9 @@
         }
 
         document.querySelector('.search')
-        .addEventListener('search', function() {
-            onHistoryUpdated();
-        });
+            .addEventListener('search', function() {
+                onHistoryUpdated();
+            });
 
         onStatusUpdated();
         document.body.addEventListener('mousedown', function() {
@@ -536,19 +542,21 @@
                 menus[i].classList.remove('show');
             }
         });
+
         document.querySelector('#tgl_pause')
-        .addEventListener('click', function() {
-            var method = !window.ngAPI.status.Download2Paused ?
-                         'pausedownload2' :
-                         'resumedownload2';
-            window.ngAPI.sendMessage(method, [], function() {
-                window.ngAPI.updateStatus();
-                window.ngAPI.updateGroups();
+            .addEventListener('click', function() {
+                var method = !window.ngAPI.status.Download2Paused ?
+                    'pausedownload2' :
+                    'resumedownload2';
+                window.ngAPI.sendMessage(method, [], function() {
+                    window.ngAPI.updateStatus();
+                    window.ngAPI.updateGroups();
+                });
             });
-        });
+
         document.querySelector('#logo')
-        .addEventListener('click', function() {
-            window.ngAPI.switchToNzbGetTab();
-        });
+            .addEventListener('click', function() {
+                window.ngAPI.switchToNzbGetTab();
+            });
     });
 })();
