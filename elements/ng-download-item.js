@@ -143,11 +143,11 @@ class NgDownloadItem extends NgElement {
         });
 
         this._elements.btn_move_top.addEventListener(
-            'mousedown', () => this.__editQueue('GroupMoveTop')
+            'mousedown', () => this._editQueue('GroupMoveTop')
         );
 
         this._elements.btn_move_bottom.addEventListener(
-            'mousedown', () => this.__editQueue('GroupMoveBottom')
+            'mousedown', () => this._editQueue('GroupMoveBottom')
         );
 
         this._elements.moreVert.addEventListener('mouseup', () => {
