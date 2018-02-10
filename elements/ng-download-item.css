@@ -4,6 +4,8 @@ ng-download-item {
     display: flex;
     padding: 15px;
     position: relative;
+    width: 430px;
+    box-sizing: border-box;
 }
 
 ng-download-item .info {
