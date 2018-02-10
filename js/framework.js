@@ -17,3 +17,39 @@ function $E(params) {
     }
     return tmp;
 }
+
+function modalDialog(header, body, buttons) {
+    'use strict';
+    const
+        shroud = document.querySelector('.shroud'),
+        btnbar = shroud.querySelector('.btnbar');
+
+    shroud.querySelector('h2').innerHTML = header;
+    shroud.querySelector('p').innerHTML = body;
+    btnbar.innerHTML = '';
+
+    const clickFunc = function() {
+        if(this.clickfunc) {
+            this.clickfunc();
+        }
+        shroud.classList.remove('active');
+    };
+
+    for(let button of buttons) {
+        let btnElm = $E({
+            tag: 'a',
+            text: button.title});
+        if(button.href) {
+            btnElm.href = button.href;
+            btnElm.target = '_blank';
+        } else {
+            btnElm.href = '#';
+        }
+        btnElm.clickfunc = button.onClick;
+
+        btnElm.addEventListener('click', clickFunc);
+        btnbar.appendChild(btnElm);
+    }
+
+    shroud.classList.add('active');
+}

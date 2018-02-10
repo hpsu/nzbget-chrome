@@ -444,41 +444,6 @@
         }
     }
 
-    function modalDialog(header, body, buttons) {
-        var shroud = document.querySelector('.shroud');
-        shroud.querySelector('h2').innerHTML = header;
-        shroud.querySelector('p').innerHTML = body;
-        var btnbar = shroud.querySelector('.btnbar');
-        btnbar.innerHTML = '';
-
-        var clickFunc = function() {
-            if(this.clickfunc) {
-                this.clickfunc();
-            }
-            shroud.classList.remove('active');
-        };
-
-        for(var i in buttons) {
-            var button = $E({
-                tag: 'a',
-                text: buttons[i].title});
-
-            if(buttons[i].href) {
-                button.href = buttons[i].href;
-                button.target = '_blank';
-            } else {
-                button.href = '#';
-            }
-            button.clickfunc = buttons[i].onClick;
-            button.closeOnClick = buttons[i].closeOnClick;
-            button.addEventListener('click', clickFunc);
-
-            btnbar.appendChild(button);
-
-        }
-        shroud.classList.add('active');
-    }
-
     function switchTab(event) {
         resetTabs();
         event.target.classList.add('active');

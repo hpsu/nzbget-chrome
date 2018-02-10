@@ -137,9 +137,20 @@ class NgDownloadItem extends NgElement {
         });
 
         this._elements.btn_delete.addEventListener('mousedown', () => {
-            if(confirm('Are you sure?')) {
-                this._editQueue('GroupDelete');
-            }
+            modalDialog(
+                'Are you sure?',
+                'Do you want to delete<br><em>' +
+                    this._elements.title.innerHTML + '</em>',
+                [
+                    {
+                        title: 'cancel'
+                    },
+                    {
+                        title: 'delete',
+                        onClick: () => {this._editQueue('GroupDelete')}
+                    },
+                ]
+            );
         });
 
         this._elements.btn_move_top.addEventListener(
