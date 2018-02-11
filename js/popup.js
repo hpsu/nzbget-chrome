@@ -436,10 +436,10 @@
 
     function resetTabs() {
         var tabs = document.querySelectorAll('.tab');
-        for(var tabIndex = 0; tabIndex < tabs.length; tabIndex++) {
-            tabs[tabIndex].classList.remove('active');
-            var container = document.getElementById(
-                tabs[tabIndex].getAttribute('data-container'));
+        for(let tab of tabs) {
+            tab.classList.remove('active');
+            let container = document.getElementById(
+                tab.getAttribute('data-container'));
             container.classList.remove('active');
         }
     }
@@ -447,8 +447,11 @@
     function switchTab(event) {
         resetTabs();
         event.target.classList.add('active');
-        var container = document.getElementById(
+        let container = document.getElementById(
             event.target.getAttribute('data-container'));
+        if(container.id === 'history_container') {
+            onHistoryUpdated();
+        }
         container.classList.add('active');
     }
 
@@ -488,12 +491,6 @@
             }
         );
         onGroupsUpdated();
-        if(window.ngAPI.Options.get('opt_historyitems') === 0) {
-            document.querySelector('#history_container').style.display = 'none';
-        }
-        else {
-            onHistoryUpdated();
-        }
 
         document.querySelector('.search')
             .addEventListener('search', function() {
