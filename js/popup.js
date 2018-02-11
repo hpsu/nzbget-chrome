@@ -356,9 +356,16 @@
             post = $E({tag: 'div', className: 'post', rel: item.NZBID});
             post.item = item;
 
+            let [status, reason] = item.Status.toLowerCase().split('/') ||
+                [item.status, ''];
+
             // Tag
             post.appendChild($E({tag: 'div', className: 'tag ' + item.status}))
-                .appendChild($E({tag: 'span', text: item.status}));
+                .appendChild($E({tag: 'span', text: status}))
+                .appendChild($E({
+                    tag: 'small',
+                    text: status === 'success' ? '' : reason
+                }));
 
             // Info
             var info = post.appendChild($E({tag: 'div', className: 'info'}));
