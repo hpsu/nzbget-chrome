@@ -853,6 +853,11 @@
                                 tabId,
                                 {file: 'sites/newsnab.js'});
                         }
+                        else if(r[0].isNzbGeek) {
+                            chrome.tabs.executeScript(
+                                tabId,
+                                {file: 'sites/nzbgeek.js'});
+                        }
                         else if(r[0].isSpotweb) {
                             chrome.tabs.executeScript(
                                 tabId,
