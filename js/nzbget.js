@@ -832,6 +832,7 @@
                           '   isNewznab: document.querySelector(' +
                           "     'div.icon_nzb a[href*=\"/getnzb\"]')" +
                           '       != null,' +
+                          '   isNzbGeek: window.location.hostname.includes("nzbgeek.info"),' +
                           '   isTtRSS: document.querySelector(' +
                           "     '#ttrssMain') != null," +
                           '   isFreshRSS: document.querySelector(' +
