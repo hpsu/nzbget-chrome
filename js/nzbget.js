@@ -832,6 +832,7 @@
                           '   isNewznab: document.querySelector(' +
                           "     'div.icon_nzb a[href*=\"/getnzb\"]')" +
                           '       != null,' +
+                          '   isNzbGeek: window.location.hostname.includes("nzbgeek.info"),' +
                           '   isTtRSS: document.querySelector(' +
                           "     '#ttrssMain') != null," +
                           '   isFreshRSS: document.querySelector(' +
@@ -851,6 +852,11 @@
                             chrome.tabs.executeScript(
                                 tabId,
                                 {file: 'sites/newsnab.js'});
+                        }
+                        else if(r[0].isNzbGeek) {
+                            chrome.tabs.executeScript(
+                                tabId,
+                                {file: 'sites/nzbgeek.js'});
                         }
                         else if(r[0].isSpotweb) {
                             chrome.tabs.executeScript(
