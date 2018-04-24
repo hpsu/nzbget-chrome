@@ -48,7 +48,7 @@
         var newitem = createNgIcon(
             lid + '_nzbgc',
             dlitem.href,
-            category
+            category.trim()
         );
 
         newdiv.appendChild(newitem);
