@@ -4,6 +4,11 @@
 (function() {
     'use strict';
     function injectBrowsingMode() {
+        let parentNode = document.querySelector('tbody tr td[width="18"]').parentNode;
+        let childNode = document.querySelector('tbody tr td[width="18"]');
+        let newNode = document.createElement('td');
+        newNode.setAttribute('width', 18);
+        parentNode.insertBefore(newNode, childNode);
         var dllinks = document.querySelectorAll('div.dog-icon-download');
         for(var i = 0; i < dllinks.length; i++) {
             var dlitem = dllinks.item(i);
